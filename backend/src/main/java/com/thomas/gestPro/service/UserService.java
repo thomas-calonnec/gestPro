@@ -58,8 +58,9 @@ public class UserService {
         userRepository.deleteById(userId);
     }
 
-    public void addCardToUser(Long userId, Card card) {
+    public void addCardToUser(Long userId, Long cardId) {
         Users user = getUserById(userId);
+        Card card = cardRepository.findById(cardId).orElseThrow(() -> new ResourceNotFoundException("Card not found"));
 
         user.getCards().add(card);
         userRepository.save(user);

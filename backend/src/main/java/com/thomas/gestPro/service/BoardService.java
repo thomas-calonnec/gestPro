@@ -30,6 +30,7 @@ public class BoardService {
         return boardRepository.findById(boardId).orElseThrow(() -> new ResourceNotFoundException("Board not found"));
     }
 
+
     public Set<ListCard> getCardsByBoardId(Long boardId) {
         return boardRepository.findById(boardId).orElseThrow(() -> new RuntimeException("Board not found")).getListCards();
     }
@@ -53,12 +54,13 @@ public class BoardService {
     @Transactional
     public ListCard createListCard(Long boardId, ListCard listCard) {
         Board existingboard =  getBoardById(boardId);
+       listCard.setBoard(existingboard);
 
-        ListCard saveListCard = listCardRepository.save(listCard);
-        existingboard.getListCards().add(listCard);
+       listCardRepository.save(listCard);
+       // existingboard.getListCards().add(listCard);
         boardRepository.save(existingboard);
 
-        return saveListCard;
+        return listCard;
 
     }
 }
