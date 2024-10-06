@@ -35,9 +35,7 @@ public class ListCardService {
     @Transactional
     public void createCard(Long listCardId, Card card) {
         ListCard listCard = findListCardById(listCardId);
-        if(card.getCardName() == null || card.getCardName().isEmpty()) {
-            throw new InvalidInputException("Card name is null or empty");
-        }
+         card.setListCard(listCard);
         cardRepository.save(card);
         listCard.getCardList().add(card);
         listCardRepository.save(listCard);

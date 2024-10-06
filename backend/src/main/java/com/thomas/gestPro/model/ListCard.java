@@ -1,5 +1,6 @@
 package com.thomas.gestPro.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,8 +25,10 @@ public class ListCard {
 
     @ManyToOne
     @JoinColumn(name = "board_id", nullable = false)
+    @JsonIgnore
     private Board board;
 
     @OneToMany(mappedBy = "listCard", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private Set<Card> cardList = new HashSet<>();
 }

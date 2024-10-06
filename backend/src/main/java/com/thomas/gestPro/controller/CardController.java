@@ -33,18 +33,21 @@ public class CardController {
     }
 
     @PostMapping("/{id}/setColor")
-    public ResponseEntity<String> addLabelColor(@PathVariable Long id, @RequestBody Label label) {
-
-       boolean response = cardService.addCardLabelColor(id,label);
-
-        return response ? ResponseEntity.ok("Color success") : ResponseEntity.badRequest().body("Color not found");
+    public ResponseEntity<Card> addLabelColor(@PathVariable Long id, @RequestBody Label label) {
+       Card updateCard = cardService.addCardLabelColor(id,label);
+        return ResponseEntity.ok(updateCard);
+    }
+    @PutMapping("/{id}/label")
+    public ResponseEntity<Card> updateLabel(@PathVariable Long id, @RequestBody Label label) {
+        Card updateCard = cardService.addCardLabelColor(id,label);
+        return ResponseEntity.ok(updateCard);
     }
 
 
     @PutMapping("/{id}/update")
     public ResponseEntity<Card> updateCardById(@PathVariable Long id, @RequestBody Card card) {
-        cardService.updateCard(id,card);
-        return new ResponseEntity<>(card,HttpStatus.OK);
+        Card updateCard = cardService.updateCard(id,card);
+        return new ResponseEntity<>(updateCard,HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
@@ -52,9 +55,9 @@ public class CardController {
         cardService.deleteCard(id);
         return ResponseEntity.ok("Card deleted");
     }
-    @DeleteMapping("/{id}/deleteLabel")
+    @DeleteMapping("/{id}/label")
     public ResponseEntity<String> removeLabelFromCard(@PathVariable Long id, @RequestBody Label label) {
-        cardService.removeLabelFromCard(id,label.getLabelId());
+        cardService.removeLabelFromCard(id,label.getLabelColor());
         return ResponseEntity.noContent().build();
     }
 

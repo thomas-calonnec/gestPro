@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
-
+import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -21,6 +21,11 @@ public class WorkspaceController {
     @Autowired
     public WorkspaceController(WorkspaceService workspaceService) {
         this.workspaceService = workspaceService;
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Workspace>> getAllWorkspaces() {
+        return ResponseEntity.ok(workspaceService.getAllWorkspaces());
     }
 
    @GetMapping("/{id}")

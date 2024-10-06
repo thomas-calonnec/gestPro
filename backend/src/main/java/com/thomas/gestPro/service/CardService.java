@@ -34,6 +34,7 @@ public class CardService {
     public List<Card> getAllCard() {
         return cardRepository.findAll();
     }
+
     public Card getCardById(Long cardId) {
         return cardRepository.findById(cardId).orElseThrow(() -> new ResourceNotFoundException("Card not found"));
     }
@@ -59,7 +60,7 @@ public class CardService {
     }
 
 
-    public boolean addCardLabelColor(Long cardId, Label updateLabel){
+    public Card addCardLabelColor(Long cardId, Label updateLabel){
         Label label = labelRepository.findLabelByLabelColor(updateLabel.getLabelColor())
                                         .orElseThrow(() -> new ResourceNotFoundException("Label not Found"));
 
@@ -73,15 +74,15 @@ public class CardService {
         // Sauvegarder uniquement la carte. Hibernate gérera la relation Many-to-Many.
         cardRepository.save(existingCard);
 
-        return true;
+        return existingCard;
     }
-    public void removeLabelFromCard(Long cardId, Long labelId) {
+    public void removeLabelFromCard(Long cardId, String labelColor) {
         // Récupérer la carte
         Card card = cardRepository.findById(cardId)
                 .orElseThrow(() -> new RuntimeException("Card not found"));
 
         // Récupérer le label
-        Label label = labelRepository.findById(labelId)
+        Label label = labelRepository.findLabelByLabelColor(labelColor)
                 .orElseThrow(() -> new RuntimeException("Label not found"));
 
         // Supprimer le label de la collection de la carte
