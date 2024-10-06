@@ -1,6 +1,6 @@
 package com.thomas.gestPro.service;
 
-import com.thomas.gestPro.Exception.InvalidInputException;
+
 import com.thomas.gestPro.Exception.ResourceNotFoundException;
 import com.thomas.gestPro.model.Card;
 import com.thomas.gestPro.model.ListCard;
