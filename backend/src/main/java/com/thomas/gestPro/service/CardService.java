@@ -20,6 +20,13 @@ public class CardService {
     private final LabelRepository labelRepository;
     private final ListCardRepository listCardRepository;
 
+    /**
+     * Constructor with dependency injection for CardRepository, LabelRepository, and ListCardRepository.
+     *
+     * @param cardRepository repository for managing cards
+     * @param labelRepository repository for managing labels
+     * @param listCardRepository repository for managing list of cards
+     */
     @Autowired
     public CardService(CardRepository cardRepository, LabelRepository labelRepository, ListCardRepository listCardRepository) {
         this.cardRepository = cardRepository;
@@ -28,15 +35,34 @@ public class CardService {
     }
 
 
+    /**
+     * Retrieves all the cards.
+     *
+     * @return a list of all cards
+     */
     public List<Card> getAllCard() {
         return cardRepository.findAll();
     }
 
+    /**
+     * Finds a card by its ID.
+     *
+     * @param cardId the ID of the card to retrieve
+     * @return the card with the given ID
+     * @throws ResourceNotFoundException if the card is not found
+     */
     public Card getCardById(Long cardId) {
         return cardRepository.findById(cardId).orElseThrow(() -> new ResourceNotFoundException("Card not found"));
     }
 
 
+    /**
+     * Updates the details of an existing card.
+     *
+     * @param cardId the ID of the card to update
+     * @param updateCard the new card details
+     * @return the updated card
+     */
     public Card updateCard(Long cardId, Card updateCard){
         Card existingCard = getCardById(cardId);
 
@@ -47,16 +73,34 @@ public class CardService {
 
     }
 
+    /**
+     * Deletes a card by its ID and removes it from the associated list of cards.
+     *
+     * @param cardId the ID of the card to delete
+     */
     public void deleteCard(Long cardId){
+        // Retrieve the card and its list
         Card card = getCardById(cardId);
         ListCard cardList = listCardRepository.findById(cardId).orElseThrow(() -> new RuntimeException("ListCard not found"));
+
+        // Remove the card from the list
         cardList.getCardList().remove(card);
+
+        // Save the updated list and delete the card
         listCardRepository.save(cardList);
         cardRepository.deleteById(cardId);
 
     }
 
 
+    /**
+     * Adds a label with a specific color to a card.
+     *
+     * @param cardId the ID of the card
+     * @param updateLabel the label to add to the card
+     * @return the updated card with the label added
+     * @throws ResourceNotFoundException if the label is not found
+     */
     public Card addCardLabelColor(Long cardId, Label updateLabel){
         Label label = labelRepository.findLabelByLabelColor(updateLabel.getLabelColor())
                                         .orElseThrow(() -> new ResourceNotFoundException("Label not Found"));
@@ -73,22 +117,29 @@ public class CardService {
 
         return existingCard;
     }
+
+    /**
+     * Removes a label with a specific color from a card.
+     *
+     * @param cardId the ID of the card
+     * @param labelColor the color of the label to remove
+     */
     public void removeLabelFromCard(Long cardId, String labelColor) {
-        // Récupérer la carte
+        // Retrieve the card by ID
         Card card = cardRepository.findById(cardId)
                 .orElseThrow(() -> new RuntimeException("Card not found"));
 
-        // Récupérer le label
+        // Retrieve the label by color
         Label label = labelRepository.findLabelByLabelColor(labelColor)
                 .orElseThrow(() -> new RuntimeException("Label not found"));
 
-        // Supprimer le label de la collection de la carte
+        // Remove the label from the card's collection
         card.getLabels().remove(label);
 
-        // Supprimer la carte de la collection du label (pour les relations bidirectionnelles)
+        // Remove the card from the label's collection (bidirectional relationship)
         label.getCards().remove(card);
 
-        // Sauvegarder les deux entités pour mettre à jour la relation
+        // Save both entities to update the relationship
         cardRepository.save(card);
         labelRepository.save(label);
     }
