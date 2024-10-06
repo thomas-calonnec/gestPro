@@ -51,7 +51,7 @@ public class ListCardService {
      * @return the list of cards associated with the ListCard
      */
     public List<Card> getCardsByListCardId(Long id) {
-       return findListCardById(id).getCardList();
+        return findListCardById(id).getCardList();
     }
 
     /**
@@ -63,7 +63,7 @@ public class ListCardService {
     @Transactional
     public void createCard(Long listCardId, Card card) {
         ListCard listCard = findListCardById(listCardId);
-         card.setListCard(listCard);
+        card.setListCard(listCard);
         cardRepository.save(card);
         listCard.getCardList().add(card);
         listCardRepository.save(listCard);
@@ -78,7 +78,7 @@ public class ListCardService {
      */
     public ListCard updateListCard(Long listCardId, ListCard updateListCard){
 
-       ListCard existingListCard = findListCardById(listCardId);
+        ListCard existingListCard = findListCardById(listCardId);
 
         existingListCard.setName(updateListCard.getName());
         existingListCard.setOrderIndex(updateListCard.getOrderIndex());

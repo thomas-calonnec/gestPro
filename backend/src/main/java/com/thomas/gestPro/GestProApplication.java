@@ -10,7 +10,4 @@ public class GestProApplication {
 		SpringApplication.run(GestProApplication.class, args);
 	}
 
-
-
-
 }

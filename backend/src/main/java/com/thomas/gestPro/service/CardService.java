@@ -137,7 +137,7 @@ public class CardService {
      */
     public Card addCardLabelColor(Long cardId, Label updateLabel){
         Label label = labelRepository.findLabelByColor(updateLabel.getColor())
-                                        .orElseThrow(() -> new ResourceNotFoundException("Label not Found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Label not Found"));
 
         Card existingCard = getCardById(cardId);
 
