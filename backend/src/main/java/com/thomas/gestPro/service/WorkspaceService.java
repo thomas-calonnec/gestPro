@@ -59,8 +59,8 @@ public class WorkspaceService {
      * @throws RuntimeException if the Workspace with the specified ID does not exist.
      */
     public List<Board> getListBoardByWorkspaceId(Long workspaceId) {
-       Workspace workspace = workspaceRepository.findById(workspaceId).orElseThrow(() -> new RuntimeException("Workspace not found"));
-       return workspace.getBoards();
+        Workspace workspace = workspaceRepository.findById(workspaceId).orElseThrow(() -> new RuntimeException("Workspace not found"));
+        return workspace.getBoards();
 
     }
 

@@ -83,7 +83,7 @@ public class UserService {
 
         user.getRoles().add(userRole);
 
-         userRepository.save(user);
+        userRepository.save(user);
 
     }
 
@@ -95,7 +95,7 @@ public class UserService {
      * @return the updated user
      */
     public User updateUser(Long userId, User updateUser){
-       User existingUser = getById(userId);
+        User existingUser = getById(userId);
 
         existingUser.setUsername(updateUser.getUsername());
         existingUser.setEmail(updateUser.getEmail());

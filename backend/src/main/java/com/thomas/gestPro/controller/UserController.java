@@ -17,10 +17,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/user/users")
 public class UserController {
-    
+
     private final UserService userService;
-  private final JwtTokenUtil jwtTokenUtil;
-    
+    private final JwtTokenUtil jwtTokenUtil;
+
     @Autowired
     public UserController(UserService userService, JwtTokenUtil jwtTokenUtil) {
         this.userService = userService;
@@ -46,11 +46,11 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authorization header is missing or invalid");
         }
     }*/
-   @GetMapping("/username/{name}")
+    @GetMapping("/username/{name}")
     public ResponseEntity<User> getUserByUsername(@PathVariable String name) {
 
-       return ResponseEntity.ok(userService.getUserByUsername(name));
-   }
+        return ResponseEntity.ok(userService.getUserByUsername(name));
+    }
 
 
     @GetMapping("{id}/workspaces")
@@ -77,7 +77,7 @@ public class UserController {
 
     @PostMapping("/{id}/addCard")
     public ResponseEntity<User> addCardToUser(@PathVariable Long id, @RequestBody Card card) {
-       User updatUser = userService.addCardToUser(id,card.getId());
+        User updatUser = userService.addCardToUser(id,card.getId());
         return ResponseEntity.ok(updatUser);
     }
 
@@ -113,5 +113,5 @@ public class UserController {
         userService.removeLabelFromUser(id,label.getLabelId());
         return ResponseEntity.ok("User deleted");
     }*/
-    
+
 }

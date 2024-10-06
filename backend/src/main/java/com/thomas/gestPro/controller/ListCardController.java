@@ -14,14 +14,14 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/user/listCards")
 public class ListCardController {
-    
+
     private final ListCardService listCardService;
-    
-    
+
+
     @Autowired
     public ListCardController(ListCardService listCardService) {
         this.listCardService = listCardService;
-      
+
     }
 
     @GetMapping("/{id}")
@@ -53,5 +53,5 @@ public class ListCardController {
         listCardService.deleteListCard(id);
         return ResponseEntity.noContent().build();
     }
-    
+
 }
