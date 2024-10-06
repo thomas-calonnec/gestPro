@@ -1,7 +1,6 @@
 package com.thomas.gestPro.service;
 
 import com.thomas.gestPro.Exception.ResourceNotFoundException;
-import com.thomas.gestPro.model.Board;
 import com.thomas.gestPro.model.Card;
 import com.thomas.gestPro.model.Label;
 import com.thomas.gestPro.model.ListCard;
@@ -11,9 +10,7 @@ import com.thomas.gestPro.repository.ListCardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CardService {
