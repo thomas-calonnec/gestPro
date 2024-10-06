@@ -1,6 +1,6 @@
 package com.thomas.gestPro.service;
 
-import com.thomas.gestPro.Exception.InvalidInputException;
+
 import com.thomas.gestPro.Exception.ResourceNotFoundException;
 import com.thomas.gestPro.model.Card;
 import com.thomas.gestPro.model.ListCard;
@@ -35,9 +35,7 @@ public class ListCardService {
     @Transactional
     public void createCard(Long listCardId, Card card) {
         ListCard listCard = findListCardById(listCardId);
-        if(card.getCardName() == null || card.getCardName().isEmpty()) {
-            throw new InvalidInputException("Card name is null or empty");
-        }
+         card.setListCard(listCard);
         cardRepository.save(card);
         listCard.getCardList().add(card);
         listCardRepository.save(listCard);
