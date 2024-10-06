@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.sql.Date;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -23,7 +23,7 @@ public class Card {
     private Long cardId;
     private String cardName;
     private String cardDescription;
-    private Date cardDeadline;
+    private LocalDate cardDeadline;
 
     @ManyToOne
     @JoinColumn(name = "list_card_id", nullable = false)

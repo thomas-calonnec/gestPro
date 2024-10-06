@@ -12,6 +12,7 @@ import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -27,6 +28,10 @@ public class WorkspaceService {
         this.workspaceRepository = workspaceRepository;
         this.usersRepository = usersRepository;
         this.boardRepository = boardRepository;
+    }
+
+    public List<Workspace> getAllWorkspaces() {
+        return workspaceRepository.findAll();
     }
 
     public Set<Board> getListBoardByWorkspaceId(Long workspaceId) {
@@ -71,4 +76,6 @@ public class WorkspaceService {
     public void deleteWorkspace(Long workspaceId){
         workspaceRepository.deleteById(workspaceId);
     }
+
+
 }

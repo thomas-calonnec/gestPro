@@ -35,7 +35,7 @@ public class UserController {
 
     @PostMapping("/{id}/addCard")
     public ResponseEntity<String> addCardToUser(@PathVariable Long id, @RequestBody Card card) {
-        userService.addCardToUser(id,card);
+        userService.addCardToUser(id,card.getCardId());
         return ResponseEntity.ok("User success");
     }
 
