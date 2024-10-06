@@ -19,6 +19,12 @@ public class BoardService {
     private final ListCardRepository listCardRepository;
 
 
+    /**
+     * Constructor with dependency injection for BoardRepository and ListCardRepository.
+     *
+     * @param boardRepository repository for managing boards
+     * @param listCardRepository repository for managing lists of cards
+     */
     @Autowired
     public BoardService(BoardRepository boardRepository, ListCardRepository listCardRepository) {
         this.boardRepository = boardRepository;
@@ -26,15 +32,36 @@ public class BoardService {
     }
 
 
+    /**
+     * Finds a board by its ID.
+     *
+     * @param boardId the ID of the board to retrieve
+     * @return the board with the given ID
+     * @throws ResourceNotFoundException if the board is not found
+     */
     public Board getBoardById(Long boardId) {
         return boardRepository.findById(boardId).orElseThrow(() -> new ResourceNotFoundException("Board not found"));
     }
 
-
+    /**
+     * Retrieves the set of list cards associated with a specific board.
+     *
+     * @param boardId the ID of the board to retrieve the list cards from
+     * @return the set of list cards for the specified board
+     * @throws RuntimeException if the board is not found
+     */
     public Set<ListCard> getCardsByBoardId(Long boardId) {
         return boardRepository.findById(boardId).orElseThrow(() -> new RuntimeException("Board not found")).getListCards();
     }
 
+    /**
+     * Updates the name of an existing board.
+     *
+     * @param id the ID of the board to update
+     * @param updateBoard the updated board object containing the new name
+     * @return the updated board
+     * @throws ResourceNotFoundException if the board name is null or empty
+     */
     public Board updateBoard(Long id, Board updateBoard){
 
         Board existingBoard = getBoardById(id);
@@ -47,10 +74,23 @@ public class BoardService {
         return boardRepository.save(existingBoard);
     }
 
+    /**
+     * Deletes a board by its ID.
+     *
+     * @param boardId the ID of the board to delete
+     */
     public void deleteBoard(Long boardId){
         boardRepository.deleteById(boardId);
     }
 
+    /**
+     * Creates a new list card and associates it with a board.
+     * This method is transactional, meaning that if anything fails, all changes will be rolled back.
+     *
+     * @param boardId the ID of the board to associate the list card with
+     * @param listCard the new list card to create
+     * @return the created list card
+     */
     @Transactional
     public ListCard createListCard(Long boardId, ListCard listCard) {
         Board existingboard =  getBoardById(boardId);
