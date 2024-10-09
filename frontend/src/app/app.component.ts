@@ -3,11 +3,14 @@ import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
-  standalone: true,
-  imports: [RouterOutlet],
-  templateUrl: './app.component.html',
+ 
+  template: `
+<router-outlet />
+`,
+standalone: true,
+imports: [RouterOutlet],
   styleUrl: './app.component.css'
 })
 export class AppComponent {
-  title = 'frontend';
+  title = 'gestPro';
 }
