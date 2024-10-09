@@ -113,7 +113,7 @@ public class UserService {
      * @param cardId the ID of the card
      * @throws ResourceNotFoundException if the card is not found
      */
-    public void addCardToUser(Long userId, Long cardId) {
+    public Users addCardToUser(Long userId, Long cardId) {
         Users user = getUserById(userId);
         Card card = cardRepository.findById(cardId).orElseThrow(() -> new ResourceNotFoundException("Card not found"));
 
@@ -122,6 +122,8 @@ public class UserService {
 
         card.getUsers().add(user);
         cardRepository.save(card);
+
+        return user;
     }
 
     /**
