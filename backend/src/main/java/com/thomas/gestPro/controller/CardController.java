@@ -8,8 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/cards")
 public class CardController {
@@ -26,11 +24,6 @@ public class CardController {
         return ResponseEntity.ok(cardService.getCardById(id));
     }
 
-
-    @GetMapping("/listCards")
-    public ResponseEntity<List<Card>> getListOfCard() {
-        return ResponseEntity.ok(cardService.getAllCard());
-    }
 
     @PostMapping("/{id}/setColor")
     public ResponseEntity<Card> addLabelColor(@PathVariable Long id, @RequestBody Label label) {
@@ -51,12 +44,12 @@ public class CardController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteCardById(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteCardById(@PathVariable Long id) {
         cardService.deleteCard(id);
-        return ResponseEntity.ok("Card deleted");
+        return ResponseEntity.noContent().build();
     }
     @DeleteMapping("/{id}/label")
-    public ResponseEntity<String> removeLabelFromCard(@PathVariable Long id, @RequestBody Label label) {
+    public ResponseEntity<Void> removeLabelFromCard(@PathVariable Long id, @RequestBody Label label) {
         cardService.removeLabelFromCard(id,label.getLabelColor());
         return ResponseEntity.noContent().build();
     }

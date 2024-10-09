@@ -17,9 +17,11 @@ public class ListCardController {
     
     private final ListCardService listCardService;
     
+    
     @Autowired
     public ListCardController(ListCardService listCardService) {
         this.listCardService = listCardService;
+      
     }
 
     @GetMapping("/{id}")
@@ -27,6 +29,7 @@ public class ListCardController {
         ListCard listCard = listCardService.findListCardById(id);
         return listCard != null ? ResponseEntity.ok(listCard) : ResponseEntity.notFound().build();
     }
+
 
     @GetMapping("{id}/cards")
     public ResponseEntity<Set<Card>> getCardsByListCardId(@PathVariable Long id) {
