@@ -34,9 +34,9 @@ public class UserController {
     }
 
     @PostMapping("/{id}/addCard")
-    public ResponseEntity<String> addCardToUser(@PathVariable Long id, @RequestBody Card card) {
-        userService.addCardToUser(id,card.getCardId());
-        return ResponseEntity.ok("User success");
+    public ResponseEntity<Users> addCardToUser(@PathVariable Long id, @RequestBody Card card) {
+       Users updatUsers = userService.addCardToUser(id,card.getCardId());
+        return ResponseEntity.ok(updatUsers);
     }
 
     @PutMapping("/create")
