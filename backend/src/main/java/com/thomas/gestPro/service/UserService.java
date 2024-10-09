@@ -10,6 +10,7 @@ import com.thomas.gestPro.repository.UsersRepository;
 import com.thomas.gestPro.repository.WorkspaceRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,6 +26,7 @@ public class UserService {
     private final UsersRepository userRepository;
     private final CardRepository cardRepository;
     private final WorkspaceRepository workspaceRepository;
+    private final PasswordEncoder passwordEncoder;
 
     /**
      * Constructor with dependency injection for repositories.
@@ -34,10 +36,11 @@ public class UserService {
      * @param workspaceRepository repository for managing workspaces
      */
     @Autowired
-    public UserService(UsersRepository userRepository, CardRepository cardRepository, WorkspaceRepository workspaceRepository) {
+    public UserService(UsersRepository userRepository, CardRepository cardRepository, WorkspaceRepository workspaceRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.cardRepository = cardRepository;
         this.workspaceRepository = workspaceRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     /**
@@ -71,6 +74,7 @@ public class UserService {
         if (userExist != null) {
             throw new InvalidInputException("User already exists");
         }
+        user.setUserPassword(passwordEncoder.encode(user.getUserPassword()));
         userRepository.save(user);
     }
 
