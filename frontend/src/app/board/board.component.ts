@@ -10,6 +10,4 @@ import { Board } from '../../dao/board';
 })
 export class BoardComponent{
 
-
-  
 }
