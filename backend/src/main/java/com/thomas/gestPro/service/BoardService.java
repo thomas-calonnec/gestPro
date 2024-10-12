@@ -51,7 +51,7 @@ public class BoardService {
      * @throws ResourceNotFoundException if the board is not found
      */
     public Board getBoardByName(String boardName) {
-        return boardRepository.findByBoardName(boardName).orElseThrow(() -> new ResourceNotFoundException("Board not found"));
+        return boardRepository.getBoardByName(boardName);
     }
 
     /**
@@ -61,8 +61,8 @@ public class BoardService {
      * @return the set of list cards for the specified board
      * @throws RuntimeException if the board is not found
      */
-    public Set<ListCard> getCardsByBoardId(Long boardId) {
-        return boardRepository.findById(boardId).orElseThrow(() -> new RuntimeException("Board not found")).getListCards();
+    public Set<ListCard> getCardsByBoardName(String boardName) {
+        return this.getBoardByName(boardName).getListCards();
     }
 
     /**
