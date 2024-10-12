@@ -39,7 +39,7 @@ public class WorkspaceController {
             return ResponseEntity.ok(workspaceService.getListWorkspaceByUserId(userId));
     }
 
-    @GetMapping("{id}/listBoard")
+    @GetMapping("{id}/boards")
     public ResponseEntity<Set<Board>> getListBoardByWorkspaceId(@PathVariable Long id) {
         Set<Board> boards = workspaceService.getListBoardByWorkspaceId(id);
         return new ResponseEntity<>(boards, HttpStatus.OK);

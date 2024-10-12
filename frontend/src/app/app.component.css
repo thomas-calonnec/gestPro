@@ -1,0 +1,71 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  min-height: 100vh;
+  /*display: flex;*/
+  /*justify-content: center;
+  align-items: center;*/
+  background-color: #f4f4f4;
+}
+
+/* Container global qui contient la sidebar et le contenu */
+.container2 {
+  display: flex;
+  flex-direction: row; /* Les éléments enfants seront alignés horizontalement */
+  height: 100vh; /* Hauteur complète de la fenêtre */
+  width: 100%; /* Largeur complète */
+  /*max-width: 1200px; /* Limite la largeur maximale pour les grands écrans */
+  background-color: white;
+  margin-left: 0 ;
+  padding-left: 0%;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Styles pour le panneau latéral */
+.sidebar {
+  flex: 0 0 250px; /* Sidebar fixe de 250px */
+  background-color: #2c3e50; /* Couleur de fond */
+  color: white;
+  padding: 20px;
+}
+
+.sidebar h2 {
+  margin-bottom: 20px;
+}
+
+.sidebar ul {
+  list-style: none;
+}
+
+.sidebar ul li {
+  margin-bottom: 10px;
+}
+
+.sidebar ul li a {
+  color: white;
+  text-decoration: none;
+}
+
+.sidebar ul li a:hover {
+  text-decoration: underline;
+}
+
+/* Styles pour le contenu principal */
+.content {
+  flex: 1; /* Prend tout l'espace restant */
+  padding: 20px;
+  background-color: #ecf0f1; /* Fond clair pour le contenu */
+}
+
+.content h1 {
+  margin-bottom: 20px;
+}
+
+.content p {
+  line-height: 1.6;
+}
