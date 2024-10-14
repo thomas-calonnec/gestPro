@@ -1,10 +1,6 @@
-import {Component, inject, OnInit} from '@angular/core';
+import {Component, inject, Input, OnInit, signal} from '@angular/core';
 import {RouterLink, RouterOutlet} from '@angular/router';
-import { Board } from '../dao/board';
-import { BoardService } from '../service/boards/board.service';
-import { WorkspaceService } from '../service/workspaces/workspace.service';
-import { HttpErrorResponse } from '@angular/common/http';
-import {BoardComponent} from './board/board.component';
+
 
 @Component({
   selector: 'app-root',
@@ -14,6 +10,6 @@ import {BoardComponent} from './board/board.component';
   styleUrl: './app.component.css'
 })
 export class AppComponent {
-
+loggedIn = signal<boolean>(false);
 
 }

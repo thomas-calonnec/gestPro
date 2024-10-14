@@ -5,13 +5,14 @@ import { Workspace } from '../../dao/workspace';
 
 import { Card } from '../../dao/card';
 import { User } from '../../dao/user';
+import { environment } from '../../environments/environment.development';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
 
-  private apiServerUrl = 'api/users';
+  private apiServerUrl = environment.apiUrl + '/users';
 
   constructor(private http: HttpClient) { }
 
@@ -38,5 +39,9 @@ export class UserService {
 
   public createWorkspace(userId: number, workspace: Workspace): Observable<Workspace>{
     return this.http.put<Workspace>(`${this.apiServerUrl}/${userId}/workspace`,workspace);
+  }
+
+  public getUserByEmail(userEmail: string): Observable<User>{
+    return this.http.get<User>(`${this.apiServerUrl}/${userEmail}`);
   }
 }

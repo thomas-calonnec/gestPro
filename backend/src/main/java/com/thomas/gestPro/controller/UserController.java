@@ -62,6 +62,11 @@ public class UserController {
         Workspace newWorkspace = userService.createWorkspace(id,workspace);
         return ResponseEntity.ok(newWorkspace);
     }
+
+    public ResponseEntity<Users> getLogin(@RequestBody Users user) {
+        Users existingUser = userService.getUserByEmail(user.getUserEmail());
+        return  ResponseEntity.ok(existingUser);
+    }
   /*
   @PostMapping("/deleteCard/{id}")
     public ResponseEntity<String> removeLabelFromUsers(@PathVariable Long id, @RequestBody Label label) {

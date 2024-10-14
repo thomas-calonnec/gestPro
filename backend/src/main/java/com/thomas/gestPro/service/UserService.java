@@ -143,4 +143,10 @@ public class UserService {
         userRepository.save(existingUser);
         return workspace;
     }
+
+    public Users getUserByEmail(String userEmail) {
+        // TODO Auto-generated method stub
+        return userRepository.getUserByEmail(userEmail);
+
+    }
 }
