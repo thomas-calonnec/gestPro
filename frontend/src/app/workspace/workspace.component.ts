@@ -21,10 +21,8 @@ export class WorkspaceComponent implements OnInit{
   public boards: Board[] = [];
   private workspaceId : number = 0;
   private workspaceService: WorkspaceService = inject(WorkspaceService);
+  private route: ActivatedRoute = inject(ActivatedRoute);
 
-
-constructor(private route: ActivatedRoute) {
-}
   ngOnInit(): void {
     this.workspaceId = this.route.snapshot.params['id'];
     this.getBoards(this.workspaceId);
