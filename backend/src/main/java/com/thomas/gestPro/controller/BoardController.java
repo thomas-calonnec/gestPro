@@ -26,7 +26,7 @@ public class BoardController {
         return ResponseEntity.ok(boardService.getBoardById(id));
     }
 
-    @GetMapping("/{boardName}}/listCards")
+    @GetMapping("/{boardName}/listCards")
     public ResponseEntity<Set<ListCard>> getListCard(@PathVariable String boardName) {
         Set<ListCard> listCards = boardService.getCardsByBoardName(boardName);
         return ResponseEntity.ok(listCards);
