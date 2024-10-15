@@ -1,7 +1,7 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UserService } from '../../service/users/user.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { User } from '../../dao/user';
 
 @Component({
@@ -13,26 +13,27 @@ import { User } from '../../dao/user';
 })
 export class LoginComponent {
   myForm: FormGroup;
-  userId = signal<number>(0);
   userService : UserService = inject(UserService);
   router : Router = inject(Router);
 
   constructor(private fb: FormBuilder) {
     this.myForm = this.fb.group({
-      name: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]]
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', Validators.required]
+
     });
   }
 
   onSubmit() {
+
     if (this.myForm.valid) {
       const email = this.myForm.get('email')?.value;
 
       const userExist = this.userService.getUserByEmail(email);
-      
+
       userExist.subscribe({ next : (user: User) => {
-          this.userId.set(user.id);
-          this.router.navigate(['workspace/'])
+         console.log(user)
+          this.router.navigateByUrl(`workspaces/${user.userId}/boards`).then(r => console.log(r));
       }})
     }
   }
