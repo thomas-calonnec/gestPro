@@ -63,8 +63,9 @@ public class UserController {
         return ResponseEntity.ok(newWorkspace);
     }
 
-    public ResponseEntity<Users> getLogin(@RequestBody Users user) {
-        Users existingUser = userService.getUserByEmail(user.getUserEmail());
+    @GetMapping("login/{email}")
+    public ResponseEntity<Users> getLogin(@PathVariable String email) {
+        Users existingUser = userService.getUserByEmail(email);
         return  ResponseEntity.ok(existingUser);
     }
   /*

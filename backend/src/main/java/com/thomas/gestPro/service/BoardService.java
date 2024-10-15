@@ -46,18 +46,18 @@ public class BoardService {
       /**
      * Finds a board by its ID.
      *
-     * @param boardId the ID of the board to retrieve
+     * @param boardName the ID of the board to retrieve
      * @return the board with the given ID
      * @throws ResourceNotFoundException if the board is not found
      */
     public Board getBoardByName(String boardName) {
-        return boardRepository.getBoardByName(boardName);
+        return boardRepository.getBoardByBoardName(boardName);
     }
 
     /**
      * Retrieves the set of list cards associated with a specific board.
      *
-     * @param boardId the ID of the board to retrieve the list cards from
+     * @param boardName the ID of the board to retrieve the list cards from
      * @return the set of list cards for the specified board
      * @throws RuntimeException if the board is not found
      */
