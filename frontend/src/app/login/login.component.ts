@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { UserService } from '../../service/users/user.service';
 import { Router } from '@angular/router';
 import { User } from '../../dao/user';
+import {AuthService} from '../auth.service';
 
 @Component({
   selector: 'app-login',
@@ -14,6 +15,7 @@ import { User } from '../../dao/user';
 export class LoginComponent {
   myForm: FormGroup;
   userService : UserService = inject(UserService);
+  authService: AuthService = inject(AuthService);
   router : Router = inject(Router);
 
   constructor(private fb: FormBuilder) {
@@ -32,8 +34,8 @@ export class LoginComponent {
       const userExist = this.userService.getUserByEmail(email);
 
       userExist.subscribe({ next : (user: User) => {
-         console.log(user)
-          this.router.navigateByUrl(`workspaces/${user.userId}/boards`).then(r => console.log(r));
+          this.authService.setLoggedIn(true);
+          this.router.navigateByUrl(`users/${user.userId}/workspaces`).then(r => console.log(r));
       }})
     }
   }

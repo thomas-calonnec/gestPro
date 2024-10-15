@@ -34,10 +34,7 @@ public class WorkspaceController {
         return ResponseEntity.ok(workspace);
     }
 
-    @GetMapping("/listWorkspace/{userId}")
-    public ResponseEntity<Set<Workspace>> getWorkspaceByUserId(@PathVariable Long userId) {
-            return ResponseEntity.ok(workspaceService.getListWorkspaceByUserId(userId));
-    }
+
 
     @GetMapping("{id}/boards")
     public ResponseEntity<Set<Board>> getListBoardByWorkspaceId(@PathVariable Long id) {

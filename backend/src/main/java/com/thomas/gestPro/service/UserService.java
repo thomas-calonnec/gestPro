@@ -14,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Service class for managing user-related operations.
@@ -148,5 +149,9 @@ public class UserService {
         // TODO Auto-generated method stub
         return userRepository.getUserByUserEmail(userEmail);
 
+    }
+
+    public Set<Workspace> getWorkspacesByUserId(Long userId) {
+        return this.getUserById(userId).getWorkspaces();
     }
 }
