@@ -1,4 +1,4 @@
 export interface Workspace {
-    id: string;
-    name: string;
+  workspaceId: number;
+  workspaceName: string;
 }
