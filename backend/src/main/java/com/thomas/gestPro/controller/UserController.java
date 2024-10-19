@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/users")
@@ -27,6 +28,10 @@ public class UserController {
         return ResponseEntity.ok(userService.getUserById(id));
     }
 
+    @GetMapping("{id}/workspaces")
+    public ResponseEntity<Set<Workspace>> getWorkspaceByUserId(@PathVariable Long id) {
+        return ResponseEntity.ok(userService.getWorkspacesByUserId(id));
+    }
 
     @GetMapping("/listUsers")
     public ResponseEntity<List<Users>> getListOfUsers() {
