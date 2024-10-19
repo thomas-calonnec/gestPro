@@ -13,6 +13,7 @@ import {AuthService} from './auth.service';
 export class AppComponent implements OnInit {
   loggedIn: boolean = false;
 
+
   constructor(private authService: AuthService) {}
 
   ngOnInit(): void {
