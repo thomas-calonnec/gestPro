@@ -14,6 +14,7 @@ import java.util.Set;
 
 @RestController
 @RequestMapping("/api/workspaces")
+@CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
 public class WorkspaceController {
 
     private final WorkspaceService workspaceService;
