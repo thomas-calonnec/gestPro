@@ -9,12 +9,12 @@ import { User } from '../dao/user';
 })
 export class AuthService {
 
-  private apiServerUrl = environment.apiUrl;
+  private apiServerUrl = environment.apiUrl + '/users';
   private http = inject(HttpClient);
   private _currentUser = signal<User | null>(null);
   currentUser = this._currentUser.asReadonly();
-  isConnected = computed(() => {
-    this._currentUser !== null
+  isConnected  = computed(() => {
+    return this._currentUser !== null
   });
 
   login(email: string, password: string): Observable<{
@@ -22,7 +22,7 @@ export class AuthService {
   }> {
     return this.http.post<{
       user: User
-    }>(this.apiServerUrl+ '/login', {email, password}, {withCredentials: true}).pipe(
+    }>(this.apiServerUrl+ '/login', {email, password}).pipe(
       tap((response) => {
         this._currentUser.set(response.user);
       })
@@ -48,7 +48,7 @@ export class AuthService {
   }
 
 
-  
 
-    
+
+
 }

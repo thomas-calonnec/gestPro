@@ -1,6 +1,7 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, inject, OnInit, signal, Signal} from '@angular/core';
 import {RouterLink, RouterOutlet} from '@angular/router';
 import {AuthService} from './auth.service';
+import {User} from '../dao/user';
 
 
 @Component({
@@ -11,16 +12,13 @@ import {AuthService} from './auth.service';
   styleUrl: './app.component.css'
 })
 export class AppComponent implements OnInit {
-  loggedIn: boolean = false;
+ islogged : Signal<boolean> = signal<boolean>(false);
+ currentUser: Signal<User | null> = signal<User | null>(null)
+ authService : AuthService = inject(AuthService);
 
-
-  constructor(private authService: AuthService) {}
-
-  ngOnInit(): void {
-    // S'abonner à l'état de connexion et mettre à jour la variable loggedIn
-    this.authService.loggedIn$.subscribe((isLoggedIn) => {
-      this.loggedIn = isLoggedIn;
-    });
-  }
+ ngOnInit() {
+  this.islogged = this.authService.isConnected;
+  this.currentUser = this.authService.currentUser;
+ }
 
 }
