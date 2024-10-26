@@ -9,7 +9,7 @@ import { User } from '../dao/user';
 })
 export class AuthService {
 
-  private apiServerUrl = environment.apiUrl + '/users';
+  private apiServerUrl = 'http://localhost:8080/login';
   private http = inject(HttpClient);
   private _currentUser = signal<User | null>(null);
   currentUser = this._currentUser.asReadonly();
@@ -22,7 +22,7 @@ export class AuthService {
   }> {
     return this.http.post<{
       user: User
-    }>(this.apiServerUrl+ '/login', {email, password}).pipe(
+    }>(this.apiServerUrl, {email, password}).pipe(
       tap((response) => {
         this._currentUser.set(response.user);
       })
