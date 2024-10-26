@@ -29,10 +29,10 @@ import java.util.ArrayList;
 @CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
 public class LoginController {
 
-   private final LoginService loginService;
+    private final LoginService loginService;
     private final AuthenticationManager authenticationManager;
-   private JwtTokenUtil jwtTokenUtil;
-   private final UserDetailsService userDetailsService;
+    private JwtTokenUtil jwtTokenUtil;
+    private final UserDetailsService userDetailsService;
 
     @Autowired
     public LoginController(LoginService loginService, AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, UserDetailsService userDetailsService) {
@@ -50,7 +50,7 @@ public class LoginController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         System.out.println("user : " + user.getUsername());
-       // System.err.println("auth : " + authentication.getPrincipal());
+        // System.err.println("auth : " + authentication.getPrincipal());
         String accessToken = this.loginService.generateAccessToken(user.getUsername());
         String refreshToken = this.loginService.generateRefreshToken(user.getUsername());
 
@@ -75,7 +75,7 @@ public class LoginController {
     @PostMapping("/refresh")
     public ResponseEntity<?> refreshAccessToken(@CookieValue(value="refreshToken", required=false) String refreshToken) {
         if (refreshToken == null || !jwtTokenUtil.validateToken(refreshToken)) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         String username = jwtTokenUtil.getUsernameFromToken(refreshToken);
 
