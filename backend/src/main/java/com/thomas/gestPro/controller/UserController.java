@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Set;
 
+@CrossOrigin("http://localhost:4200")
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -68,8 +69,17 @@ public class UserController {
         return ResponseEntity.ok(newWorkspace);
     }
 
-    @GetMapping("login/{email}")
+    @GetMapping("/login/{email}")
+    
     public ResponseEntity<Users> getLogin(@PathVariable String email) {
+        Users existingUser = userService.getUserByEmail(email);
+        return  ResponseEntity.ok(existingUser);
+    }
+
+    @PostMapping("/login")
+
+    public ResponseEntity<Users> setLogin(@RequestBody Users user) {
+        String email;
         Users existingUser = userService.getUserByEmail(email);
         return  ResponseEntity.ok(existingUser);
     }
