@@ -69,20 +69,14 @@ public class UserController {
         return ResponseEntity.ok(newWorkspace);
     }
 
-    @GetMapping("/login/{email}")
-    
-    public ResponseEntity<Users> getLogin(@PathVariable String email) {
-        Users existingUser = userService.getUserByEmail(email);
-        return  ResponseEntity.ok(existingUser);
-    }
 
-    @PostMapping("/login")
 
+    /*@PostMapping("/login")
     public ResponseEntity<Users> setLogin(@RequestBody Users user) {
-        String email;
+
         Users existingUser = userService.getUserByEmail(email);
         return  ResponseEntity.ok(existingUser);
-    }
+    }*/
   /*
   @PostMapping("/deleteCard/{id}")
     public ResponseEntity<String> removeLabelFromUsers(@PathVariable Long id, @RequestBody Label label) {
