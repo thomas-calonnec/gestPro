@@ -9,8 +9,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 
+
 @RestController
 @RequestMapping("/api/labels")
+@CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
 public class LabelController {
 
     private final LabelService labelService;
