@@ -11,7 +11,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")  // Applique CORS à tous les endpoints
-                .allowedOrigins("http://localhost:4200")  // Autorise le domaine Angular
+                .allowedOrigins("http://192.168.1.138:4200")  // Autorise le domaine Angular
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")  // Méthodes HTTP autorisées
                 .allowedHeaders("*")  // Autorise tous les headers
                 .allowCredentials(true)  // Autorise l'envoi de cookies (ex: JWT dans les cookies)

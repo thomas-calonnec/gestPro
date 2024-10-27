@@ -10,8 +10,8 @@ import {ActivatedRoute} from '@angular/router';
   imports: [],
   template: `
     <ul>
-    @for(board of boards() ; track board.boardId){
-         <li>{{ board.boardName}}</li>
+    @for(board of boards() ; track board.id){
+         <li>{{ board.name}}</li>
   }
     </ul>
   `,

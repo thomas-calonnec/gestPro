@@ -20,10 +20,10 @@ public class Card {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long cardId;
-    private String cardName;
-    private String cardDescription;
-    private LocalDate cardDeadline;
+    private Long id;
+    private String name;
+    private String description;
+    private LocalDate deadline;
 
     @ManyToOne
     @JoinColumn(name = "list_card_id", nullable = false)
@@ -36,5 +36,5 @@ public class Card {
     private Set<Label> labels = new HashSet<>();
 
     @ManyToMany(mappedBy = "cards")
-    private Set<Users> users = new HashSet<>();
+    private Set<User> users = new HashSet<>();
 }

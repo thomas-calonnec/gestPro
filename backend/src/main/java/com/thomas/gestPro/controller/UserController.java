@@ -1,7 +1,7 @@
 package com.thomas.gestPro.controller;
 
 import com.thomas.gestPro.model.Card;
-import com.thomas.gestPro.model.Users;
+import com.thomas.gestPro.model.User;
 import com.thomas.gestPro.model.Workspace;
 import com.thomas.gestPro.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Set;
 
-@CrossOrigin("http://localhost:4200")
+@CrossOrigin(value = "http://localhost:4200", allowCredentials = "true")
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -25,8 +25,8 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Users> getUsersById(@PathVariable Long id) {
-        return ResponseEntity.ok(userService.getUserById(id));
+    public ResponseEntity<User> getUserById(@PathVariable Long id) {
+        return ResponseEntity.ok(userService.getById(id));
     }
 
     @GetMapping("{id}/workspaces")
@@ -34,31 +34,31 @@ public class UserController {
         return ResponseEntity.ok(userService.getWorkspacesByUserId(id));
     }
 
-    @GetMapping("/listUsers")
-    public ResponseEntity<List<Users>> getListOfUsers() {
+    @GetMapping("/listUser")
+    public ResponseEntity<List<User>> getListOfUser() {
         return ResponseEntity.ok(userService.getAllUser());
     }
 
     @PostMapping("/{id}/addCard")
-    public ResponseEntity<Users> addCardToUser(@PathVariable Long id, @RequestBody Card card) {
-       Users updatUsers = userService.addCardToUser(id,card.getCardId());
-        return ResponseEntity.ok(updatUsers);
+    public ResponseEntity<User> addCardToUser(@PathVariable Long id, @RequestBody Card card) {
+       User updatUser = userService.addCardToUser(id,card.getId());
+        return ResponseEntity.ok(updatUser);
     }
 
     @PutMapping("/create")
-    public ResponseEntity<Users> createUser(@RequestBody Users user) {
+    public ResponseEntity<User> createUser(@RequestBody User user) {
         userService.createUser(user);
         return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}/update")
-    public ResponseEntity<Users> updateUsersById(@PathVariable Long id, @RequestBody Users user) {
-        Users updateUser = userService.updateUser(id,user);
+    public ResponseEntity<User> updateUserById(@PathVariable Long id, @RequestBody User user) {
+        User updateUser = userService.updateUser(id,user);
         return ResponseEntity.ok(updateUser);
     }
 
     @DeleteMapping("/{id}/delete")
-    public ResponseEntity<String> deleteUsersById(@PathVariable Long id) {
+    public ResponseEntity<String> deleteUserById(@PathVariable Long id) {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }
@@ -72,16 +72,16 @@ public class UserController {
 
 
     /*@PostMapping("/login")
-    public ResponseEntity<Users> setLogin(@RequestBody Users user) {
+    public ResponseEntity<User> setLogin(@RequestBody User user) {
 
-        Users existingUser = userService.getUserByEmail(email);
+        User existingUser = userService.getUserByEmail(email);
         return  ResponseEntity.ok(existingUser);
     }*/
   /*
   @PostMapping("/deleteCard/{id}")
-    public ResponseEntity<String> removeLabelFromUsers(@PathVariable Long id, @RequestBody Label label) {
+    public ResponseEntity<String> removeLabelFromUser(@PathVariable Long id, @RequestBody Label label) {
         userService.removeLabelFromUser(id,label.getLabelId());
-        return ResponseEntity.ok("Users deleted");
+        return ResponseEntity.ok("User deleted");
     }*/
     
 }

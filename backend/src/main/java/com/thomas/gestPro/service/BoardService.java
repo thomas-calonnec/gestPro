@@ -51,7 +51,7 @@ public class BoardService {
      * @throws ResourceNotFoundException if the board is not found
      */
     public Board getBoardByName(String boardName) {
-        return boardRepository.getBoardByBoardName(boardName);
+        return boardRepository.getBoardByName(boardName);
     }
 
     /**
@@ -77,10 +77,10 @@ public class BoardService {
 
         Board existingBoard = getBoardById(id);
 
-        if(existingBoard.getBoardName() == null || existingBoard.getBoardName().isEmpty()){
+        if(existingBoard.getName() == null || existingBoard.getName().isEmpty()){
             throw new ResourceNotFoundException("Board not found");
         }
-        existingBoard.setBoardName(updateBoard.getBoardName());
+        existingBoard.setName(updateBoard.getName());
 
         return boardRepository.save(existingBoard);
     }
