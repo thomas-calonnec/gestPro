@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Espace Administrateur</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+        header {
+            background-color: #e74c3c;
+            color: white;
+            padding: 20px 0;
+        }
+        h1 {
+            margin: 0;
+        }
+        main {
+            padding: 40px;
+        }
+        a {
+            padding: 10px 20px;
+            background-color: #e74c3c;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        a:hover {
+            background-color: #c0392b;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Espace Administrateur</h1>
+</header>
+
+<main>
+    <h2 th:text="'Bienvenue, ' + ${adminName} + '!'"></h2>
+    <p>Ceci est votre tableau de bord administrateur. Vous pouvez gérer les utilisateurs et les paramètres du site ici.</p>
+    <a th:href="@{/admin/users}">Gestion des utilisateurs</a> |
+    <a th:href="@{/admin/settings}">Paramètres</a> |
+    <a th:href="@{/logout}">Se déconnecter</a>
+</main>
+
+</body>
+</html>
