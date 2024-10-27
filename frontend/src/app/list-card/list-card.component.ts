@@ -7,16 +7,13 @@ import { ActivatedRoute } from '@angular/router';
   selector: 'app-list-card',
   standalone: true,
   imports: [],
-  template: `@for (card of cards; track card.cardId) {}`,
+  template: `@for (card of cards; track card.id) {}`,
   styleUrl: './list-card.component.css'
 })
 export class ListCardComponent implements OnInit {
 
   public cards : Card[] = [];
   private listCardId : number = 0;
-
-  private listCardService : ListCardService = inject(ListCardService);
-
   constructor(private route: ActivatedRoute) {}
 
   ngOnInit(): void {

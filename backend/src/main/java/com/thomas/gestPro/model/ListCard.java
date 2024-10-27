@@ -20,8 +20,8 @@ import java.util.Set;
 public class ListCard {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long listCardId;
-    private String listCardName;
+    private Long id;
+    private String name;
 
     @ManyToOne
     @JoinColumn(name = "board_id", nullable = false)

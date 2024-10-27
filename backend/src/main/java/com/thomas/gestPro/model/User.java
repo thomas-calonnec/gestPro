@@ -16,14 +16,15 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name="t_users")
-public class Users {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userId;
-    private String userName;
-    private String userPassword;
-    private String userEmail;
+    private Long id;
+    private String username;
+    private String password;
+    private String email;
+    private String role;
 
     @ManyToMany(mappedBy = "users")
     @JsonIgnore

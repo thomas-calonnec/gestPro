@@ -10,5 +10,5 @@ import java.util.Optional;
 @Repository
 public interface LabelRepository extends JpaRepository<Label, Long> {
 
-    Optional<Label> findLabelByLabelColor(String labelColor);
+    Optional<Label> findLabelByColor(String labelColor);
 }

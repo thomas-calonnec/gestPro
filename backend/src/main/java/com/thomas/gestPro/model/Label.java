@@ -20,8 +20,8 @@ public class Label {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long labelId;
-    private String labelColor;
+    private Long id;
+    private String color;
 
     @ManyToMany(mappedBy = "labels")
     @JsonIgnore

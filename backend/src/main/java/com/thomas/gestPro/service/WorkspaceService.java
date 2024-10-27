@@ -2,10 +2,10 @@ package com.thomas.gestPro.service;
 
 
 import com.thomas.gestPro.model.Board;
-import com.thomas.gestPro.model.Users;
+import com.thomas.gestPro.model.User;
 import com.thomas.gestPro.model.Workspace;
 import com.thomas.gestPro.repository.BoardRepository;
-import com.thomas.gestPro.repository.UsersRepository;
+import com.thomas.gestPro.repository.UserRepository;
 import com.thomas.gestPro.repository.WorkspaceRepository;
 import jakarta.transaction.Transactional;
 import lombok.Data;
@@ -25,7 +25,7 @@ import java.util.Set;
 public class WorkspaceService {
 
     private final WorkspaceRepository workspaceRepository;
-    private final UsersRepository usersRepository;
+    private final UserRepository userRepository;
     private final BoardRepository boardRepository;
 
     /**
@@ -36,9 +36,9 @@ public class WorkspaceService {
      * @param boardRepository the repository for board management
      */
     @Autowired
-    public WorkspaceService(WorkspaceRepository workspaceRepository, UsersRepository usersRepository, BoardRepository boardRepository) {
+    public WorkspaceService(WorkspaceRepository workspaceRepository, UserRepository usersRepository, BoardRepository boardRepository) {
         this.workspaceRepository = workspaceRepository;
-        this.usersRepository = usersRepository;
+        this.userRepository = usersRepository;
         this.boardRepository = boardRepository;
     }
 
@@ -72,7 +72,7 @@ public class WorkspaceService {
      * @throws RuntimeException if the user with the specified ID does not exist
      */
     public Set<Workspace> getListWorkspaceByUserId(Long userId) {
-        Users user = usersRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
         return user.getWorkspaces();
     }
 
@@ -118,8 +118,8 @@ public class WorkspaceService {
     public Workspace updateWorkspace(Long id, Workspace updateWorkspace){
         workspaceRepository.findById(id)
                 .map(workspace -> {
-                    workspace.setWorkspaceName(updateWorkspace.getWorkspaceName());
-                    workspace.setWorkspaceDescription(updateWorkspace.getWorkspaceDescription());
+                    workspace.setName(updateWorkspace.getName());
+                    workspace.setDescription(updateWorkspace.getDescription());
                     return workspaceRepository.save(workspace);
                 })
                 .orElseThrow(() -> new RuntimeException("Workspace not found"));
