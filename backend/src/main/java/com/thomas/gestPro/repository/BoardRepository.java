@@ -10,6 +10,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface BoardRepository extends JpaRepository<Board, Long> {
- Board getBoardByBoardName(String boardName);
+ Board getBoardByName(String boardName);
 
 }

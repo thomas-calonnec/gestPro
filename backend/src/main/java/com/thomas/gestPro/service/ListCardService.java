@@ -75,7 +75,7 @@ public class ListCardService {
      */
     public ListCard updateListCard(Long listCardId, ListCard updateListCard){
        ListCard existingCard = findListCardById(listCardId);
-       existingCard.setListCardName(updateListCard.getListCardName());
+       existingCard.setName(updateListCard.getName());
 
         return listCardRepository.save(updateListCard);
     }

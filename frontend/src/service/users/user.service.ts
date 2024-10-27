@@ -17,8 +17,8 @@ export class UserService {
   constructor(private http: HttpClient) { }
 
 
-  public getWorkspaces(userId: number): Observable<Workspace[]>{
-    return this.http.get<Workspace[]>(`${this.apiServerUrl}/${userId}/workspaces`);
+  public getWorkspaces(id: number): Observable<Workspace[]>{
+    return this.http.get<Workspace[]>(`${this.apiServerUrl}/${id}/workspaces`);
   }
 
   public addCardToUser(userId: number, card: Card): Observable<User>{

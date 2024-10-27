@@ -52,7 +52,7 @@ public class LabelService {
      * @throws RuntimeException if a Label with the same color already exists
      */
     public void createLabel(Label label) {
-        if(labelRepository.findLabelByLabelColor(label.getLabelColor()).isEmpty()) {
+        if(labelRepository.findLabelByColor(label.getColor()).isEmpty()) {
             labelRepository.save(label);
         } else {
             throw new RuntimeException("Label already exists");
@@ -69,7 +69,7 @@ public class LabelService {
      */
     public Label updateLabel(Long id, Label updateLabel){
         Label existingLabel = findLabelById(id);
-        existingLabel.setLabelColor(updateLabel.getLabelColor());
+        existingLabel.setColor(updateLabel.getColor());
         return labelRepository.save(existingLabel);
     }
 

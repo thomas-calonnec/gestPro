@@ -1,6 +1,6 @@
 export interface Card {
-    cardId: number;
-    cardName: string;
-    cardDescription: string;
-    cardDeadline: Date;
+    id: number;
+    name: string;
+    description: string;
+    deadline: Date;
 }
