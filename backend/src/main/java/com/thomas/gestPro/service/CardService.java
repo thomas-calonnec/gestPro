@@ -66,9 +66,9 @@ public class CardService {
     public Card updateCard(Long cardId, Card updateCard){
         Card existingCard = getCardById(cardId);
 
-        existingCard.setCardName(updateCard.getCardName());
-        existingCard.setCardDeadline(updateCard.getCardDeadline());
-        existingCard.setCardDescription(updateCard.getCardDescription());
+        existingCard.setName(updateCard.getName());
+        existingCard.setDeadline(updateCard.getDeadline());
+        existingCard.setDescription(updateCard.getDescription());
         return cardRepository.save(existingCard);
 
     }
@@ -102,7 +102,7 @@ public class CardService {
      * @throws ResourceNotFoundException if the label is not found
      */
     public Card addCardLabelColor(Long cardId, Label updateLabel){
-        Label label = labelRepository.findLabelByLabelColor(updateLabel.getLabelColor())
+        Label label = labelRepository.findLabelByColor(updateLabel.getColor())
                                         .orElseThrow(() -> new ResourceNotFoundException("Label not Found"));
 
         Card existingCard = getCardById(cardId);
@@ -130,7 +130,7 @@ public class CardService {
                 .orElseThrow(() -> new RuntimeException("Card not found"));
 
         // Retrieve the label by color
-        Label label = labelRepository.findLabelByLabelColor(labelColor)
+        Label label = labelRepository.findLabelByColor(labelColor)
                 .orElseThrow(() -> new RuntimeException("Label not found"));
 
         // Remove the label from the card's collection

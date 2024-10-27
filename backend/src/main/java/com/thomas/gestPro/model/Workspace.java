@@ -20,11 +20,11 @@ public class Workspace {
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-    private Long workspaceId;
+    private Long id;
 
-    private String workspaceName;
+    private String name;
 
-    private String workspaceDescription;
+    private String description;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name="workspace_id")
@@ -35,5 +35,5 @@ public class Workspace {
     @JoinTable(name="tj_user_workspace",
             joinColumns = @JoinColumn(name="workspace_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id"))
-    private Set<Users> users = new HashSet<>();
+    private Set<User> users = new HashSet<>();
 }

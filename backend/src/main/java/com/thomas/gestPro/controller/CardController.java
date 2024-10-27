@@ -52,7 +52,7 @@ public class CardController {
     }
     @DeleteMapping("/{id}/label")
     public ResponseEntity<Void> removeLabelFromCard(@PathVariable Long id, @RequestBody Label label) {
-        cardService.removeLabelFromCard(id,label.getLabelColor());
+        cardService.removeLabelFromCard(id,label.getColor());
         return ResponseEntity.noContent().build();
     }
 

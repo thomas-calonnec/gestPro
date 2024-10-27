@@ -3,10 +3,10 @@ package com.thomas.gestPro.service;
 import com.thomas.gestPro.Exception.InvalidInputException;
 import com.thomas.gestPro.Exception.ResourceNotFoundException;
 import com.thomas.gestPro.model.Card;
-import com.thomas.gestPro.model.Users;
+import com.thomas.gestPro.model.User;
 import com.thomas.gestPro.model.Workspace;
 import com.thomas.gestPro.repository.CardRepository;
-import com.thomas.gestPro.repository.UsersRepository;
+import com.thomas.gestPro.repository.UserRepository;
 import com.thomas.gestPro.repository.WorkspaceRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ import java.util.Set;
  */
 @Service
 public class UserService {
-    private final UsersRepository userRepository;
+    private final UserRepository userRepository;
     private final CardRepository cardRepository;
     private final WorkspaceRepository workspaceRepository;
     private final PasswordEncoder passwordEncoder;
@@ -37,7 +37,7 @@ public class UserService {
      * @param workspaceRepository repository for managing workspaces
      */
     @Autowired
-    public UserService(UsersRepository userRepository, CardRepository cardRepository, WorkspaceRepository workspaceRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, CardRepository cardRepository, WorkspaceRepository workspaceRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.cardRepository = cardRepository;
         this.workspaceRepository = workspaceRepository;
@@ -51,8 +51,12 @@ public class UserService {
      * @return the found user
      * @throws ResourceNotFoundException if the user is not found
      */
-    public Users getUserById(Long userId) {
+    public User getById(Long userId) {
         return userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+    }
+
+    public User getByUsername(String username) {
+        return userRepository.findByUsername(username);
     }
 
     /**
@@ -60,7 +64,7 @@ public class UserService {
      *
      * @return a list of all users
      */
-    public List<Users> getAllUser() {
+    public List<User> getAllUser() {
         return userRepository.findAll();
     }
 
@@ -70,12 +74,12 @@ public class UserService {
      * @param user the user to create
      * @throws InvalidInputException if a user with the same username already exists
      */
-    public void createUser(Users user) {
-        Users userExist = userRepository.findByUserName(user.getUserName());
+    public void createUser(User user) {
+        User userExist = userRepository.findByEmail(user.getEmail());
         if (userExist != null) {
             throw new InvalidInputException("User already exists");
         }
-        user.setUserPassword(passwordEncoder.encode(user.getUserPassword()));
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
     }
 
@@ -86,12 +90,13 @@ public class UserService {
      * @param updateUser the user object containing updated information
      * @return the updated user
      */
-    public Users updateUser(Long userId, Users updateUser){
-       Users existingUser = getUserById(userId);
+    public User updateUser(Long userId, User updateUser){
+       User existingUser = getById(userId);
 
-        existingUser.setUserName(updateUser.getUserName());
-        existingUser.setUserEmail(updateUser.getUserEmail());
-        existingUser.setUserPassword(updateUser.getUserPassword());
+        existingUser.setUsername(updateUser.getUsername());
+        existingUser.setEmail(updateUser.getEmail());
+        existingUser.setPassword(updateUser.getPassword());
+        existingUser.setRole(updateUser.getRole());
 
         return userRepository.save(existingUser);
 
@@ -114,8 +119,8 @@ public class UserService {
      * @param cardId the ID of the card
      * @throws ResourceNotFoundException if the card is not found
      */
-    public Users addCardToUser(Long userId, Long cardId) {
-        Users user = getUserById(userId);
+    public User addCardToUser(Long userId, Long cardId) {
+        User user = getById(userId);
         Card card = cardRepository.findById(cardId).orElseThrow(() -> new ResourceNotFoundException("Card not found"));
 
         user.getCards().add(card);
@@ -136,7 +141,7 @@ public class UserService {
      */
     @Transactional
     public Workspace createWorkspace(Long userId, Workspace workspace) {
-        Users existingUser = getUserById(userId);
+        User existingUser = getById(userId);
 
         workspace.getUsers().add(existingUser);
         workspaceRepository.save(workspace);
@@ -145,13 +150,12 @@ public class UserService {
         return workspace;
     }
 
-    public Users getUserByEmail(String userEmail) {
-        // TODO Auto-generated method stub
-        return userRepository.getUserByUserEmail(userEmail);
+    public User getUserByEmail(String userEmail) {
+        return userRepository.findByEmail(userEmail);
 
     }
 
     public Set<Workspace> getWorkspacesByUserId(Long userId) {
-        return this.getUserById(userId).getWorkspaces();
+        return this.getById(userId).getWorkspaces();
     }
 }
