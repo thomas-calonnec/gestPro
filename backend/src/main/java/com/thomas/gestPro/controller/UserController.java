@@ -1,3 +1,4 @@
+
 package com.thomas.gestPro.controller;
 
 import com.thomas.gestPro.Security.JwtTokenUtil;
@@ -19,13 +20,16 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
-    private final JwtTokenUtil jwtTokenUtil;
 
     @Autowired
     public UserController(UserService userService, JwtTokenUtil jwtTokenUtil) {
         this.userService = userService;
 
-        this.jwtTokenUtil = jwtTokenUtil;
+    }
+
+    @PostMapping("/create")
+    public ResponseEntity<User> createUser(User user) {
+        return ResponseEntity.ok(userService.createUser(user));
     }
 
     @GetMapping("/{id}")
