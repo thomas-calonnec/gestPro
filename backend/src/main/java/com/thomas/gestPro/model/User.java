@@ -24,7 +24,7 @@ public class User {
     private String username;
     private String password;
     private String email;
-    private String role;
+
 
     @ManyToMany(mappedBy = "users")
     @JsonIgnore
@@ -36,4 +36,12 @@ public class User {
             joinColumns = @JoinColumn(name="user_id"),
             inverseJoinColumns = @JoinColumn(name = "card_id"))
     private Set<Card> cards = new HashSet<>();
+
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @JoinTable(name = "tj_user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles = new HashSet<>();
+
+
 }

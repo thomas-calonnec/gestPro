@@ -6,6 +6,7 @@ import com.thomas.gestPro.service.WorkspaceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -14,7 +15,7 @@ import java.util.Set;
 
 @RestController
 @RequestMapping("/api/workspaces")
-@CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
+@CrossOrigin(origins = "http://192.168.1.138:4200", allowCredentials = "true")
 public class WorkspaceController {
 
     private final WorkspaceService workspaceService;
@@ -30,6 +31,7 @@ public class WorkspaceController {
     }
 
    @GetMapping("/{id}")
+   @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public ResponseEntity<Workspace> getWorkspaceById(@PathVariable Long id) {
         Workspace workspace = workspaceService.getWorkspaceById(id);
         return ResponseEntity.ok(workspace);
