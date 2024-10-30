@@ -2,7 +2,6 @@ import {Component, inject, OnInit} from '@angular/core';
 import {Workspace} from '../../dao/workspace';
 import {UserService} from '../../service/users/user.service';
 import {ActivatedRoute, RouterLink} from '@angular/router';
-import {HttpResponse} from '@angular/common/http';
 
 @Component({
   selector: 'app-user',

@@ -12,13 +12,9 @@ import com.thomas.gestPro.repository.UserRepository;
 import com.thomas.gestPro.repository.WorkspaceRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -63,9 +59,9 @@ public class UserService {
         return userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 
-    public User getByUsername(String username) {
+   /* public User getByUsername(String username) {
         return userRepository.findByUsername(username);
-    }
+    }*/
 
     /**
      * Retrieves a list of all users.
@@ -159,10 +155,10 @@ public class UserService {
         return workspace;
     }
 
-    public User getUserByEmail(String userEmail) {
+    /*public User getUserByEmail(String userEmail) {
         return userRepository.findByEmail(userEmail);
 
-    }
+    }*/
 
     public Set<Workspace> getWorkspacesByUserId(Long userId) {
         return this.getById(userId).getWorkspaces();

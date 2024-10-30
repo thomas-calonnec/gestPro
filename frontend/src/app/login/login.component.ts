@@ -1,9 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { User } from '../../dao/user';
 import {AuthService} from '../auth.service';
-import {HttpErrorResponse, HttpHeaders} from '@angular/common/http';
+import {HttpErrorResponse} from '@angular/common/http';
 import {UserService} from '../../service/users/user.service';
 
 @Component({
@@ -33,7 +32,7 @@ export class LoginComponent {
   const password = this.myForm.get('password')?.value;
 
    this.authService.login(username,password).subscribe({
-    next: (response) => {
+    next: () => {
 
       //const userId = response.id
      // console.log(userId)
