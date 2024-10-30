@@ -41,7 +41,7 @@ export class AuthService {
   revokeToken(): Observable<any> {
     return this.http.post<any>(this.apiServerUrl+ '/revoke-token', {}, {withCredentials: true})
     .pipe(
-      tap(response => {
+      tap(() => {
         console.log('Tokens refreshed successfully');
       }))
   }

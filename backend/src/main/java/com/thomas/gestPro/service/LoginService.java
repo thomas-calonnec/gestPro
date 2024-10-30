@@ -3,11 +3,8 @@ package com.thomas.gestPro.service;
 import com.thomas.gestPro.Security.JwtTokenUtil;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-
-import javax.naming.AuthenticationException;
 
 @Service
 public class LoginService {
@@ -22,7 +19,7 @@ public class LoginService {
         this.userDetailsService = userDetailsService;
     }
 
-    public String login(String username, String password) throws AuthenticationException {
+    public String login(String username, String password) {
         // Authentifier l'utilisateur via le AuthenticationManager de Spring Security
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(username, password));

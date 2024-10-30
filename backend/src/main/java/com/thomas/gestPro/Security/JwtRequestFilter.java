@@ -1,6 +1,6 @@
 package com.thomas.gestPro.Security;
 
-import io.jsonwebtoken.JwtException;
+
 import io.micrometer.common.lang.Nullable;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
