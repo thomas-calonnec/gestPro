@@ -14,6 +14,7 @@ import {User} from '../dao/user';
 export class AppComponent implements OnInit {
  islogged : Signal<boolean> = signal<boolean>(false);
  currentUser: Signal<User | null> = signal<User | null>(null)
+  token: String = "";
  authService : AuthService = inject(AuthService);
 
  ngOnInit() {

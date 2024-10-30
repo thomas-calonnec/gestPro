@@ -1,11 +1,10 @@
 package com.thomas.gestPro.controller;
 
+import com.thomas.gestPro.Security.JwtResponse;
 import com.thomas.gestPro.model.User;
-import com.thomas.gestPro.service.UserService;
+import com.thomas.gestPro.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -13,37 +12,32 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = "http://192.168.1.138:4200", allowCredentials = "true")
 public class LoginController {
 
-    private final UserService userService;
-    private final PasswordEncoder passwordEncoder;
+   private final LoginService loginService;
 
     @Autowired
-    public LoginController(UserService userService, PasswordEncoder passwordEncoder) {
-        this.userService = userService;
-        this.passwordEncoder = passwordEncoder;
+    public LoginController(LoginService loginService) {
+        this.loginService = loginService;
+
     }
 
     @PostMapping
-    public ResponseEntity<?> getLogin(@RequestBody User users) {
+    public ResponseEntity<?> getLogin(@RequestBody User user) {
 
 
-        User existingUser = userService.getByUsername(users.getUsername());
+        try {
+            // Appeler le service pour authentifier l'utilisateur et générer le JWT
+            String token = loginService.login(user.getUsername(), user.getPassword());
 
-        if (existingUser != null) {
-            System.err.println("Mot de passe fourni : " + users.getPassword());
-            System.err.println("Mot de passe stocké : " + existingUser.getPassword());
+            // Retourner le token au client
+            return ResponseEntity.ok(new JwtResponse(token));
 
-            // Comparez le mot de passe fourni avec le mot de passe existant
-            if (users.getPassword().equals(existingUser.getPassword())) {
-                return ResponseEntity.ok(existingUser   ); // Authentification réussie
-            } else {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Mot de passe incorrect"); // Authentification échouée
-            }
+        } catch (Exception e) {
+            return ResponseEntity.status(401).body("Invalid credentials");
         }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Utilisateur non trouvé"); // Utilisateur non trouvé
+
     }
 
-
-
-
 }
+
+
 
