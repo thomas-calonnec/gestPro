@@ -3,9 +3,11 @@ package com.thomas.gestPro.service;
 import com.thomas.gestPro.Exception.InvalidInputException;
 import com.thomas.gestPro.Exception.ResourceNotFoundException;
 import com.thomas.gestPro.model.Card;
+import com.thomas.gestPro.model.Role;
 import com.thomas.gestPro.model.User;
 import com.thomas.gestPro.model.Workspace;
 import com.thomas.gestPro.repository.CardRepository;
+import com.thomas.gestPro.repository.RoleRepository;
 import com.thomas.gestPro.repository.UserRepository;
 import com.thomas.gestPro.repository.WorkspaceRepository;
 import jakarta.transaction.Transactional;
@@ -28,6 +30,7 @@ public class UserService {
     private final CardRepository cardRepository;
     private final WorkspaceRepository workspaceRepository;
     private final PasswordEncoder passwordEncoder;
+    private final RoleRepository roleRepository;
 
     /**
      * Constructor with dependency injection for repositories.
@@ -37,11 +40,12 @@ public class UserService {
      * @param workspaceRepository repository for managing workspaces
      */
     @Autowired
-    public UserService(UserRepository userRepository, CardRepository cardRepository, WorkspaceRepository workspaceRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, CardRepository cardRepository, WorkspaceRepository workspaceRepository, PasswordEncoder passwordEncoder, RoleRepository roleRepository) {
         this.userRepository = userRepository;
         this.cardRepository = cardRepository;
         this.workspaceRepository = workspaceRepository;
         this.passwordEncoder = passwordEncoder;
+        this.roleRepository = roleRepository;
     }
 
     /**
@@ -55,9 +59,9 @@ public class UserService {
         return userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 
-    public User getByUsername(String username) {
+   /* public User getByUsername(String username) {
         return userRepository.findByUsername(username);
-    }
+    }*/
 
     /**
      * Retrieves a list of all users.
@@ -75,12 +79,13 @@ public class UserService {
      * @throws InvalidInputException if a user with the same username already exists
      */
     public void createUser(User user) {
-        User userExist = userRepository.findByEmail(user.getEmail());
-        if (userExist != null) {
-            throw new InvalidInputException("User already exists");
-        }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
+        Role userRole = roleRepository.findByName("ROLE_USER");
+
+        user.getRoles().add(userRole);
+
+         userRepository.save(user);
+
     }
 
     /**
@@ -96,7 +101,7 @@ public class UserService {
         existingUser.setUsername(updateUser.getUsername());
         existingUser.setEmail(updateUser.getEmail());
         existingUser.setPassword(updateUser.getPassword());
-        existingUser.setRole(updateUser.getRole());
+        existingUser.setRoles(updateUser.getRoles());
 
         return userRepository.save(existingUser);
 
@@ -150,12 +155,14 @@ public class UserService {
         return workspace;
     }
 
-    public User getUserByEmail(String userEmail) {
+    /*public User getUserByEmail(String userEmail) {
         return userRepository.findByEmail(userEmail);
 
-    }
+    }*/
 
     public Set<Workspace> getWorkspacesByUserId(Long userId) {
         return this.getById(userId).getWorkspaces();
     }
+
+
 }
