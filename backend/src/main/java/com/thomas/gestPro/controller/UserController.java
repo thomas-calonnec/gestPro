@@ -1,18 +1,23 @@
 package com.thomas.gestPro.controller;
 
+import com.thomas.gestPro.Security.JwtResponse;
 import com.thomas.gestPro.model.Card;
 import com.thomas.gestPro.model.User;
 import com.thomas.gestPro.model.Workspace;
 import com.thomas.gestPro.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Arrays;
 import java.util.Set;
 
-@CrossOrigin(value = "http://localhost:4200", allowCredentials = "true")
+@CrossOrigin(value = "http://192.168.1.138:4200", allowCredentials = "true")
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -25,18 +30,43 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
+
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getById(id));
     }
 
-    @GetMapping("{id}/workspaces")
-    public ResponseEntity<Set<Workspace>> getWorkspaceByUserId(@PathVariable Long id) {
-        return ResponseEntity.ok(userService.getWorkspacesByUserId(id));
+    @GetMapping("/protected-endpoint")
+    public ResponseEntity<?> getProtectedData(HttpServletRequest request) {
+        // Récupérer l'en-tête Authorization
+        final String authorizationHeader = request.getHeader("Authorization");
+
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            String token = authorizationHeader.substring(7); // Extraire le token après "Bearer "
+            // Vous pouvez maintenant utiliser et valider le token JWT
+            return ResponseEntity.ok(new JwtResponse(token));
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authorization header is missing or invalid");
+        }
     }
 
-    @GetMapping("/listUser")
-    public ResponseEntity<List<User>> getListOfUser() {
-        return ResponseEntity.ok(userService.getAllUser());
+    @GetMapping("{id}/workspaces")
+    public ResponseEntity<Set<Workspace>> getWorkspaceByUserId(@PathVariable Long id) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication != null && authentication.isAuthenticated()) {
+            boolean hasUserRole = authentication.getAuthorities().stream()
+                    .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_USER"));
+
+            if (hasUserRole) {
+                // L'utilisateur a le rôle ADMIN
+                System.out.println("L'utilisateur a le rôle USER");
+            } else {
+                // L'utilisateur n'a pas le rôle ADMIN
+                System.err.println(authentication);
+                System.out.println("L'utilisateur n'a pas le rôle USER");
+            }
+        }
+        return ResponseEntity.ok(userService.getWorkspacesByUserId(id));
     }
 
     @PostMapping("/{id}/addCard")
@@ -45,15 +75,9 @@ public class UserController {
         return ResponseEntity.ok(updatUser);
     }
 
-    @PutMapping("/create")
-    public ResponseEntity<User> createUser(@RequestBody User user) {
-        userService.createUser(user);
-        return new ResponseEntity<>(user, HttpStatus.CREATED);
-    }
-
     @PutMapping("/{id}/update")
     public ResponseEntity<User> updateUserById(@PathVariable Long id, @RequestBody User user) {
-        User updateUser = userService.updateUser(id,user);
+        User updateUser = userService.updateUser(id, user);
         return ResponseEntity.ok(updateUser);
     }
 

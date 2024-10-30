@@ -2,6 +2,7 @@ import {Component, inject, OnInit} from '@angular/core';
 import {Workspace} from '../../dao/workspace';
 import {UserService} from '../../service/users/user.service';
 import {ActivatedRoute, RouterLink} from '@angular/router';
+import {HttpResponse} from '@angular/common/http';
 
 @Component({
   selector: 'app-user',
@@ -26,8 +27,26 @@ export class UserComponent implements  OnInit{
     this.userId = this.route.snapshot.params['id'];
     this.getWorkspaces();
 
-  }
+    //this.getToken()
 
+  }
+   parseJwt (token: string) {
+    const base64Url = token.split('.')[1]; // Extraire la partie Payload du token JWT
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+
+    return JSON.parse(jsonPayload); // Retourner le JSON extrait
+  }
+  getToken(): void {
+    this.userService.getProtectedData().subscribe({
+      next: (response: String) => {
+        console.log(response);
+
+      }
+    })
+  }
   getWorkspaces(): void {
 
     this.userService.getWorkspaces(this.userId).subscribe({

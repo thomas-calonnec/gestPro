@@ -3,7 +3,8 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Router } from '@angular/router';
 import { User } from '../../dao/user';
 import {AuthService} from '../auth.service';
-import { HttpErrorResponse } from '@angular/common/http';
+import {HttpErrorResponse, HttpHeaders} from '@angular/common/http';
+import {UserService} from '../../service/users/user.service';
 
 @Component({
   selector: 'app-login',
@@ -15,6 +16,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 export class LoginComponent {
   myForm: FormGroup;
   authService: AuthService = inject(AuthService);
+  userService: UserService = inject(UserService);
   router : Router = inject(Router);
 
   constructor(private fb: FormBuilder) {
@@ -25,20 +27,23 @@ export class LoginComponent {
     });
   }
 
-  onSubmit() {
+  onLogin() {
 
   const username = this.myForm.get('username')?.value;
   const password = this.myForm.get('password')?.value;
 
    this.authService.login(username,password).subscribe({
-    next: (response: {user: User}) => {
+    next: (response) => {
 
-      const userId = this.authService.currentUser()?.id;
-      console.log(userId)
-     // this.router.navigateByUrl(`users/${userId}/workspaces`).then(r => console.log(r))
+      //const userId = response.id
+     // console.log(userId)
+      //const headers = new HttpHeaders().set('Authorization', `Bearer ${this.authService.getToken()}`);
+
+      this.router.navigateByUrl(`users/1/workspaces`).then(r => console.log(r))
     },
     error: (error: HttpErrorResponse) => {
       console.error('Login failed ', error);
+      alert("Login failed : " + error.message);
     }
    })
   }

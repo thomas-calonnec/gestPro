@@ -12,20 +12,27 @@ export class AuthService {
   private http = inject(HttpClient);
   private _currentUser = signal<User | null>(null);
   currentUser = this._currentUser.asReadonly();
+  tokenKey : string = "jwtToken"
   isConnected  = computed(() => {
     return this._currentUser !== null
   });
 
+  storeToken(token: string)  {
+    localStorage.setItem(this.tokenKey, token) ;
+  }
 
-  login(username: string, password: string): Observable<{
-    user: User
-  }> {
+  getToken(): string | null{
+    return localStorage.getItem(this.tokenKey)
+  }
+  login(username: string, password: string): Observable<any> {
 
-    return this.http.post<{
-      user: User
-    }>(this.apiServerUrl, {username, password},{  withCredentials: true }).pipe(
+    return this.http.post<any>(this.apiServerUrl, {username, password},{  withCredentials: true }).pipe(
       tap((response) => {
-        this._currentUser.set(response.user);
+        //this._currentUser.set(response);
+        console.log("Token : " +response.token)
+        this.storeToken(response.token);
+
+
       })
     );
 
