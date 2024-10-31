@@ -23,7 +23,6 @@ public class LoginController {
     @PostMapping
     public ResponseEntity<?> getLogin(@RequestBody User user) {
 
-
         try {
             // Appeler le service pour authentifier l'utilisateur et générer le JWT
             String token = loginService.login(user.getUsername(), user.getPassword());
@@ -35,6 +34,10 @@ public class LoginController {
             return ResponseEntity.status(401).body("Invalid credentials");
         }
 
+    }
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout() {
+        return ResponseEntity.ok().body("Logout successful");
     }
 
 }

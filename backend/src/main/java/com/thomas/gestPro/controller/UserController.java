@@ -1,13 +1,10 @@
 package com.thomas.gestPro.controller;
 
-import com.thomas.gestPro.Security.JwtResponse;
 import com.thomas.gestPro.model.Card;
 import com.thomas.gestPro.model.User;
 import com.thomas.gestPro.model.Workspace;
 import com.thomas.gestPro.service.UserService;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -33,7 +30,7 @@ public class UserController {
         return ResponseEntity.ok(userService.getById(id));
     }
 
-    @GetMapping("/protected-endpoint")
+    /*@GetMapping("/protected-endpoint")
     public ResponseEntity<?> getProtectedData(HttpServletRequest request) {
         // Récupérer l'en-tête Authorization
         final String authorizationHeader = request.getHeader("Authorization");
@@ -45,7 +42,7 @@ public class UserController {
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authorization header is missing or invalid");
         }
-    }
+    }*/
 
     @GetMapping("{id}/workspaces")
     public ResponseEntity<Set<Workspace>> getWorkspaceByUserId(@PathVariable Long id) {

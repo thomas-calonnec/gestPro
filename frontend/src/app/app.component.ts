@@ -1,25 +1,21 @@
-import {Component, inject, OnInit, signal, Signal} from '@angular/core';
-import {RouterLink, RouterOutlet} from '@angular/router';
-import {AuthService} from './auth.service';
-import {User} from '../dao/user';
+import { Component } from '@angular/core';
+import { RouterLink, RouterOutlet} from '@angular/router';
+import {FormsModule} from '@angular/forms';
+
+
 
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, RouterLink],
+  imports: [RouterOutlet, RouterLink, FormsModule],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
-})
-export class AppComponent implements OnInit {
- islogged : Signal<boolean> = signal<boolean>(false);
- currentUser: Signal<User | null> = signal<User | null>(null)
-  token: String = "";
- authService : AuthService = inject(AuthService);
+  styleUrl: './app.component.css',
+  providers: [
 
- ngOnInit() {
-  this.islogged = this.authService.isConnected;
-  this.currentUser = this.authService.currentUser;
- }
+  ],
+})
+export class AppComponent  {
+
 
 }
