@@ -33,7 +33,7 @@ public class UserController {
         return ResponseEntity.ok(userService.getById(id));
     }
 
-    @GetMapping("/protected-endpoint")
+    /*@GetMapping("/protected-endpoint")
     public ResponseEntity<?> getProtectedData(HttpServletRequest request) {
         // Récupérer l'en-tête Authorization
         final String authorizationHeader = request.getHeader("Authorization");
@@ -45,12 +45,12 @@ public class UserController {
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authorization header is missing or invalid");
         }
-    }
+    }*/
 
     @GetMapping("{id}/workspaces")
     public ResponseEntity<Set<Workspace>> getWorkspaceByUserId(@PathVariable Long id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
+         System.err.println("auth : " + authentication.isAuthenticated());
         if (authentication != null && authentication.isAuthenticated()) {
             boolean hasUserRole = authentication.getAuthorities().stream()
                     .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_USER"));
