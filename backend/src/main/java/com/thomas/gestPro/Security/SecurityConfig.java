@@ -55,7 +55,7 @@ public class SecurityConfig {
                         .logoutUrl("/api/logout") // URL du logout
                         .invalidateHttpSession(true) // Invalider la session
                         .deleteCookies("JSESSIONID") // Supprimer les cookies
-                        .logoutSuccessHandler((request, response, authentication) -> {
+                        .logoutSuccessHandler((_, response, _) -> {
                             response.setStatus(200); // Répondre avec succès (200)
                         })
                 )

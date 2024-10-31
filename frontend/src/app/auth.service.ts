@@ -1,7 +1,6 @@
-import {ChangeDetectorRef, computed, inject, Injectable, Signal, signal} from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import {HttpClient} from '@angular/common/http';
-import { User } from '../dao/user';
 import {Router} from '@angular/router';
 
 @Injectable({
@@ -37,7 +36,7 @@ export class AuthService {
     return this.http.post<any>(this.apiServerUrl , {username, password},{  withCredentials: true }).pipe(
       tap((response) => {
         //this._currentUser.set(response);
-        //console.log("Token : " +response.token)
+
         this.storeToken(response.token);
 
       })
