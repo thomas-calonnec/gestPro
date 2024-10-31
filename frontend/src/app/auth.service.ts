@@ -1,7 +1,7 @@
-import { computed, inject, Injectable, signal } from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import {HttpClient} from '@angular/common/http';
-import { User } from '../dao/user';
+import {Router} from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
@@ -10,28 +10,34 @@ export class AuthService {
 
   private apiServerUrl = 'http://192.168.1.138:8080/loginForm';
   private http = inject(HttpClient);
-  private _currentUser = signal<User | null>(null);
-  currentUser = this._currentUser.asReadonly();
-  tokenKey : string = "jwtToken"
-  isConnected  = computed(() => {
-    return this._currentUser !== null
-  });
+ private router : Router = inject(Router);
+  private readonly TOKEN_KEY = "JwtToken";
+ private authenticated = false;
+
+
 
   storeToken(token: string)  {
-    localStorage.setItem(this.tokenKey, token) ;
+    localStorage.setItem(this.TOKEN_KEY, token) ;
   }
+
+  // Vérifie la présence d'un token à l'initialisation
+
 
   getToken(): string | null{
-    return localStorage.getItem(this.tokenKey)
+    return localStorage.getItem(this.TOKEN_KEY)
   }
-  login(username: string, password: string): Observable<any> {
 
-    return this.http.post<any>(this.apiServerUrl, {username, password},{  withCredentials: true }).pipe(
+  removeToken() {
+    localStorage.removeItem(this.TOKEN_KEY)
+  }
+
+  login(username: string, password: string): Observable<any> {
+    this.authenticated =  true;
+    return this.http.post<any>(this.apiServerUrl , {username, password},{  withCredentials: true }).pipe(
       tap((response) => {
         //this._currentUser.set(response);
-        console.log("Token : " +response.token)
-        this.storeToken(response.token);
 
+        this.storeToken(response.token);
 
       })
     );
@@ -46,13 +52,15 @@ export class AuthService {
       }))
   }
 
-  logout() : Observable<any> {
-    return this.http.post<any>(this.apiServerUrl+'/logout', {}, {withCredentials: true})
-    .pipe(
-      tap(() => {
-        this._currentUser.set(null);
-      })
-    )
+  isAuthenticated(): boolean {
+    return this.authenticated;
+  }
+
+  logout() : void{
+    this.removeToken()
+    this.authenticated = false;
+    this.router.navigate(['/login']); // Rediriger vers la page de login après logout
+
   }
 
 

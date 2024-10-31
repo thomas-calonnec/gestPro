@@ -44,12 +44,20 @@ public class SecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(registry -> {
-                    registry.requestMatchers("/loginForm").permitAll();
-                    registry.requestMatchers("/api/**").hasRole("USER");
+                    registry.requestMatchers("/loginForm/**").permitAll();
+                    registry.requestMatchers("/api/**").permitAll();
                     registry.requestMatchers("/admin/**").permitAll();
                     registry.anyRequest().authenticated();
 
                 }
+                )
+                .logout(logout -> logout
+                        .logoutUrl("/api/logout") // URL du logout
+                        .invalidateHttpSession(true) // Invalider la session
+                        .deleteCookies("JSESSIONID") // Supprimer les cookies
+                        .logoutSuccessHandler((_, response, _) -> {
+                            response.setStatus(200); // Répondre avec succès (200)
+                        })
                 )
 
                 .sessionManagement(session ->  session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

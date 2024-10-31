@@ -25,7 +25,7 @@ export class UserService {
     });
 
     return this.http.get<Workspace[]>(`${this.apiServerUrl}/${id}/workspaces`, {headers});
-    //return this.http.get<Workspace[]>("api/workspaces/");
+
   }
 
   public getProtectedData(): Observable<string> {
