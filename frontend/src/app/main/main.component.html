@@ -3,7 +3,7 @@
 
 <nav class="navbar navbar-expand-lg bg-primary">
   <div class="container-fluid">
-    <a class="navbar-brand" href="#">GestPro {{ this.authService.getToken()}}</a>
+    <a class="navbar-brand" href="#">GestPro </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -28,7 +28,7 @@
 </nav>
 <div class="container2">
   <aside class="sidebar">
-
+    @if(this.boards().length !== 0) {
     <ul>
       <li><a class="nav-link" routerLink="/board">Boards</a></li>
       <li><a class="nav-link" routerLink="/user">Members</a></li>
@@ -36,8 +36,18 @@
     </ul>
     <ul>
       <li><a class="nav-link" routerLink="/board">Your boards</a></li>
-      <!--@for (board of boards; track boards.id) {}-->
+
+
+
+        <ul>
+      @for (board of this.boards(); track board.id) {
+
+        <li>{{board.name}}</li>
+      }
+        </ul>
+
     </ul>
+    }
   </aside>
   <main>
     <router-outlet />

@@ -53,12 +53,12 @@ export class AuthService {
   }
 
   isAuthenticated(): boolean {
-    return this.authenticated;
+    return this.getToken() !== null;
   }
 
   logout() : void{
     this.removeToken()
-    this.authenticated = false;
+
     this.router.navigate(['/login']); // Rediriger vers la page de login après logout
 
   }

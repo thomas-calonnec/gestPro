@@ -18,7 +18,7 @@ export class UserService {
   constructor(private http: HttpClient) { }
 
 
-  public getWorkspaces(id: number): Observable<Workspace[]>{
+  public getWorkspaces(id: string): Observable<Workspace[]>{
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${this.authService.getToken()}`, // Ajouter le token JWT dans l'en-tête Authorization
       'Content-Type': 'application/json'
@@ -58,7 +58,7 @@ export class UserService {
     return this.http.put<Workspace>(`${this.apiServerUrl}/${userId}/workspace`,workspace);
   }
 
-  public getUserByEmail(userEmail: string): Observable<User>{
-    return this.http.get<User>(`${this.apiServerUrl}/login/${userEmail}`);
+  public getUserByUsername(username: string): Observable<User>{
+    return this.http.get<User>(`${this.apiServerUrl}/username/${username}`);
   }
 }
