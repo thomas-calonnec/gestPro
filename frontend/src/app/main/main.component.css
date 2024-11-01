@@ -1,17 +1,3 @@
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-body {
-  font-family: Arial, sans-serif;
-  min-height: 100vh;
-  /*display: flex;*/
-  /*justify-content: center;
-  align-items: center;*/
-  background-color: #f4f4f4;
-}
 
 /* Container global qui contient la sidebar et le contenu */
 .container2 {
@@ -24,6 +10,13 @@ body {
   margin-left: 0 ;
   padding-left: 0;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+main {
+  background: linear-gradient(135deg, #f4f7fb, #e6f1f5); /* Dégradé doux du gris clair au bleu pastel */
+  min-height: 100vh;
+  margin: 0;
+  width: 100%;
+  font-family: Arial, sans-serif; /* Police simple et professionnelle */
 }
 
 /* Styles pour le panneau latéral */

@@ -1,16 +1,9 @@
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
 
 body {
-  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #f4f7fb, #e6f1f5); /* Dégradé doux du gris clair au bleu pastel */
   min-height: 100vh;
-  /*display: flex;*/
-  /*justify-content: center;
-  align-items: center;*/
-  background-color: #f4f4f4;
+  margin: 0;
+  font-family: Arial, sans-serif; /* Police simple et professionnelle */
 }
 
 /* Container global qui contient la sidebar et le contenu */
