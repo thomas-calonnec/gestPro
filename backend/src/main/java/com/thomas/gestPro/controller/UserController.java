@@ -43,6 +43,10 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authorization header is missing or invalid");
         }
     }*/
+   @GetMapping("/username/{name}")
+    public ResponseEntity<User> getUserByUsername(@PathVariable String name) {
+       return ResponseEntity.ok(userService.getUserByUsername(name));
+   }
 
     @GetMapping("{id}/workspaces")
     public ResponseEntity<Set<Workspace>> getWorkspaceByUserId(@PathVariable Long id) {

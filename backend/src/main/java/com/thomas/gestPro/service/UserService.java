@@ -155,10 +155,10 @@ public class UserService {
         return workspace;
     }
 
-    /*public User getUserByEmail(String userEmail) {
-        return userRepository.findByEmail(userEmail);
+    public User getUserByUsername(String username) {
+        return userRepository.findByUsername(username);
 
-    }*/
+    }
 
     public Set<Workspace> getWorkspacesByUserId(Long userId) {
         return this.getById(userId).getWorkspaces();

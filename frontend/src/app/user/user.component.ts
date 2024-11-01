@@ -1,4 +1,4 @@
-import {Component, inject, OnInit} from '@angular/core';
+import {Component, EventEmitter, inject, OnInit, Output} from '@angular/core';
 import {Workspace} from '../../dao/workspace';
 import {UserService} from '../../service/users/user.service';
 import {ActivatedRoute, RouterLink} from '@angular/router';
@@ -11,19 +11,21 @@ import {ActivatedRoute, RouterLink} from '@angular/router';
   ],
   template: `
     <ul>
-    @for(workspace of workspaces; track workspace.workspaceId){
-        <li><a routerLink="/workspaces/{{workspace.workspaceId}}/boards">{{ workspace.workspaceName}}</a></li>
+    @for(workspace of workspaces; track workspace.id){
+        <li><a routerLink="/workspaces/{{workspace.id}}/boards">{{ workspace.name}}</a></li>
     }</ul>`,
   styleUrl: './user.component.css'
 })
 export class UserComponent implements  OnInit{
   workspaces : Workspace[] = [];
-  userId: number = 0;
+  userId: string = "";
   userService : UserService = inject(UserService);
   route : ActivatedRoute = inject(ActivatedRoute);
+  @Output() paramId  = new EventEmitter<string>();
 
   ngOnInit(): void{
-    this.userId = this.route.snapshot.params['id'];
+    this.userId = this.route.snapshot.params['userId'];
+    this.paramId.emit(this.userId);
     this.getWorkspaces();
 
   }

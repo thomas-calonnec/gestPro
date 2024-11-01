@@ -1,8 +1,9 @@
-import {Component, inject, OnInit, signal, WritableSignal} from '@angular/core';
+import {Component, computed, inject, OnInit} from '@angular/core';
 import {Board} from '../../dao/board';
 import {WorkspaceService} from '../../service/workspaces/workspace.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {ActivatedRoute} from '@angular/router';
+import {BoardService} from '../../service/boards/board.service';
 
 @Component({
   selector: 'app-workspace',
@@ -10,7 +11,7 @@ import {ActivatedRoute} from '@angular/router';
   imports: [],
   template: `
     <ul>
-    @for(board of boards() ; track board.id){
+    @for(board of this.boards() ; track board.id){
          <li>{{ board.name}}</li>
   }
     </ul>
@@ -19,21 +20,24 @@ import {ActivatedRoute} from '@angular/router';
 })
 export class WorkspaceComponent implements OnInit{
 
-
-  boards : WritableSignal<Board[]> = signal<Board[]>([]);
-
-  private workspaceId : number = 0;
-  private workspaceService: WorkspaceService = inject(WorkspaceService);
+  private workspaceId : string | null = "null";
+   workspaceService: WorkspaceService = inject(WorkspaceService);
   private route: ActivatedRoute = inject(ActivatedRoute);
+  boardService = inject(BoardService)
+
+  public boards  = computed(() => this.boardService.getBoards()());
+
 
   ngOnInit(): void {
-    this.workspaceId = this.route.snapshot.params['id'];
+    this.workspaceId = this.route.snapshot.params['workspaceId'];
     this.getBoards(this.workspaceId);
   }
-  public getBoards(workspaceId: number) : void {
+  public getBoards(workspaceId: string | null) : void {
 
     this.workspaceService.getBoards(workspaceId).subscribe({
-        next: (data: Board[]) => this.boards.set(data),
+        next: (data: Board[]) => {
+          this.boardService.setBoards(data)
+        },
         error: (error: HttpErrorResponse) => {
           alert("error -> " + error.message)
         }
