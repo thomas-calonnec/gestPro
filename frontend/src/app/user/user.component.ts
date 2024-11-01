@@ -10,10 +10,14 @@ import {ActivatedRoute, RouterLink} from '@angular/router';
     RouterLink
   ],
   template: `
-    <ul>
+
+<div class="container">
     @for(workspace of workspaces; track workspace.id){
-        <li><a routerLink="/workspaces/{{workspace.id}}/boards">{{ workspace.name}}</a></li>
-    }</ul>`,
+      <div class="hover-card">
+        <a style=" text-decoration: none;" routerLink="/workspaces/{{workspace.id}}/boards"><h3 class="card-title">{{ workspace.name }}</h3></a>
+      </div>
+
+    } </div>`,
   styleUrl: './user.component.css'
 })
 export class UserComponent implements  OnInit{
