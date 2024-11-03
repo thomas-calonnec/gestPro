@@ -1,4 +1,4 @@
-import {Component, OnInit, inject, Signal, signal, Input, WritableSignal} from '@angular/core';
+import {Component, OnInit, inject, signal, Input, WritableSignal} from '@angular/core';
 import { Card } from '../../dao/card';
 import { ListCardService } from '../../service/list-cards/list-card.service';
 import { ActivatedRoute } from '@angular/router';

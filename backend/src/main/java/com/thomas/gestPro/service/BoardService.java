@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 
 import java.util.List;
-import java.util.Set;
 
 @Service
 public class BoardService {
@@ -59,7 +58,7 @@ public class BoardService {
      * Retrieves the set of list cards associated with a specific board.
      *
      * @param id the ID of the board to retrieve the list cards from
-     * @return the set of list cards for the specified board
+     * @return the list of list cards for the specified board
      * @throws RuntimeException if the board is not found
      */
     public List<ListCard> getCardsByBoardId(Long id) {

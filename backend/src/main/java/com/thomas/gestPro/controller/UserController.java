@@ -11,7 +11,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Set;
 
 @CrossOrigin(value = "http://192.168.1.138:4200", allowCredentials = "true")
 @RestController
