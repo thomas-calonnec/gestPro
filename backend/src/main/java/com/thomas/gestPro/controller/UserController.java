@@ -10,7 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Set;
+import java.util.List;
 
 @CrossOrigin(value = "http://192.168.1.138:4200", allowCredentials = "true")
 @RestController
@@ -43,9 +43,13 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authorization header is missing or invalid");
         }
     }*/
+   @GetMapping("/username/{name}")
+    public ResponseEntity<User> getUserByUsername(@PathVariable String name) {
+       return ResponseEntity.ok(userService.getUserByUsername(name));
+   }
 
     @GetMapping("{id}/workspaces")
-    public ResponseEntity<Set<Workspace>> getWorkspaceByUserId(@PathVariable Long id) {
+    public ResponseEntity<List<Workspace>> getWorkspaceByUserId(@PathVariable Long id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication != null && authentication.isAuthenticated()) {

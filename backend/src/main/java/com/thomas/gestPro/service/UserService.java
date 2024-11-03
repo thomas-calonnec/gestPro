@@ -16,7 +16,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * Service class for managing user-related operations.
@@ -155,12 +154,12 @@ public class UserService {
         return workspace;
     }
 
-    /*public User getUserByEmail(String userEmail) {
-        return userRepository.findByEmail(userEmail);
+    public User getUserByUsername(String username) {
+        return userRepository.findByUsername(username);
 
-    }*/
+    }
 
-    public Set<Workspace> getWorkspacesByUserId(Long userId) {
+    public List<Workspace> getWorkspacesByUserId(Long userId) {
         return this.getById(userId).getWorkspaces();
     }
 

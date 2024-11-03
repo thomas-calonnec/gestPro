@@ -1,0 +1,38 @@
+.card-content {
+  background-color: #688fca; /* Fond plus clair pour la section centrale */
+  border-radius: 8px;
+  margin: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.card-content .status-badges {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.badge {
+  padding: 0.25rem 0.5rem;
+  border-radius: 5px;
+  color: white;
+  font-size: 0.8rem;
+}
+
+.badge-green {
+  background-color: #4CAF50; /* Couleur verte */
+}
+
+.badge-yellow {
+  background-color: #FFA726; /* Couleur jaune */
+}
+
+.badge-blue {
+  background-color: #2196F3; /* Couleur bleue */
+}
+
+.card-content .task-name {
+  background-color: #688fca;
+  padding: 0.5rem;
+  border-radius: 8px;
+  color: #ffffff;
+}

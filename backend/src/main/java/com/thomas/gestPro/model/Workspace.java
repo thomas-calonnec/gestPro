@@ -7,8 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -28,12 +28,12 @@ public class Workspace {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name="workspace_id")
-    private Set<Board> boards = new HashSet<>();
+    private List<Board> boards = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JsonIgnore
     @JoinTable(name="tj_user_workspace",
             joinColumns = @JoinColumn(name="workspace_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id"))
-    private Set<User> users = new HashSet<>();
+    private List<User> users = new ArrayList<>();
 }

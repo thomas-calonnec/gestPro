@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
-import java.util.Set;
+import java.util.List;
 
 @Service
 public class BoardService {
@@ -57,12 +57,12 @@ public class BoardService {
     /**
      * Retrieves the set of list cards associated with a specific board.
      *
-     * @param boardName the ID of the board to retrieve the list cards from
-     * @return the set of list cards for the specified board
+     * @param id the ID of the board to retrieve the list cards from
+     * @return the list of list cards for the specified board
      * @throws RuntimeException if the board is not found
      */
-    public Set<ListCard> getCardsByBoardName(String boardName) {
-        return this.getBoardByName(boardName).getListCards();
+    public List<ListCard> getCardsByBoardId(Long id) {
+        return this.getBoardById(id).getListCards();
     }
 
     /**

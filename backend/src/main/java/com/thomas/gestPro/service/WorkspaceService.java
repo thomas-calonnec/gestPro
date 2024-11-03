@@ -11,9 +11,7 @@ import jakarta.transaction.Transactional;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
-import java.util.Set;
 
 /**
  * Workspace management service.
@@ -55,10 +53,10 @@ public class WorkspaceService {
      * Retrieves the list of Boards associated with a specific Workspace.
      *
      * @param workspaceId the Workspace identifier
-     * @return a set of Boards associated with the Workspace
+     * @return a list of Boards associated with the Workspace
      * @throws RuntimeException if the Workspace with the specified ID does not exist.
      */
-    public Set<Board> getListBoardByWorkspaceId(Long workspaceId) {
+    public List<Board> getListBoardByWorkspaceId(Long workspaceId) {
        Workspace workspace = workspaceRepository.findById(workspaceId).orElseThrow(() -> new RuntimeException("Workspace not found"));
        return workspace.getBoards();
 
@@ -68,10 +66,10 @@ public class WorkspaceService {
      * Retrieves the list of workspaces associated with a specific user.
      *
      * @param userId the user's identifier
-     * @return a set of Workspaces associated with the user
+     * @return a list of Workspaces associated with the user
      * @throws RuntimeException if the user with the specified ID does not exist
      */
-    public Set<Workspace> getListWorkspaceByUserId(Long userId) {
+    public List<Workspace> getListWorkspaceByUserId(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
         return user.getWorkspaces();
     }

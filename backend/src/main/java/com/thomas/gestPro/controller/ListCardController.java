@@ -7,9 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-
-import java.util.Set;
+import java.util.List;
 
 
 @CrossOrigin("http://192.168.1.138:4200")
@@ -34,7 +32,7 @@ public class ListCardController {
 
 
     @GetMapping("{id}/cards")
-    public ResponseEntity<Set<Card>> getCardsByListCardId(@PathVariable Long id) {
+    public ResponseEntity<List<Card>> getCardsByListCardId(@PathVariable Long id) {
         return ResponseEntity.ok(listCardService.getCardsByListCardId(id));
     }
 

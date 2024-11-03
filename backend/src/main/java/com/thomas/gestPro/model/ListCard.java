@@ -7,8 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Entity
@@ -30,5 +30,5 @@ public class ListCard {
 
     @OneToMany(mappedBy = "listCard", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private Set<Card> cardList = new HashSet<>();
+    private List<Card> cardList = new ArrayList<>();
 }

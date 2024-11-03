@@ -9,8 +9,7 @@ import com.thomas.gestPro.repository.ListCardRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Set;
+import java.util.List;
 
 @Service
 public class ListCardService {
@@ -45,9 +44,9 @@ public class ListCardService {
      * Retrieves the set of cards associated with a given ListCard.
      *
      * @param id the ID of the ListCard
-     * @return the set of cards associated with the ListCard
+     * @return the list of cards associated with the ListCard
      */
-    public Set<Card> getCardsByListCardId(Long id) {
+    public List<Card> getCardsByListCardId(Long id) {
        return findListCardById(id).getCardList();
     }
 
