@@ -1,6 +1,5 @@
-import {Component, inject, OnInit, signal, Signal, WritableSignal} from '@angular/core';
+import {Component, inject, OnInit, signal, WritableSignal} from '@angular/core';
 import { BoardService } from '../../service/boards/board.service';
-import { Board } from '../../dao/board';
 import {ListCardComponent} from '../list-card/list-card.component';
 import {ActivatedRoute, RouterLink} from '@angular/router';
 import {FaIconComponent} from '@fortawesome/angular-fontawesome';

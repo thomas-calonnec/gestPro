@@ -8,13 +8,13 @@
   justify-content: center;
   align-items: center;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  box-shadow: 0px 4px 6px rgba(13, 110, 253, 0.1); /* Ombre légère par défaut */
+  box-shadow: 0 4px 6px rgba(13, 110, 253, 0.1); /* Ombre légère par défaut */
   text-align: center;
 }
 /* Style de l'effet au hover */
 .hover-card:hover {
   transform: translateY(-10px); /* Élève la carte */
-  box-shadow: 0px 8px 15px rgba(13, 110, 253, 0.3); /* Ombre plus prononcée */
+  box-shadow: 0 8px 15px rgba(13, 110, 253, 0.3); /* Ombre plus prononcée */
 }
 
 /* Style du titre */
