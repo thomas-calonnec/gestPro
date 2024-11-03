@@ -7,7 +7,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -33,8 +35,8 @@ public class Card {
     @JoinTable(name="tj_label_card",
             joinColumns = @JoinColumn(name = "card_id"),
             inverseJoinColumns = @JoinColumn(name = "label_id"))
-    private Set<Label> labels = new HashSet<>();
+    private List<Label> labels = new ArrayList<>();
 
     @ManyToMany(mappedBy = "cards")
-    private Set<User> users = new HashSet<>();
+    private List<User> users = new ArrayList<>();
 }

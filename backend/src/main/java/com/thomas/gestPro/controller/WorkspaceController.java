@@ -40,8 +40,8 @@ public class WorkspaceController {
 
 
     @GetMapping("{id}/boards")
-    public ResponseEntity<Set<Board>> getListBoardByWorkspaceId(@PathVariable Long id) {
-        Set<Board> boards = workspaceService.getListBoardByWorkspaceId(id);
+    public ResponseEntity<List<Board>> getListBoardByWorkspaceId(@PathVariable Long id) {
+        List<Board> boards = workspaceService.getListBoardByWorkspaceId(id);
         return new ResponseEntity<>(boards, HttpStatus.OK);
     }
 

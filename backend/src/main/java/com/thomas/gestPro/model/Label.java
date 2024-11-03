@@ -7,7 +7,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -25,5 +27,5 @@ public class Label {
 
     @ManyToMany(mappedBy = "labels")
     @JsonIgnore
-    private Set<Card> cards = new HashSet<>();
+    private List<Card> cards = new ArrayList<>();
 }

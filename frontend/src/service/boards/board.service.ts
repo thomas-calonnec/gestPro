@@ -3,13 +3,14 @@ import {Injectable, signal, WritableSignal} from '@angular/core';
 import { Observable } from 'rxjs';
 import { Board } from '../../dao/board';
 import { ListCard } from '../../dao/list-card';
+import {environment} from '../../environments/environment.development';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BoardService {
 
-  private apiServerUrl = 'api/boards';
+  private apiServerUrl = environment.apiUrl+'/boards';
 
   private boards : WritableSignal<Board[]> = signal<Board[]>([]);
 

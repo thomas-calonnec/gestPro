@@ -4,6 +4,8 @@ import {AuthService} from '../auth.service';
 import {FormsModule} from '@angular/forms';
 import {BoardService} from '../../service/boards/board.service';
 import {WorkspaceComponent} from '../workspace/workspace.component';
+import { FontAwesomeModule} from '@fortawesome/angular-fontawesome';
+import {faTable, faUser, faPerson, faUsers, faGear} from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-main',
@@ -12,15 +14,16 @@ import {WorkspaceComponent} from '../workspace/workspace.component';
     RouterLink,
     RouterOutlet,
     FormsModule,
-    WorkspaceComponent
+    WorkspaceComponent,
+    FontAwesomeModule
   ],
   templateUrl: './main.component.html',
   styleUrl: './main.component.css'
 })
 export class MainComponent implements OnInit {
-
+  faTable = faTable
   private authService : AuthService = inject(AuthService);
-  private workspaceId: string | null = null;
+  public workspaceId: string | null = null;
   private route : ActivatedRoute = inject(ActivatedRoute);
   public boardService = inject(BoardService)
   public boards  = computed(() => this.boardService.getBoards()());
@@ -33,10 +36,9 @@ export class MainComponent implements OnInit {
 
     this.route.firstChild?.paramMap.subscribe((param) => {
       this.workspaceId = param.get('workspaceId');
-      console.log(this.workspaceId)
+
     })
 
-    console.log("vrai")
     this.loggedIn = true;
   }
 
@@ -49,4 +51,8 @@ export class MainComponent implements OnInit {
   }
 
 
+  protected readonly faPerson = faPerson;
+  protected readonly faUser = faUser;
+  protected readonly faUsers = faUsers;
+  protected readonly faGear = faGear;
 }

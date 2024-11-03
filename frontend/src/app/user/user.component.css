@@ -25,11 +25,11 @@
   margin: 0;
 }
 /* Centre le contenu de la page pour un effet d'espace de travail */
-.container {
+.containerWorkspace {
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
   padding: 40px;
-  justify-content: center;
+
 }
 
