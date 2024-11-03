@@ -8,10 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/api/workspaces")
@@ -40,8 +37,8 @@ public class WorkspaceController {
 
 
     @GetMapping("{id}/boards")
-    public ResponseEntity<Set<Board>> getListBoardByWorkspaceId(@PathVariable Long id) {
-        Set<Board> boards = workspaceService.getListBoardByWorkspaceId(id);
+    public ResponseEntity<List<Board>> getListBoardByWorkspaceId(@PathVariable Long id) {
+        List<Board> boards = workspaceService.getListBoardByWorkspaceId(id);
         return new ResponseEntity<>(boards, HttpStatus.OK);
     }
 

@@ -1,20 +1,19 @@
-import { Component } from '@angular/core';
+import {Component, Input} from '@angular/core';
 
 @Component({
   selector: 'app-card',
   standalone: true,
   imports: [],
-  template:`<div class="card" style="width: 18rem;">
-  <div class="card-body">
-    <h5 class="card-title">Card title</h5>
-    <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
-    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-    <a href="#" class="card-link">Card link</a>
-    <a href="#" class="card-link">Another link</a>
-  </div>
-</div>`,
+  template:`<div class="card-content">
+    <!--  <div class="status-badges">
+        <span class="badge badge-green">d</span>
+        <span class="badge badge-yellow">Oct 4</span>
+        <span class="badge badge-blue">6/6</span>
+      </div>-->
+    <div class="task-name">{{ taskName }}</div>
+  </div>`,
   styleUrl: './card.component.css'
 })
 export class CardComponent {
-
+@Input() taskName = "";
 }

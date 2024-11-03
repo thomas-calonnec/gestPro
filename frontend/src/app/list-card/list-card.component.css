@@ -1,0 +1,73 @@
+.card-container {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem !important ;
+}
+
+.card {
+  display: flex;
+  position: relative;
+  box-sizing: border-box;
+  flex-basis: 272px;
+  flex-direction: column;
+  flex-grow: 0;
+  flex-shrink: 0;
+  align-self: start;
+  justify-content: space-between;
+  width: 272px;
+  max-height: 100%;
+  padding-bottom: 8px;
+  margin-left: 0.7rem;
+  margin-right: 0.7rem;
+  border-radius: 8px;
+  background-color: #2A3E52;
+  box-shadow: var(--ds-shadow-raised, 0px 1px 1px #091e4240, 0px 0px 1px #091e424f);
+  /*color: var(--accent-text, var(--ds-text-subtle, #44546f));*/
+  vertical-align: top;
+  white-space: normal;
+  scroll-margin: 8px;
+}
+.card2 {
+  width: 272px; /* Largeur de la carte */
+  background-color: #ffffff; /* Fond sombre */
+  border-radius: 10px; /* Coins arrondis */
+
+  padding: 1rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Ombre pour le relief */
+  font-family: Arial, sans-serif;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  background-color: #2A3E52;
+  align-items: center;
+  font-weight: bold;
+  color: #ffffff;
+}
+
+.card-header .title {
+  font-size: 1rem;
+  text-transform: capitalize; /* Pour mettre les premières lettres en majuscule */
+}
+
+.card-header .icons {
+  display: flex;
+  gap: 0.5rem;
+  font-size: 1rem;
+}
+
+
+
+.card-footer {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: #b5b5b5; /* Texte plus clair pour le pied de la carte */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.card-footer:hover {
+  color: #ffffff;
+}

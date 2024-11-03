@@ -14,7 +14,7 @@ export class WorkspaceService {
 
   constructor(private http: HttpClient) { }
 
-  public getBoards(workspaceId: number) : Observable<Board[]> {
+  public getBoards(workspaceId: string | null) : Observable<Board[]> {
     return this.http.get<Board[]>(`${this.apiServerUrl}/${workspaceId}/boards`);
   }
 

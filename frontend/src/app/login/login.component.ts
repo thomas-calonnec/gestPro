@@ -18,6 +18,7 @@ export class LoginComponent {
   userService: UserService = inject(UserService);
   router : Router = inject(Router);
 
+  userId: number = 0
   constructor(private fb: FormBuilder) {
     this.myForm = this.fb.group({
       username: ['', Validators.required],
@@ -34,11 +35,17 @@ export class LoginComponent {
    this.authService.login(username,password).subscribe({
     next: () => {
 
-      //const userId = response.id
+
+      this.userService.getUserByUsername(username).subscribe({
+        next: (user) => {
+          this.userId = user.id;
+          this.router.navigateByUrl(`users/${this.userId}/workspaces`).then(r => console.log(r))
+        }
+      })
      // console.log(userId)
       //const headers = new HttpHeaders().set('Authorization', `Bearer ${this.authService.getToken()}`);
 
-      this.router.navigateByUrl(`users/1/workspaces`).then(r => console.log(r))
+
     },
     error: (error: HttpErrorResponse) => {
       console.error('Login failed ', error);
