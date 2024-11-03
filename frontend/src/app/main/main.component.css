@@ -12,11 +12,20 @@
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 main {
-  background: linear-gradient(135deg, #f4f7fb, #e6f1f5); /* Dégradé doux du gris clair au bleu pastel */
+  background-color: #ebf1fb;/* Dégradé doux du gris clair au bleu pastel */
   min-height: 100vh;
   margin: 0;
   width: 100%;
   font-family: Arial, sans-serif; /* Police simple et professionnelle */
+}
+.custom-list {
+  list-style-type: none; /* Supprime les marqueurs par défaut */
+
+}
+
+.custom-list li {
+  margin-bottom: 10px; /* Ajoute un espacement entre les éléments de la liste */
+  /* Ajoutez d'autres styles ici si nécessaire */
 }
 
 /* Styles pour le panneau latéral */
@@ -24,6 +33,7 @@ main {
   flex: 0 0 250px; /* Sidebar fixe de 250px */
   background-color: #2c3e50; /* Couleur de fond */
   color: white;
+  opacity: 0.4;
   padding: 20px;
 }
 

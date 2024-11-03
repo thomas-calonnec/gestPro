@@ -1,0 +1,34 @@
+/* Style de base de la carte */
+.hover-card {
+  width: 300px;
+  height: 150px;
+  background-color: #ffffff; /* Couleur de fond blanche */
+  border-radius: 15px; /* Bords arrondis */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0px 4px 6px rgba(13, 110, 253, 0.1); /* Ombre légère par défaut */
+  text-align: center;
+}
+/* Style de l'effet au hover */
+.hover-card:hover {
+  transform: translateY(-10px); /* Élève la carte */
+  box-shadow: 0px 8px 15px rgba(13, 110, 253, 0.3); /* Ombre plus prononcée */
+}
+
+/* Style du titre */
+.card-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333; /* Couleur du texte */
+  margin: 0;
+}
+/* Centre le contenu de la page pour un effet d'espace de travail */
+.containerBoard {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding: 40px;
+
+}

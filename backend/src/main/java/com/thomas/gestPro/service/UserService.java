@@ -160,7 +160,7 @@ public class UserService {
 
     }
 
-    public Set<Workspace> getWorkspacesByUserId(Long userId) {
+    public List<Workspace> getWorkspacesByUserId(Long userId) {
         return this.getById(userId).getWorkspaces();
     }
 

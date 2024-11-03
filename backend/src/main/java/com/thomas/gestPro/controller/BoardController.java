@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
+import java.util.List;
 import java.util.Set;
 
 @CrossOrigin(origins = "http://192.168.1.138:4200", allowCredentials = "true")
@@ -27,9 +28,9 @@ public class BoardController {
         return ResponseEntity.ok(boardService.getBoardById(id));
     }
 
-    @GetMapping("/{boardName}/listCards")
-    public ResponseEntity<Set<ListCard>> getListCard(@PathVariable String boardName) {
-        Set<ListCard> listCards = boardService.getCardsByBoardName(boardName);
+    @GetMapping("/{id}/listCards")
+    public ResponseEntity<List<ListCard>> getListCard(@PathVariable Long id) {
+        List<ListCard> listCards = boardService.getCardsByBoardId(id);
         return ResponseEntity.ok(listCards);
     }
 

@@ -2,19 +2,24 @@ import {Component, computed, inject, OnInit} from '@angular/core';
 import {Board} from '../../dao/board';
 import {WorkspaceService} from '../../service/workspaces/workspace.service';
 import {HttpErrorResponse} from '@angular/common/http';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, RouterLink} from '@angular/router';
 import {BoardService} from '../../service/boards/board.service';
 
 @Component({
   selector: 'app-workspace',
   standalone: true,
-  imports: [],
+  imports: [
+    RouterLink
+  ],
   template: `
-    <ul>
-    @for(board of this.boards() ; track board.id){
-         <li>{{ board.name}}</li>
-  }
-    </ul>
+    <div class="containerBoard">
+      @for(board of this.boards(); track board.id){
+        <div class="hover-card">
+          <a style=" text-decoration: none;" routerLink="/boards/{{board.id}}"><h3 class="card-title">{{ board.name }}</h3></a>
+        </div>
+
+      } </div>
+
   `,
   styleUrl: './workspace.component.css'
 })

@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
+import java.util.List;
 import java.util.Set;
 
 
@@ -34,7 +35,7 @@ public class ListCardController {
 
 
     @GetMapping("{id}/cards")
-    public ResponseEntity<Set<Card>> getCardsByListCardId(@PathVariable Long id) {
+    public ResponseEntity<List<Card>> getCardsByListCardId(@PathVariable Long id) {
         return ResponseEntity.ok(listCardService.getCardsByListCardId(id));
     }
 

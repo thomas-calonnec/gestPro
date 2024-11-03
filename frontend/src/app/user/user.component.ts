@@ -11,7 +11,7 @@ import {ActivatedRoute, RouterLink} from '@angular/router';
   ],
   template: `
 
-<div class="container">
+<div class="containerWorkspace">
     @for(workspace of workspaces; track workspace.id){
       <div class="hover-card">
         <a style=" text-decoration: none;" routerLink="/workspaces/{{workspace.id}}/boards"><h3 class="card-title">{{ workspace.name }}</h3></a>

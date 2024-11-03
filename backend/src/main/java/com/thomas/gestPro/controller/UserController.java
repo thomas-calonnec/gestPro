@@ -10,6 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Set;
 
 @CrossOrigin(value = "http://192.168.1.138:4200", allowCredentials = "true")
@@ -49,7 +50,7 @@ public class UserController {
    }
 
     @GetMapping("{id}/workspaces")
-    public ResponseEntity<Set<Workspace>> getWorkspaceByUserId(@PathVariable Long id) {
+    public ResponseEntity<List<Workspace>> getWorkspaceByUserId(@PathVariable Long id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication != null && authentication.isAuthenticated()) {
