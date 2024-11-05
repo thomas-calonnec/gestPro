@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
-@CrossOrigin("http://192.168.1.138:4200")
+@CrossOrigin("http://localhost:4200")
 @RestController
 @RequestMapping("/api/cards")
 public class CardController {

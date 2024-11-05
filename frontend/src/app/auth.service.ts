@@ -9,7 +9,7 @@ import {jwtDecode} from 'jwt-decode';
 })
 export class AuthService {
 
-  private apiServerUrl = 'http://192.168.1.138:8080/loginForm';
+  private apiServerUrl = 'http://localhost:8080/loginForm';
   private http = inject(HttpClient);
   private router : Router = inject(Router);
   private readonly TOKEN_KEY = "JwtToken";

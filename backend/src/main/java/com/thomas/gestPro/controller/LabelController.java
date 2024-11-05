@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/labels")
-@CrossOrigin(origins = "http://192.168.1.138:4200", allowCredentials = "true")
+@CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
 public class LabelController {
 
     private final LabelService labelService;
