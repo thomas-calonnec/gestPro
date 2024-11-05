@@ -1,4 +1,4 @@
-import {Injectable, Signal, signal, WritableSignal} from '@angular/core';
+import {Injectable, Signal, signal} from '@angular/core';
 import {Workspace} from '../../dao/workspace';
 import {Board} from '../../dao/board';
 

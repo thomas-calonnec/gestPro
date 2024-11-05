@@ -5,6 +5,7 @@ import {ActivatedRoute, RouterLink} from '@angular/router';
 import {FaIconComponent} from '@fortawesome/angular-fontawesome';
 import {ListCard} from '../../dao/list-card';
 import {MainService} from '../../service/main/main.service';
+
 @Component({
   selector: 'app-board',
   standalone: true,
