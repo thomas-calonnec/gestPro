@@ -1,8 +1,9 @@
-import {Component, computed, inject, OnInit} from '@angular/core';
+import {Component, inject, OnInit, signal, WritableSignal} from '@angular/core';
 import {Board} from '../../dao/board';
 import {WorkspaceService} from '../../service/workspaces/workspace.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {ActivatedRoute, RouterLink} from '@angular/router';
+import {MainService} from '../../service/main/main.service';
 import {BoardService} from '../../service/boards/board.service';
 
 @Component({
@@ -13,7 +14,7 @@ import {BoardService} from '../../service/boards/board.service';
   ],
   template: `
     <div class="containerBoard">
-      @for(board of this.boards(); track board.id){
+      @for(board of this.boardService.boards(); track board.id){
         <div class="hover-card">
           <a style=" text-decoration: none;" routerLink="/boards/{{board.id}}"><h3 class="card-title">{{ board.name }}</h3></a>
         </div>
@@ -27,21 +28,25 @@ export class WorkspaceComponent implements OnInit{
 
   private workspaceId : string | null = "null";
    workspaceService: WorkspaceService = inject(WorkspaceService);
+   mainService: MainService = inject(MainService)
+  boardService: BoardService = inject(BoardService);
   private route: ActivatedRoute = inject(ActivatedRoute);
-  boardService = inject(BoardService)
-
-  public boards  = computed(() => this.boardService.getBoards()());
+  boards : WritableSignal<Board[]> = signal<Board[]>([]);
 
 
   ngOnInit(): void {
-    this.workspaceId = this.route.snapshot.params['workspaceId'];
+    this.workspaceId = this.route.snapshot.params['id'];
+
     this.getBoards(this.workspaceId);
+
   }
   public getBoards(workspaceId: string | null) : void {
 
     this.workspaceService.getBoards(workspaceId).subscribe({
         next: (data: Board[]) => {
-          this.boardService.setBoards(data)
+          this.boardService.updateBoards(data);
+          this.mainService.setBoards(data);
+          console.log(this.mainService.getListBoards())
         },
         error: (error: HttpErrorResponse) => {
           alert("error -> " + error.message)

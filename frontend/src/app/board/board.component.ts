@@ -4,6 +4,7 @@ import {ListCardComponent} from '../list-card/list-card.component';
 import {ActivatedRoute, RouterLink} from '@angular/router';
 import {FaIconComponent} from '@fortawesome/angular-fontawesome';
 import {ListCard} from '../../dao/list-card';
+import {MainService} from '../../service/main/main.service';
 @Component({
   selector: 'app-board',
   standalone: true,
@@ -16,7 +17,7 @@ import {ListCard} from '../../dao/list-card';
     <div style="display: flex; flex-direction: row">
     @for(list of listCard(); track list.id) {
 
-    <app-list-card [title]="list.name"></app-list-card>
+    <app-list-card [listCardId]="list.id" [title]="list.name"></app-list-card>
 
   }</div>` ,
   styleUrl: './board.component.css'
@@ -25,6 +26,7 @@ export class BoardComponent implements OnInit{
 
   public listCard: WritableSignal<ListCard[]> = signal<ListCard[]>([]);
   public boardService : BoardService = inject(BoardService);
+  mainService : MainService = inject(MainService)
   private route : ActivatedRoute = inject(ActivatedRoute);
   private boardId : number = 0;
 
@@ -32,6 +34,8 @@ export class BoardComponent implements OnInit{
 
     this.boardId = this.route.snapshot.params['id'];
     this.getListCards(this.boardId)
+
+    console.log(this.mainService.getListBoards())
 
   }
 

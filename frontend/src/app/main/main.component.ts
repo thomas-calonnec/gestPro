@@ -1,11 +1,14 @@
-import {Component, computed, inject, OnInit} from '@angular/core';
+import {Component, inject, OnInit} from '@angular/core';
 import {ActivatedRoute, RouterLink, RouterOutlet} from "@angular/router";
 import {AuthService} from '../auth.service';
 import {FormsModule} from '@angular/forms';
-import {BoardService} from '../../service/boards/board.service';
 import {WorkspaceComponent} from '../workspace/workspace.component';
 import { FontAwesomeModule} from '@fortawesome/angular-fontawesome';
-import {faTable, faUser, faPerson, faUsers, faGear} from '@fortawesome/free-solid-svg-icons';
+import {WorkspaceService} from '../../service/workspaces/workspace.service';
+import {Board} from '../../dao/board';
+import {MainService} from '../../service/main/main.service';
+import {Workspace} from '../../dao/workspace';
+import {SidebarComponent} from '../sidebar/sidebar.component';
 
 @Component({
   selector: 'app-main',
@@ -15,44 +18,46 @@ import {faTable, faUser, faPerson, faUsers, faGear} from '@fortawesome/free-soli
     RouterOutlet,
     FormsModule,
     WorkspaceComponent,
-    FontAwesomeModule
+    FontAwesomeModule,
+    SidebarComponent
   ],
   templateUrl: './main.component.html',
   styleUrl: './main.component.css'
 })
 export class MainComponent implements OnInit {
-  faTable = faTable
+
   private authService : AuthService = inject(AuthService);
+  public workspaceService : WorkspaceService = inject(WorkspaceService);
   public workspaceId: string | null = null;
   private route : ActivatedRoute = inject(ActivatedRoute);
-  public boardService = inject(BoardService)
-  public boards  = computed(() => this.boardService.getBoards()());
+  public mainService = inject(MainService)
+  public boards: Board[]  = []
+  public workspace : Workspace | undefined;
+
+
   loggedIn = true
 
 
   ngOnInit() {
 
     //this.workspaceId = this.route.snapshot.paramMap.get('workspaceId');
-
+    this.boards = this.mainService.getListBoards();
     this.route.firstChild?.paramMap.subscribe((param) => {
-      this.workspaceId = param.get('workspaceId');
-
+      this.workspaceId = param.get('id');
     })
 
-    this.loggedIn = true;
+
   }
 
+  getBoard(){
 
+  }
 
   logout() {
     this.loggedIn = false;
-    this.boards().pop();
+
     this.authService.logout();
   }
 
 
-  protected readonly faPerson = faPerson;
-  protected readonly faUser = faUser;
-  protected readonly faUsers = faUsers;
-  protected readonly faGear = faGear;
 }
