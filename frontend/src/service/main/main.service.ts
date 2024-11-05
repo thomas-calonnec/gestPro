@@ -1,4 +1,4 @@
-import {Injectable, Signal, signal, WritableSignal} from '@angular/core';
+import {Injectable, Signal, signal} from '@angular/core';
 import {Workspace} from '../../dao/workspace';
 import {Board} from '../../dao/board';
 
@@ -9,7 +9,7 @@ export class MainService {
 
   public workspace : Workspace | undefined;
   public boards : Signal<Board[]> = signal<Board[]>([]);
-  //public boards : Board[] = []
+ //public boards : Board[] = []
   public setWorkspace(workspace : Workspace) {
     this.workspace = workspace;
   }
@@ -18,7 +18,7 @@ export class MainService {
   }
 
   setBoards(boards : Board[]) {
-    // this.boards.bind(boards);
+   // this.boards.bind(boards);
     this.boards.bind(boards);
   }
   getListBoards(): Board[] {
