@@ -1,8 +1,9 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import { Observable } from 'rxjs';
 import { Board } from '../../dao/board';
 import { HttpClient } from '@angular/common/http';
 import {environment} from '../../environments/environment.development';
+import {Workspace} from '../../dao/workspace';
 
 
 @Injectable({
@@ -16,6 +17,9 @@ export class WorkspaceService {
 
   public getBoards(workspaceId: string | null) : Observable<Board[]> {
     return this.http.get<Board[]>(`${this.apiServerUrl}/${workspaceId}/boards`);
+  }
+  public getWorkspaceById(workspaceId: string | null) : Observable<Workspace> {
+    return this.http.get<Workspace>(`${this.apiServerUrl}/${workspaceId}`);
   }
 
 

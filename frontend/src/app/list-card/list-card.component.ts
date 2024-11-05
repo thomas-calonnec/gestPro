@@ -1,7 +1,6 @@
 import {Component, OnInit, inject, signal, Input, WritableSignal} from '@angular/core';
 import { Card } from '../../dao/card';
 import { ListCardService } from '../../service/list-cards/list-card.service';
-import { ActivatedRoute } from '@angular/router';
 import {CardComponent} from '../card/card.component';
 
 @Component({
@@ -36,13 +35,12 @@ import {CardComponent} from '../card/card.component';
 })
 export class ListCardComponent implements OnInit {
   @Input() title = '';
+  @Input() listCardId = 0;
   public cards : WritableSignal<Card[]> = signal<Card[]>([]);
-  private listCardId : number = 0;
+
   public listCardService = inject(ListCardService);
-  private route : ActivatedRoute = inject(ActivatedRoute);
 
   ngOnInit(): void {
-    this.listCardId = this.route.snapshot.params['id'];
     this.getListCard(this.listCardId);
 
   }
