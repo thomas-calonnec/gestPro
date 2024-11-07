@@ -105,9 +105,9 @@ public class BoardService {
     @Transactional
     public ListCard createListCard(Long boardId, ListCard listCard) {
         Board existingboard =  getBoardById(boardId);
-       listCard.setBoard(existingboard);
+        listCard.setBoard(existingboard);
 
-       listCardRepository.save(listCard);
+        listCardRepository.save(listCard);
        // existingboard.getListCards().add(listCard);
         boardRepository.save(existingboard);
 

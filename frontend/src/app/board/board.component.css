@@ -1,0 +1,9 @@
+.buttonAddList {
+  height: 50px;
+  width: 272px;
+  margin: 16px;
+  border-radius: 12px ;
+  border-color: #0c66e4;
+  background-color: whitesmoke; color: #0c66e4;
+  opacity: 0.8;
+}
