@@ -20,7 +20,6 @@ export class BoardService {
 
   constructor(private http: HttpClient) { }
 
-
   public getBoardById(boardId: number) : Observable<Board> {
     return this.http.get<Board>(`${this.apiServerUrl}/${boardId}`);
   }
@@ -30,7 +29,7 @@ export class BoardService {
   }
 
   public createListCard(boardId: number, listCard : ListCard): Observable<ListCard>{
-    return this.http.put<ListCard>(`${this.apiServerUrl}/${boardId}`,listCard);
+    return this.http.put<ListCard>(`${this.apiServerUrl}/${boardId}/listCards`,listCard);
   }
 
   public updateListCard(boardId: number, listCard: ListCard): Observable<ListCard>{
