@@ -1,10 +1,12 @@
-import {Component, inject, OnInit, signal, WritableSignal} from '@angular/core';
+import {Component, EventEmitter, inject, OnInit, Output, signal, WritableSignal} from '@angular/core';
 import { BoardService } from '../../service/boards/board.service';
 import {ListCardComponent} from '../list-card/list-card.component';
 import {ActivatedRoute, RouterLink} from '@angular/router';
 import {FaIconComponent} from '@fortawesome/angular-fontawesome';
 import {ListCard} from '../../dao/list-card';
 import {MainService} from '../../service/main/main.service';
+import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {ListCardService} from '../../service/list-cards/list-card.service';
 
 @Component({
   selector: 'app-board',
@@ -12,25 +14,45 @@ import {MainService} from '../../service/main/main.service';
   imports: [
     ListCardComponent,
     RouterLink,
-    FaIconComponent
+    FaIconComponent,
+    ReactiveFormsModule
   ],
-  template:`
-    <div style="display: flex; flex-direction: row">
-    @for(list of listCard(); track list.id) {
-
-    <app-list-card [listCardId]="list.id" [title]="list.name"></app-list-card>
-
-  }</div>` ,
+  templateUrl:'board.component.html' ,
   styleUrl: './board.component.css'
 })
 export class BoardComponent implements OnInit{
-
+  myForm : FormGroup;
   public listCard: WritableSignal<ListCard[]> = signal<ListCard[]>([]);
+  public listCardService : ListCardService = inject(ListCardService);
   public boardService : BoardService = inject(BoardService);
   mainService : MainService = inject(MainService)
   private route : ActivatedRoute = inject(ActivatedRoute);
   private boardId : number = 0;
+  protected isClicked: boolean = false;
+  @Output() listCardAdded = new EventEmitter<ListCard>();
 
+  formBuilder : FormBuilder = inject(FormBuilder);
+  constructor() {
+    this.myForm = this.formBuilder.group({
+      name: ['', Validators.required],
+
+    });
+  }
+  buttonClicked() {
+    this.isClicked = true;
+  }
+  addList() {
+   const listCard: ListCard =  this.myForm.value;
+
+   this.boardService.createListCard(this.boardId,listCard).subscribe({
+     next: (data: ListCard) =>{
+       this.isClicked = false;
+       this.listCard().push(data);
+     }
+   })
+
+
+  }
   ngOnInit() {
 
     this.boardId = this.route.snapshot.params['id'];
