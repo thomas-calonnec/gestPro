@@ -1,33 +1,19 @@
 
+<div style="display: flex; flex-direction: row">
+  @for(list of listCard(); track list.id) {
 
+    <app-list-card [listCardId]="list.id" [title]="list.name"></app-list-card>
 
-<div class="card-container">
-  <div class="card">
-    <div class="card-header">
-      <span class="title">Partie backend</span>
-      <div class="icons">
-        <i class="fa-solid fa-arrows-up-down-left-right"></i> <!-- Icône de déplacement -->
-        <i class="fa-solid fa-ellipsis"></i> <!-- Icône de menu -->
-      </div>
+  }
+  @if(!isClicked) {
+    <button class="buttonAddList"
+            (click)="buttonClicked()">  <i class="fa-solid fa-circle-plus"></i> Add an another list</button>
+  } @else {
+    <div class="buttonAddList">
+    <form  [formGroup]="myForm" (ngSubmit)="addList()">
+      <input formControlName="name">
+      <button type="submit" class="bg-primary"> Add a list </button>
+    </form>
     </div>
-    <div class="card-content">
-    <!--  <div class="status-badges">
-        <span class="badge badge-green">d</span>
-        <span class="badge badge-yellow">Oct 4</span>
-        <span class="badge badge-blue">6/6</span>
-      </div>-->
-      <div class="task-name">Java Spring Boot</div>
-    </div>
-    <div class="card-footer">
-      <div style="margin-right: 10px;"> <i class="fa-solid fa-circle-plus"></i></div>  Add a card
-    </div>
-  </div>
+  }
 </div>
-<!--<div class="container">
-  @for(board of this.boards(); track board.id){
-    <div class="hover-card">
-      <a style=" text-decoration: none;" routerLink="/boards/{{board.id}}"><h3 class="card-title">{{ board.name }}</h3></a>
-    </div>
-
-  } </div>-->
-
