@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import {AuthService} from '../auth.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {UserService} from '../../service/users/user.service';
+import {MainService} from '../../service/main/main.service';
 
 @Component({
   selector: 'app-login',
@@ -16,6 +17,7 @@ export class LoginComponent {
   myForm: FormGroup;
   authService: AuthService = inject(AuthService);
   userService: UserService = inject(UserService);
+  mainService: MainService = inject(MainService);
   router : Router = inject(Router);
 
   userId: number = 0
@@ -39,6 +41,7 @@ export class LoginComponent {
       this.userService.getUserByUsername(username).subscribe({
         next: (user) => {
           this.userId = user.id;
+
           this.router.navigateByUrl(`users/${this.userId}/workspaces`).then(r => console.log(r))
         }
       })

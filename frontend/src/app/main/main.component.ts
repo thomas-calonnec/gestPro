@@ -31,17 +31,14 @@ export class MainComponent implements OnInit {
   public workspaceId: string | null = null;
   private route : ActivatedRoute = inject(ActivatedRoute);
   public mainService = inject(MainService)
-  public boards: Board[]  = []
   public workspace : Workspace | undefined;
 
-
   loggedIn = true
-
 
   ngOnInit() {
 
     //this.workspaceId = this.route.snapshot.paramMap.get('workspaceId');
-    this.boards = this.mainService.getListBoards();
+    //this.boards = this.mainService.getListBoards();
     this.route.firstChild?.paramMap.subscribe((param) => {
       this.workspaceId = param.get('id');
     })
@@ -55,7 +52,6 @@ export class MainComponent implements OnInit {
 
   logout() {
     this.loggedIn = false;
-
     this.authService.logout();
   }
 

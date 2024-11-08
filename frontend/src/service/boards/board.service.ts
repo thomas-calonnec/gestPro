@@ -12,12 +12,6 @@ export class BoardService {
 
   private apiServerUrl = environment.apiUrl+'/boards';
 
-   boards : WritableSignal<Board[]> = signal<Board[]>([]);
-
-  updateBoards(boards: Board[]) {
-    this.boards.set(boards);
-  }
-
   constructor(private http: HttpClient) { }
 
   public getBoardById(boardId: number) : Observable<Board> {
