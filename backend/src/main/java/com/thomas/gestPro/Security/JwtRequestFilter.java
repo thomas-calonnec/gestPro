@@ -33,7 +33,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         final String authorizationHeader = request.getHeader("Authorization");
-
+        System.err.println("auth : " + authorizationHeader);
         String username = null;
         String jwt = null;
 
@@ -50,7 +50,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             headersInfo.append(headerName).append(": ").append(headerValue).append("\n");
         }
 
-        System.err.println("Authorization header: " + headersInfo);
+        //System.err.println("Authorization header: " + headersInfo);
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             jwt = authorizationHeader.substring(7);
             username = jwtTokenUtil.extractUsername(jwt);
@@ -58,7 +58,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-            System.err.println("User : " + userDetails.getUsername() + "Auth :" + userDetails.getAuthorities());
+            //System.err.println("User : " + userDetails.getUsername() + "Auth :" + userDetails.getAuthorities());
             if (jwtTokenUtil.validateToken(jwt, userDetails)) {
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities()); // Les rôles sont inclus ici

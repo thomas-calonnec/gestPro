@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(value = "http://localhost:4200", allowCredentials = "true")
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -25,7 +25,6 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getById(id));
     }
@@ -51,7 +50,7 @@ public class UserController {
     @GetMapping("{id}/workspaces")
     public ResponseEntity<List<Workspace>> getWorkspaceByUserId(@PathVariable Long id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
+        System.err.println(authentication);
         if (authentication != null && authentication.isAuthenticated()) {
             boolean hasUserRole = authentication.getAuthorities().stream()
                     .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_USER"));

@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { HorizontalComponent } from './horizontal.component';
+import { HorizontalDragDropExampleComponent } from './horizontal.component';
 
 describe('HorizontalComponent', () => {
-  let component: HorizontalComponent;
-  let fixture: ComponentFixture<HorizontalComponent>;
+  let component: HorizontalDragDropExampleComponent;
+  let fixture: ComponentFixture<HorizontalDragDropExampleComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [HorizontalComponent]
+      imports: [HorizontalDragDropExampleComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(HorizontalComponent);
+    fixture = TestBed.createComponent(HorizontalDragDropExampleComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
