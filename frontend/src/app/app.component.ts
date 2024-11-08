@@ -18,5 +18,6 @@ import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 })
 export class AppComponent  {
 
+  title = "test"
 
 }

@@ -1,6 +1,6 @@
 import {inject, Injectable} from '@angular/core';
 import { Observable, tap } from 'rxjs';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Router} from '@angular/router';
 import {jwtDecode} from 'jwt-decode';
 
@@ -52,6 +52,7 @@ export class AuthService {
   }
   login(username: string, password: string): Observable<any> {
     this.authenticated =  true;
+
     return this.http.post<any>(this.apiServerUrl , {username, password},{  withCredentials: true }).pipe(
       tap((response) => {
         //this._currentUser.set(response);
