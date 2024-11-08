@@ -60,6 +60,11 @@ export class UserService {
   }
 
   public getUserByUsername(username: string): Observable<User>{
-    return this.http.get<User>(`${this.apiServerUrl}/username/${username}`);
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${this.authService.getToken()}`, // Ajouter le token JWT dans l'en-tête Authorization
+      'Content-Type': 'application/json'
+    });
+console.log(headers)
+    return this.http.get<User>(`${this.apiServerUrl}/username/${username}`, {headers});
   }
 }
