@@ -2,20 +2,22 @@ import {Component, OnInit, inject, signal, Input, WritableSignal} from '@angular
 import { Card } from '../../dao/card';
 import { ListCardService } from '../../service/list-cards/list-card.service';
 import {CardComponent} from '../card/card.component';
+import {HorizontalDragDropExampleComponent} from '../horizontal/horizontal.component';
 
 @Component({
   selector: 'app-list-card',
   standalone: true,
   imports: [
-    CardComponent
+    CardComponent,
+    HorizontalDragDropExampleComponent
   ],
   template: `
+
     <div class="card-container">
       <div class="card">
         <div class="card-header">
           <span class="title">{{ title }}</span>
           <div class="icons">
-            <i class="fa-solid fa-arrows-up-down-left-right"></i> <!-- Icône de déplacement -->
             <i class="fa-solid fa-ellipsis"></i> <!-- Icône de menu -->
           </div>
         </div>

@@ -14,7 +14,7 @@ import {BoardService} from '../../service/boards/board.service';
   ],
   template: `
     <div class="containerBoard">
-      @for(board of this.boardService.boards(); track board.id){
+      @for(board of this.mainService.boards()[0]; track board.id){
         <div class="hover-card">
           <a style=" text-decoration: none;" routerLink="/boards/{{board.id}}"><h3 class="card-title">{{ board.name }}</h3></a>
         </div>
@@ -31,12 +31,11 @@ export class WorkspaceComponent implements OnInit{
    mainService: MainService = inject(MainService)
   boardService: BoardService = inject(BoardService);
   private route: ActivatedRoute = inject(ActivatedRoute);
-  boards : WritableSignal<Board[]> = signal<Board[]>([]);
+
 
 
   ngOnInit(): void {
     this.workspaceId = this.route.snapshot.params['id'];
-
     this.getBoards(this.workspaceId);
 
   }
@@ -44,9 +43,13 @@ export class WorkspaceComponent implements OnInit{
 
     this.workspaceService.getBoards(workspaceId).subscribe({
         next: (data: Board[]) => {
-          this.boardService.updateBoards(data);
+          //this.boardService.updateBoards(data);
           this.mainService.setBoards(data);
-          console.log(this.mainService.getListBoards())
+          if (typeof this.workspaceId === "string") {
+            localStorage.setItem("workspaceId", this.workspaceId);
+          }
+          //this.boardService.boards().push(data);
+         // console.log(this.mainService.getListBoards())
         },
         error: (error: HttpErrorResponse) => {
           alert("error -> " + error.message)
