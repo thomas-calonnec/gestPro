@@ -79,7 +79,7 @@ export class AuthService {
 
   logout() : void{
     this.removeToken()
-
+    localStorage.removeItem("workspaceId");
     this.router.navigate(['/login']); // Rediriger vers la page de login après logout
 
   }

@@ -2,6 +2,7 @@ import {Component, EventEmitter, inject, OnInit, Output} from '@angular/core';
 import {Workspace} from '../../dao/workspace';
 import {UserService} from '../../service/users/user.service';
 import {ActivatedRoute, RouterLink} from '@angular/router';
+import {MainService} from '../../service/main/main.service';
 
 @Component({
   selector: 'app-user',
@@ -25,12 +26,15 @@ export class UserComponent implements  OnInit{
   userId: string = "";
   userService : UserService = inject(UserService);
   route : ActivatedRoute = inject(ActivatedRoute);
+  mainService : MainService = inject(MainService);
   @Output() paramId  = new EventEmitter<string>();
 
   ngOnInit(): void{
     this.userId = this.route.snapshot.params['userId'];
     this.paramId.emit(this.userId);
     this.getWorkspaces();
+    localStorage.removeItem("workspaceId")
+    this.mainService.removeListBoard()
 
   }
 

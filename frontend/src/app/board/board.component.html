@@ -1,8 +1,9 @@
-
-<div style="display: flex; flex-direction: row">
+<app-horizontal-drag-drop></app-horizontal-drag-drop>
+<!--<div style="display: flex; flex-direction: row">-->
+<div cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="drop($event)" )>
   @for(list of listCard(); track list.id) {
 
-    <app-list-card [listCardId]="list.id" [title]="list.name"></app-list-card>
+    <app-list-card [listCardId]="list.id" [title]="list.name" cdkDrag></app-list-card>
 
   }
   @if(!isClicked) {
@@ -11,7 +12,7 @@
   } @else {
     <div class="buttonAddList">
     <form  [formGroup]="myForm" (ngSubmit)="addList()">
-      <input formControlName="name">
+      <input formControlName="name" required="required">
       <button type="submit" class="bg-primary"> Add a list </button>
     </form>
     </div>

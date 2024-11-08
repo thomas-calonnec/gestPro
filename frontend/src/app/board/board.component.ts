@@ -7,6 +7,8 @@ import {ListCard} from '../../dao/list-card';
 import {MainService} from '../../service/main/main.service';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ListCardService} from '../../service/list-cards/list-card.service';
+import {HorizontalDragDropExampleComponent} from '../horizontal/horizontal.component';
+import {CdkDragDrop, CdkDrag, CdkDropList, moveItemInArray} from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-board',
@@ -15,9 +17,12 @@ import {ListCardService} from '../../service/list-cards/list-card.service';
     ListCardComponent,
     RouterLink,
     FaIconComponent,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    HorizontalDragDropExampleComponent,
+    CdkDropList,
+    CdkDrag
   ],
-  templateUrl:'board.component.html' ,
+  templateUrl:'./board.component.html' ,
   styleUrl: './board.component.css'
 })
 export class BoardComponent implements OnInit{
@@ -29,7 +34,6 @@ export class BoardComponent implements OnInit{
   private route : ActivatedRoute = inject(ActivatedRoute);
   private boardId : number = 0;
   protected isClicked: boolean = false;
-  @Output() listCardAdded = new EventEmitter<ListCard>();
 
   formBuilder : FormBuilder = inject(FormBuilder);
   constructor() {
@@ -43,15 +47,14 @@ export class BoardComponent implements OnInit{
   }
   addList() {
    const listCard: ListCard =  this.myForm.value;
-
-   this.boardService.createListCard(this.boardId,listCard).subscribe({
-     next: (data: ListCard) =>{
-       this.isClicked = false;
-       this.listCard().push(data);
-     }
-   })
-
-
+   if(listCard.name !== ""){
+     this.boardService.createListCard(this.boardId,listCard).subscribe({
+       next: (data: ListCard) =>{
+         this.isClicked = false;
+         this.listCard().push(data);
+       }
+     })
+   }
   }
   ngOnInit() {
 
@@ -69,6 +72,10 @@ export class BoardComponent implements OnInit{
       }
     });
   }
+  drop(event : CdkDragDrop<ListCard[]>) {
+      moveItemInArray(this.listCard(),event.previousIndex,event.currentIndex);
+  }
+
 
 
 }
