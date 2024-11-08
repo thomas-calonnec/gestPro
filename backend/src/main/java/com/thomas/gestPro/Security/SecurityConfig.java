@@ -4,6 +4,7 @@ import com.thomas.gestPro.service.TemporaryUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -44,8 +45,9 @@ public class SecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(registry -> {
+                    registry.requestMatchers(HttpMethod.OPTIONS,"/**").permitAll();
                     registry.requestMatchers("/loginForm/**").permitAll();
-                    registry.requestMatchers("/api/**").permitAll();
+                    registry.requestMatchers("/api/**").hasRole("USER");
                     registry.requestMatchers("/admin/**").permitAll();
                     registry.anyRequest().authenticated();
 
