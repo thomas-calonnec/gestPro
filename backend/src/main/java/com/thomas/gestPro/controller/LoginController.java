@@ -26,13 +26,11 @@ public class LoginController {
 
     @PostMapping
     public ResponseEntity<?> getLogin(@RequestBody User user) {
-        JwtTokenUtil jwtTokenUtil = new JwtTokenUtil();
+
         try {
             // Appeler le service pour authentifier l'utilisateur et générer le JWT
             String token = loginService.login(user.getUsername(), user.getPassword());
-
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(user.getUsername());
-
+            
 
             // Retourner le token au client
             return ResponseEntity.ok(new JwtResponse(token));
