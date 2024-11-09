@@ -20,22 +20,14 @@ export class UserService {
 
 
   public getWorkspaces(id: string): Observable<Workspace[]>{
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${this.authService.getToken()}`, // Ajouter le token JWT dans l'en-tête Authorization
-      'Content-Type': 'application/json'
-    });
 
-    return this.http.get<Workspace[]>(`${this.apiServerUrl}/${id}/workspaces`, {headers});
+    return this.http.get<Workspace[]>(`${this.apiServerUrl}/${id}/workspaces`);
 
   }
 
   public getProtectedData(): Observable<string> {
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${this.authService.getToken()}`, // Ajouter le token JWT dans l'en-tête Authorization
-      'Content-Type': 'application/json'
-    });
 
-    return this.http.get<string>(`${this.apiServerUrl}/protected-endpoint`, { headers });
+    return this.http.get<string>(`${this.apiServerUrl}/protected-endpoint`,);
   }
 
 
@@ -60,11 +52,11 @@ export class UserService {
   }
 
   public getUserByUsername(username: string): Observable<User>{
-    const headers = new HttpHeaders({
+    /*const headers = new HttpHeaders({
       'Authorization': `Bearer ${this.authService.getToken()}`, // Ajouter le token JWT dans l'en-tête Authorization
       'Content-Type': 'application/json'
-    });
-console.log(headers)
-    return this.http.get<User>(`${this.apiServerUrl}/username/${username}`, {headers});
+    });*/
+
+    return this.http.get<User>(`${this.apiServerUrl}/username/${username}`);
   }
 }
