@@ -3,11 +3,14 @@ package com.thomas.gestPro.controller;
 import com.thomas.gestPro.model.Board;
 import com.thomas.gestPro.model.ListCard;
 import com.thomas.gestPro.service.BoardService;
+import com.thomas.gestPro.service.ListCardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
@@ -16,10 +19,12 @@ import java.util.List;
 public class BoardController {
 
     private final BoardService boardService;
+    private final ListCardService listCardService;
 
     @Autowired
-    public BoardController(BoardService boardService) {
+    public BoardController(BoardService boardService, ListCardService listCardService) {
         this.boardService = boardService;
+        this.listCardService = listCardService;
     }
 
     @GetMapping("/{id}")
@@ -36,6 +41,14 @@ public class BoardController {
     @PutMapping("/{id}/listCards")
     public ResponseEntity<ListCard> createListCard(@PathVariable Long id, @RequestBody ListCard listCard) {
        ListCard newListCard = boardService.createListCard(id,listCard);
+        return ResponseEntity.ok(newListCard);
+    }
+
+    @PutMapping("/{id}/listCards/update")
+    public ResponseEntity<List<ListCard>> updateListCard(@PathVariable Long id, @RequestBody List<ListCard> listCard) {
+
+       List<ListCard> newListCard =  boardService.updateListCard(id, listCard);
+
         return ResponseEntity.ok(newListCard);
     }
 

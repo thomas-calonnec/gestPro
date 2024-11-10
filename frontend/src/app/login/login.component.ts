@@ -52,6 +52,7 @@ export class LoginComponent {
     },
     error: (error: HttpErrorResponse) => {
       console.error('Login failed ', error);
+
       alert("Login failed : " + error.message);
     }
    })

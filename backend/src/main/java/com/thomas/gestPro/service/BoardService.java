@@ -114,4 +114,29 @@ public class BoardService {
         return listCard;
 
     }
+    @Transactional
+    public List<ListCard> updateListCard(Long boardId, List<ListCard> listCard) {
+        // Récupérer le tableau existant par ID
+        Board existingBoard = getBoardById(boardId);
+
+        // Mettre à jour chaque ListCard dans la base de données
+        for (ListCard card : listCard) {
+            // Trouver la carte correspondante dans la liste actuelle du board
+            ListCard existingCard = existingBoard.getListCards().stream()
+                    .filter(c -> c.getId().equals(card.getId()))
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("Carte introuvable : " + card.getId()));
+
+            // Mettre à jour l'ordre de la carte
+            existingCard.setOrderIndex(card.getOrderIndex());
+        }
+
+        // Sauvegarder toutes les cartes mises à jour
+        listCardRepository.saveAll(existingBoard.getListCards());
+
+        // Sauvegarder le tableau pour s'assurer que la relation est bien mise à jour
+        boardRepository.save(existingBoard);
+
+        return existingBoard.getListCards();
+    }
 }
