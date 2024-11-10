@@ -1,4 +1,5 @@
 export interface ListCard{
     id: number;
-    name: string
+    name: string;
+    orderIndex: number;
 }

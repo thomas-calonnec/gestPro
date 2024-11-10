@@ -16,8 +16,6 @@ export class AuthService {
 
  private authenticated = false;
 
-
-
   storeToken(token: string)  {
     localStorage.setItem(this.TOKEN_KEY, token) ;
   }
@@ -44,7 +42,7 @@ export class AuthService {
 
     const issuedAt = new Date(decoded.iat * 1000); // Convertir `iat` en millisecondes
     const now = new Date();
-
+    console.log("issued at : " );
     // Calculer la différence en millisecondes et la convertir en heures
     const diffInHours = (now.getTime() - issuedAt.getTime()) / (1000 * 60 * 60);
 
@@ -56,7 +54,7 @@ export class AuthService {
     return this.http.post<any>(this.apiServerUrl , {username, password},{  withCredentials: true }).pipe(
       tap((response) => {
         //this._currentUser.set(response);
-
+       // console.log( this.isTokenIssuedWithinLastHour())
         this.storeToken(response.token);
 
       })
@@ -74,12 +72,26 @@ export class AuthService {
 
   isAuthenticated(): boolean {
 
-  console.log(this.isTokenIssuedWithinLastHour())
     return this.getToken() !== null && this.isTokenIssuedWithinLastHour();
   }
 
+  isTokenExpired(): boolean {
+    const token = this.getToken();
+    if (!token) return true;
+
+    try {
+      const decodedToken: any = jwtDecode(token);
+      const expirationDate = new Date(0);
+      expirationDate.setUTCSeconds(decodedToken.exp);
+
+      return expirationDate < new Date();
+    } catch (error) {
+      console.error('Token decoding error:', error);
+      return true;
+    }
+  }
   logout() : void{
-    this.removeToken()
+
     localStorage.removeItem("workspaceId");
     this.router.navigate(['/login']); // Rediriger vers la page de login après logout
 
