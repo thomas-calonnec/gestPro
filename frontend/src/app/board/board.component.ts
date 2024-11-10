@@ -1,4 +1,4 @@
-import {Component, computed, EventEmitter, inject, OnInit, Output, signal, WritableSignal} from '@angular/core';
+import {Component, computed, inject, OnInit, signal, WritableSignal} from '@angular/core';
 import { BoardService } from '../../service/boards/board.service';
 import {ListCardComponent} from '../list-card/list-card.component';
 import {ActivatedRoute, RouterLink} from '@angular/router';
@@ -45,17 +45,20 @@ export class BoardComponent implements OnInit{
       name: ['', Validators.required],
 
     });
+
   }
   buttonClicked() {
     this.isClicked = true;
   }
+
   addList() {
    const listCard: ListCard =  this.myForm.value;
    if(listCard.name !== ""){
      this.boardService.createListCard(this.boardId,listCard).subscribe({
        next: (data: ListCard) =>{
          this.isClicked = false;
-         this.listCard().push(data);
+         this.listCard.update((currentList) => [...currentList, data])
+
        }
      })
    }
@@ -96,6 +99,7 @@ export class BoardComponent implements OnInit{
     }
 
 
-
-
+  closeButton() {
+    this.isClicked = false;
+  }
 }

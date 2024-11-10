@@ -14,7 +14,7 @@ export class ListCardService {
   constructor(private http: HttpClient) { }
 
   public createCard(listCardId: number, card : Card): Observable<Card>{
-    return this.http.put<Card>(`${this.apiServerUrl}/${listCardId}`,card);
+    return this.http.put<Card>(`${this.apiServerUrl}/${listCardId}/card                                     `,card);
   }
 
   public getCards(listCardId: number): Observable<Card[]> {

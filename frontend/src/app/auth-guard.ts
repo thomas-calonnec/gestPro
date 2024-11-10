@@ -7,7 +7,7 @@ export const AuthGuard  = () => {
   const router = inject(Router);
 
   if(!auth.isAuthenticated()) {
-    auth.removeToken();
+    auth.removeTokens();
     router.navigateByUrl('/login').then(r => r);
     return false;
   }

@@ -1,21 +1,27 @@
 
-<!--<div style="display: flex; flex-direction: row">-->
-<div  style="display: flex; flex-direction: row" cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="drop($event)" >
+<div style="display: flex; flex-direction: row">
+<div style="display: flex; flex-direction: row" cdkDropList cdkDropListOrientation="horizontal"
+     (cdkDropListDropped)="drop($event)" xmlns="http://www.w3.org/1999/html">
   @for(list of sortedListCard(); track list.id) {
-
 
    <app-list-card [listCardId]="list.id" [title]="list.name" cdkDrag></app-list-card>
 
   }
-  @if(!isClicked) {
-    <button class="buttonAddList"
-            (click)="buttonClicked()">  <i class="fa-solid fa-circle-plus"></i> Add an another list</button>
-  } @else {
-    <div class="buttonAddList">
-    <form  [formGroup]="myForm" (ngSubmit)="addList()">
-      <input formControlName="name" required="required">
-      <button type="submit" class="bg-primary"> Add a list </button>
+
+</div>
+@if(!isClicked) {
+  <button class="buttonAddList"
+          (click)="buttonClicked()">  <i class="fa-solid fa-circle-plus"></i> Add an another list</button>
+} @else {
+  <div class="buttonAddList2">
+    <form  [formGroup]="myForm" (ngSubmit)="addList()" style="background-color: #2A3E52; border-radius: 12px ;">
+      <div class="myInput">
+        <input type="text" class="form-control h-25 opacity-75 inputListCard" formControlName="name" maxlength="512" required="required" aria-label="Small"  placeholder="Enter list name" aria-describedby="inputGroup-sizing-sm">
+      </div>
+      <button type="submit" class="btn btn-sm" style="margin: 10px; background-color: #579DFF; text-decoration: none;"> Add list </button>
+      <button type="submit"  class="btn btn-light btn-sm" (click)="closeButton()" ><i class="fa-solid fa-times" ></i></button>
     </form>
-    </div>
-  }
+
+  </div>
+}
 </div>
