@@ -7,3 +7,9 @@
   background-color: whitesmoke; color: #0c66e4;
   opacity: 0.8;
 }
+.example-custom-placeholder {
+  background: #ccc;
+  border: dotted 3px #999;
+  min-height: 60px;
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}

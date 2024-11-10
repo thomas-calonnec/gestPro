@@ -22,6 +22,7 @@ public class ListCard {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    private int orderIndex;
 
     @ManyToOne
     @JoinColumn(name = "board_id", nullable = false)

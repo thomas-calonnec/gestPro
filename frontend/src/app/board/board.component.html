@@ -1,9 +1,10 @@
-<app-horizontal-drag-drop></app-horizontal-drag-drop>
-<!--<div style="display: flex; flex-direction: row">-->
-<div cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="drop($event)" )>
-  @for(list of listCard(); track list.id) {
 
-    <app-list-card [listCardId]="list.id" [title]="list.name" cdkDrag></app-list-card>
+<!--<div style="display: flex; flex-direction: row">-->
+<div  style="display: flex; flex-direction: row" cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="drop($event)" >
+  @for(list of sortedListCard(); track list.id) {
+
+
+   <app-list-card [listCardId]="list.id" [title]="list.name" cdkDrag></app-list-card>
 
   }
   @if(!isClicked) {

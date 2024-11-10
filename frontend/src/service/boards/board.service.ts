@@ -26,8 +26,8 @@ export class BoardService {
     return this.http.put<ListCard>(`${this.apiServerUrl}/${boardId}/listCards`,listCard);
   }
 
-  public updateListCard(boardId: number, listCard: ListCard): Observable<ListCard>{
-    return this.http.put<ListCard>(`${this.apiServerUrl}/${boardId}`,listCard);
+  public updateListCard(boardId: number, listCard: ListCard[]): Observable<ListCard[]>{
+    return this.http.put<ListCard[]>(`${this.apiServerUrl}/${boardId}/listCards/update`,listCard);
   }
 
   public deleteListCard(boardId: number): Observable<void>{
