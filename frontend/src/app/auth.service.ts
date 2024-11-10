@@ -1,39 +1,50 @@
-import {inject, Injectable} from '@angular/core';
-import { Observable, tap } from 'rxjs';
+import {effect, inject, Injectable, signal} from '@angular/core';
+import {catchError, Observable, tap, throwError} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {Router} from '@angular/router';
 import {jwtDecode} from 'jwt-decode';
+
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
 
-  private apiServerUrl = 'http://localhost:8080/loginForm';
-  private http = inject(HttpClient);
+  private apiServerUrl = "http://localhost:8080/loginForm";
+  private accessTokenSignal = signal<string | null>(localStorage.getItem('accessToken'));
+  private refreshTokenSignal = signal<string | null>(localStorage.getItem('refreshToken'));
+
   private router : Router = inject(Router);
-  private readonly TOKEN_KEY = "JwtToken";
+  private http: HttpClient = inject(HttpClient);
 
- private authenticated = false;
+  constructor() {
+    // Effet qui écoute l'accessToken pour le stocker dans localStorage quand il change
+    effect(() => {
+      const accessToken = this.accessTokenSignal();
+      if (accessToken) {
+        localStorage.setItem('accessToken', accessToken);
+      } else {
+        localStorage.removeItem('accessToken');
+      }
+    });
 
-  storeToken(token: string)  {
-    localStorage.setItem(this.TOKEN_KEY, token) ;
+    // Effet qui écoute le refreshToken pour le stocker dans localStorage quand il change
+    effect(() => {
+      const refreshToken = this.refreshTokenSignal();
+      if (refreshToken) {
+        localStorage.setItem('refreshToken', refreshToken);
+      } else {
+        localStorage.removeItem('refreshToken');
+      }
+    });
   }
 
-  // Vérifie la présence d'un token à l'initialisation
-
-
-  getToken(): string | null{
-    return localStorage.getItem(this.TOKEN_KEY)
+  getAccessToken(): string | null {
+    return this.accessTokenSignal();
   }
-
-  removeToken() {
-    localStorage.removeItem(this.TOKEN_KEY)
-  }
-
   // Méthode pour vérifier si le token a été émis il y a moins d'une heure
   isTokenIssuedWithinLastHour(): boolean {
-    const token = this.getToken();
+    const token = this.getAccessToken();
     if (!token) return false;
 
     // Décoder le token pour obtenir la date d'émission (iat)
@@ -48,57 +59,55 @@ export class AuthService {
 
     return diffInHours < 1; // Retourne true si le token a moins d'une heure
   }
-  login(username: string, password: string): Observable<any> {
-    this.authenticated =  true;
 
-    return this.http.post<any>(this.apiServerUrl , {username, password},{  withCredentials: true }).pipe(
-      tap((response) => {
-        //this._currentUser.set(response);
-       // console.log( this.isTokenIssuedWithinLastHour())
-        this.storeToken(response.token);
+
+  isAuthenticated(): boolean {
+
+    return this.getAccessToken() !== null && this.isTokenIssuedWithinLastHour();
+  }
+  setAccessToken(token: string): void {
+    this.accessTokenSignal.set(token);
+  }
+
+  setRefreshToken(token: string): void {
+    this.refreshTokenSignal.set(token);
+  }
+
+  removeTokens(): void {
+    this.accessTokenSignal.set(null);
+    this.refreshTokenSignal.set(null);
+  }
+
+  // Méthode pour renouveler le token d'accès en utilisant le token de rafraîchissement
+  refreshToken(): Observable<any> {
+    return this.http.post(this.apiServerUrl+'/refresh-token', { refreshToken: this.refreshTokenSignal() }).pipe(
+      tap((response: any) => {
+        this.setAccessToken(response.accessToken);
+      }),
+      catchError(() => {
+        this.removeTokens();
+        this.router.navigate(['/login']);
+        return throwError(() => new Error('Token de rafraîchissement invalide ou expiré'));
+      })
+    );
+  }
+
+
+  login(username: string, password: string): Observable<any> {
+
+    return this.http.post<any>(this.apiServerUrl,{username, password}, {withCredentials: true}).pipe(
+      tap((response: any) => {
+
+        this.setRefreshToken(response.refreshToken);
 
       })
     );
 
   }
 
-  revokeToken(): Observable<any> {
-    return this.http.post<any>(this.apiServerUrl+ '/revoke-token', {}, {withCredentials: true})
-    .pipe(
-      tap(() => {
-        console.log('Tokens refreshed successfully');
-      }))
+  logout() {
+    this.removeTokens();
+    localStorage.removeItem('workspaceId');
+    this.router.navigate(['/login']);
   }
-
-  isAuthenticated(): boolean {
-
-    return this.getToken() !== null && this.isTokenIssuedWithinLastHour();
-  }
-
-  isTokenExpired(): boolean {
-    const token = this.getToken();
-    if (!token) return true;
-
-    try {
-      const decodedToken: any = jwtDecode(token);
-      const expirationDate = new Date(0);
-      expirationDate.setUTCSeconds(decodedToken.exp);
-
-      return expirationDate < new Date();
-    } catch (error) {
-      console.error('Token decoding error:', error);
-      return true;
-    }
-  }
-  logout() : void{
-
-    localStorage.removeItem("workspaceId");
-    this.router.navigate(['/login']); // Rediriger vers la page de login après logout
-
-  }
-
-
-
-
-
 }

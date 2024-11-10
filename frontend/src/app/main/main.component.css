@@ -110,5 +110,6 @@ main {
   flex: 1; /* Prend tout l'espace restant */
   padding: 20px;
   overflow-y: auto; /* Permet le défilement vertical uniquement dans ce composant */
-  background-color: #f2f2f2;
+  background-color: #ecf0f1;
+  font-family: Arial, sans-serif;
 }

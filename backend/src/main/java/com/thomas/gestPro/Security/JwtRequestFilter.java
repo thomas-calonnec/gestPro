@@ -13,9 +13,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-
 import java.io.IOException;
-import java.util.Enumeration;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
@@ -34,40 +32,68 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         final String authorizationHeader = request.getHeader("Authorization");
         System.err.println("auth : " + authorizationHeader);
+
         String username = null;
-        String jwt = null;
+        String jwtAccessToken = null;
+        String jwtRefreshToken;
 
-        // StringBuilder pour construire une chaîne avec tous les headers
-        StringBuilder headersInfo = new StringBuilder();
-
-        // Récupérer tous les noms des headers
+        // Récupérer tous les en-têtes pour le débogage
+       /* StringBuilder headersInfo = new StringBuilder();
         Enumeration<String> headerNames = request.getHeaderNames();
-
-        // Parcourir chaque header et ajouter à la chaîne
         while (headerNames.hasMoreElements()) {
             String headerName = headerNames.nextElement();
             String headerValue = request.getHeader(headerName);
             headersInfo.append(headerName).append(": ").append(headerValue).append("\n");
-        }
+        }*/
+        // System.err.println("All headers: " + headersInfo);
 
-        //System.err.println("Authorization header: " + headersInfo);
+        // Extraction du token d'accès
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            jwt = authorizationHeader.substring(7);
-            username = jwtTokenUtil.extractUsername(jwt);
+            jwtAccessToken = authorizationHeader.substring(7);
+            username = jwtTokenUtil.extractUsername(jwtAccessToken);
         }
 
+        // Vérifiez si l'utilisateur est authentifié dans le contexte de sécurité
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-            //System.err.println("User : " + userDetails.getUsername() + "Auth :" + userDetails.getAuthorities());
-            if (jwtTokenUtil.validateToken(jwt, userDetails)) {
-                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities()); // Les rôles sont inclus ici
-                authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
+            if (jwtTokenUtil.isTokenExpired(jwtAccessToken)) {
+                // Si le token d'accès est expiré, essayez d'utiliser le token de rafraîchissement
+                jwtRefreshToken = request.getHeader("Authorization"); // ou depuis les cookies, selon votre implémentation
+
+                if (jwtRefreshToken != null && jwtTokenUtil.validateToken(jwtRefreshToken, userDetails)) {
+                    // Générer un nouveau token d'accès
+                    String newAccessToken = jwtTokenUtil.generateAccessToken(userDetails);
+
+                    // Ajouter le nouveau token d'accès dans l'en-tête de réponse
+                    if (response != null) {
+                        response.setHeader("Authorization", "Bearer " + newAccessToken);
+                    }
+
+                    // Créer un nouveau `UsernamePasswordAuthenticationToken` pour ce nouvel accès
+                    UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                            userDetails, null, userDetails.getAuthorities());
+                    authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+                    SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                } else {
+                    // Le token de rafraîchissement est invalide ou expiré : déconnexion nécessaire
+                    if (response != null) {
+                        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Le token de rafraîchissement est expiré ou invalide");
+                    }
+                    return; // Fin du filtre sans continuer
+                }
+            } else if (jwtTokenUtil.validateToken(jwtAccessToken, userDetails)) {
+                // Si le token d'accès est valide, continuez normalement
+                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                        userDetails, null, userDetails.getAuthorities());
+                authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             }
         }
+        // Continuer avec le filtre
         assert chain != null;
         chain.doFilter(request, response);
     }
+
 }
