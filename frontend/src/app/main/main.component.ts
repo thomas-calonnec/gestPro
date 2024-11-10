@@ -5,7 +5,6 @@ import {FormsModule} from '@angular/forms';
 import {WorkspaceComponent} from '../workspace/workspace.component';
 import { FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 import {WorkspaceService} from '../../service/workspaces/workspace.service';
-import {Board} from '../../dao/board';
 import {MainService} from '../../service/main/main.service';
 import {Workspace} from '../../dao/workspace';
 import {SidebarComponent} from '../sidebar/sidebar.component';
@@ -46,9 +45,6 @@ export class MainComponent implements OnInit {
 
   }
 
-  getBoard(){
-
-  }
 
   logout() {
     this.loggedIn = false;

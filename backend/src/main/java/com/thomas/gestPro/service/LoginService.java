@@ -1,5 +1,6 @@
 package com.thomas.gestPro.service;
 
+import com.thomas.gestPro.Security.JwtResponse;
 import com.thomas.gestPro.Security.JwtTokenUtil;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,7 +20,7 @@ public class LoginService {
         this.userDetailsService = userDetailsService;
     }
 
-    public String login(String username, String password) {
+    public JwtResponse login(String username, String password) {
         // Authentifier l'utilisateur via le AuthenticationManager de Spring Security
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(username, password));
@@ -28,6 +29,9 @@ public class LoginService {
         final UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
         // Générer le token JWT à partir des détails de l'utilisateur
-        return jwtTokenUtil.generateToken(userDetails);
+         String accessToken = jwtTokenUtil.generateAccessToken(userDetails);
+         String refreshToken = jwtTokenUtil.generateRefreshToken(accessToken);
+
+         return new JwtResponse(accessToken, refreshToken);
     }
 }
