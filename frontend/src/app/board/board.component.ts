@@ -1,4 +1,4 @@
-import {Component, EventEmitter, inject, OnInit, Output, signal, WritableSignal} from '@angular/core';
+import {Component, computed, EventEmitter, inject, OnInit, Output, signal, WritableSignal} from '@angular/core';
 import { BoardService } from '../../service/boards/board.service';
 import {ListCardComponent} from '../list-card/list-card.component';
 import {ActivatedRoute, RouterLink} from '@angular/router';
@@ -8,7 +8,7 @@ import {MainService} from '../../service/main/main.service';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ListCardService} from '../../service/list-cards/list-card.service';
 import {HorizontalDragDropExampleComponent} from '../horizontal/horizontal.component';
-import {CdkDragDrop, CdkDrag, CdkDropList, moveItemInArray} from '@angular/cdk/drag-drop';
+import {CdkDragDrop, CdkDrag, CdkDropList, moveItemInArray, CdkDragPlaceholder} from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-board',
@@ -20,7 +20,8 @@ import {CdkDragDrop, CdkDrag, CdkDropList, moveItemInArray} from '@angular/cdk/d
     ReactiveFormsModule,
     HorizontalDragDropExampleComponent,
     CdkDropList,
-    CdkDrag
+    CdkDrag,
+    CdkDragPlaceholder
   ],
   templateUrl:'./board.component.html' ,
   styleUrl: './board.component.css'
@@ -28,6 +29,9 @@ import {CdkDragDrop, CdkDrag, CdkDropList, moveItemInArray} from '@angular/cdk/d
 export class BoardComponent implements OnInit{
   myForm : FormGroup;
   public listCard: WritableSignal<ListCard[]> = signal<ListCard[]>([]);
+  sortedListCard = computed(() =>
+    this.listCard().slice().sort((a, b) => a.orderIndex - b.orderIndex)
+  );
   public listCardService : ListCardService = inject(ListCardService);
   public boardService : BoardService = inject(BoardService);
   mainService : MainService = inject(MainService)
@@ -61,20 +65,36 @@ export class BoardComponent implements OnInit{
     this.boardId = this.route.snapshot.params['id'];
     this.getListCards(this.boardId)
 
-    console.log(this.mainService.getListBoards())
-
   }
 
   getListCards(boardId: number): void {
     this.boardService.getListCards(boardId).subscribe({
       next: (data: ListCard[]) => {
+        console.log(data)
         this.listCard.set(data);
       }
     });
+
   }
   drop(event : CdkDragDrop<ListCard[]>) {
-      moveItemInArray(this.listCard(),event.previousIndex,event.currentIndex);
-  }
+      moveItemInArray(this.sortedListCard(),event.previousIndex,event.currentIndex);
+
+      this.sortedListCard().forEach((item, index) => {
+        item.orderIndex = index + 1;
+      });
+
+      // Appelez le backend pour sauvegarder les modifications d'ordre
+      this.boardService.updateListCard(this.boardId, this.sortedListCard()).subscribe({
+        next: (response) => {
+          console.log("Ordre mis à jour avec succès", response);
+        },
+        error: (err) => {
+          console.error("Erreur lors de la mise à jour de l'ordre", err);
+          // Vous pouvez également restaurer l'état précédent si nécessaire en cas d'erreur
+        }
+      });
+    }
+
 
 
 
