@@ -37,11 +37,11 @@ export class LoginComponent {
    this.authService.login(username,password).subscribe({
     next: () => {
 
-      console.log("test")
+
       this.userService.getUserByUsername(username).subscribe({
         next: (user) => {
           this.userId = user.id;
-          console.log("test2")
+
           this.router.navigateByUrl(`users/${this.userId}/workspaces`).then(r => console.log(r))
         }
       })
