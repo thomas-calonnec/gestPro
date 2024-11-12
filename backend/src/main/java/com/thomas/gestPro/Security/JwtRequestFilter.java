@@ -1,14 +1,14 @@
 package com.thomas.gestPro.Security;
 
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import io.micrometer.common.lang.Nullable;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
@@ -18,11 +18,9 @@ import java.io.IOException;
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
 
-    private final UserDetailsService userDetailsService;
     private final JwtTokenUtil jwtTokenUtil;  // Classe utilitaire pour générer/valider les JWT
 
-    public JwtRequestFilter(UserDetailsService userDetailsService, JwtTokenUtil jwtTokenUtil) {
-        this.userDetailsService = userDetailsService;
+    public JwtRequestFilter(JwtTokenUtil jwtTokenUtil) {
         this.jwtTokenUtil = jwtTokenUtil;
     }
 
@@ -30,70 +28,47 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, @Nullable HttpServletResponse response, @Nullable FilterChain chain)
             throws ServletException, IOException {
 
-        final String authorizationHeader = request.getHeader("Authorization");
-        System.err.println("auth : " + authorizationHeader);
+        // Récupérer le token d'accès depuis l'en-tête Authorization
 
-        String username = null;
-        String jwtAccessToken = null;
-        String jwtRefreshToken;
+        String authHeader = request.getHeader("Authorization");
+        System.err.println("username :" + authHeader);
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String accessToken = authHeader.substring(7); // Extraire le token après "Bearer "
 
-        // Récupérer tous les en-têtes pour le débogage
-       /* StringBuilder headersInfo = new StringBuilder();
-        Enumeration<String> headerNames = request.getHeaderNames();
-        while (headerNames.hasMoreElements()) {
-            String headerName = headerNames.nextElement();
-            String headerValue = request.getHeader(headerName);
-            headersInfo.append(headerName).append(": ").append(headerValue).append("\n");
-        }*/
-        // System.err.println("All headers: " + headersInfo);
+            try {
+                // Vérifier si le token est valide
+                if (jwtTokenUtil.validateToken(accessToken)) {
 
-        // Extraction du token d'accès
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            jwtAccessToken = authorizationHeader.substring(7);
-            username = jwtTokenUtil.extractUsername(jwtAccessToken);
-        }
+                    String username = jwtTokenUtil.getUsernameFromToken(accessToken);
 
-        // Vérifiez si l'utilisateur est authentifié dans le contexte de sécurité
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+                    if (username != null) {
+                        // Authentifier l'utilisateur
+                        // Vous pouvez créer un objet d'authentification avec le nom d'utilisateur et l'ajouter au contexte de sécurité
+                        JwtAuthenticationToken authentication = new JwtAuthenticationToken(accessToken, username);
+                        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-            if (jwtTokenUtil.isTokenExpired(jwtAccessToken)) {
-                // Si le token d'accès est expiré, essayez d'utiliser le token de rafraîchissement
-                jwtRefreshToken = request.getHeader("Authorization"); // ou depuis les cookies, selon votre implémentation
-
-                if (jwtRefreshToken != null && jwtTokenUtil.validateToken(jwtRefreshToken, userDetails)) {
-                    // Générer un nouveau token d'accès
-                    String newAccessToken = jwtTokenUtil.generateAccessToken(userDetails);
-
-                    // Ajouter le nouveau token d'accès dans l'en-tête de réponse
-                    if (response != null) {
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                    }
+                } else {
+                    // Si le token d'accès est expiré, essayer de renouveler le token avec le refresh token
+                    String refreshToken = jwtTokenUtil.getRefreshTokenFromRequest(request);
+                    if (refreshToken != null && jwtTokenUtil.validateToken(refreshToken)) {
+                        String newAccessToken = jwtTokenUtil.refreshAccessToken(refreshToken);
+                        // Mettre à jour l'en-tête Authorization avec le nouveau token
+                        assert response != null;
                         response.setHeader("Authorization", "Bearer " + newAccessToken);
                     }
-
-                    // Créer un nouveau `UsernamePasswordAuthenticationToken` pour ce nouvel accès
-                    UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                            userDetails, null, userDetails.getAuthorities());
-                    authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-                    SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-                } else {
-                    // Le token de rafraîchissement est invalide ou expiré : déconnexion nécessaire
-                    if (response != null) {
-                        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Le token de rafraîchissement est expiré ou invalide");
-                    }
-                    return; // Fin du filtre sans continuer
                 }
-            } else if (jwtTokenUtil.validateToken(jwtAccessToken, userDetails)) {
-                // Si le token d'accès est valide, continuez normalement
-                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities());
-                authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+            } catch (ExpiredJwtException e) {
+                // Gestion de l'expiration du token
+                logger.error("Token expiré", e);
+            } catch (JwtException e) {
+                // Gestion des erreurs de décodage du token
+                logger.error("Erreur lors de l'analyse du token JWT", e);
             }
         }
-        // Continuer avec le filtre
-        assert chain != null;
-        chain.doFilter(request, response);
-    }
 
+        assert chain != null;
+        chain.doFilter(request, response); // Continuer avec le filtre suivant
+    }
 }

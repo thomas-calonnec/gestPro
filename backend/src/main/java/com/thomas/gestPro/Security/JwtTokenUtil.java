@@ -1,17 +1,15 @@
 package com.thomas.gestPro.Security;
 
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.security.core.userdetails.UserDetails;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Function;
 
 @Service
 public class JwtTokenUtil {
@@ -19,68 +17,62 @@ public class JwtTokenUtil {
 
     private static final String SECRET_KEY = "L8p#R9m$K2x^V7j!Q3w*F5z@T6y&N0d$Y4u"; // Clé secrète, peut être externalisée
     private final Key secretKey = Keys.hmacShaKeyFor(SECRET_KEY.getBytes()); // Clé correcte avec taille appropriée
-    private static final long ACCESS_TOKEN_VALIDITY = 1000 * 60 * 60; // 15 minutes
-    private static final long REFRESH_TOKEN_VALIDITY = 1000 * 60 * 60 * 24; // 24 heures
+    private static final long ACCESS_TOKEN_VALIDITY = 1000 * 60 * 60; // 1 hours
+    private static final long REFRESH_TOKEN_VALIDITY = 1000 * 60 * 60 * 6; // 6 heures
 
-    // Génère un token d'accès avec des claims supplémentaires
-    public String generateAccessToken(UserDetails userDetails) {
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("roles", userDetails.getAuthorities());
-        return createToken(claims, userDetails.getUsername(), ACCESS_TOKEN_VALIDITY);
+    @Autowired
+    public JwtTokenUtil(UserDetailsService userDetailsService) {
     }
 
-    // Génère un token de rafraîchissement sans claims spécifiques
-    public String generateRefreshToken(String username) {
-        return createToken(new HashMap<>(), username, REFRESH_TOKEN_VALIDITY);
-    }
-
-    // Méthode générique de création de token
-    private String createToken(Map<String, Object> claims, String subject, long validity) {
-        long currentTimeMillis = System.currentTimeMillis();
-
+    // Générer un Access Token
+    public String generateAccessToken(String username) {
         return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(subject)
-                .setIssuedAt(new Date(currentTimeMillis))
-                .setExpiration(new Date(currentTimeMillis + validity))
-                .signWith(secretKey, SignatureAlgorithm.HS256)
+                .setSubject(username)
+                .signWith(secretKey,SignatureAlgorithm.HS256)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_VALIDITY))
                 .compact();
     }
 
-    // Extrait le nom d'utilisateur du token
-    public String extractUsername(String token) {
-        return extractClaim(token, Claims::getSubject);
+    // Générer un Refresh Token
+    public String generateRefreshToken(String username) {
+        return Jwts.builder()
+                .setSubject(username)
+                .signWith(secretKey,SignatureAlgorithm.HS256 )
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_VALIDITY))
+                .compact();
     }
 
-    // Extrait la date d'expiration du token
-    private Date extractExpiration(String token) {
-        return extractClaim(token, Claims::getExpiration);
+    // Valider un token
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
-    // Extraction générique de claim
-    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-        final Claims claims = extractAllClaims(token);
-        return claimsResolver.apply(claims);
-    }
-
-    // Récupère tous les claims du token
-    private Claims extractAllClaims(String token) {
+    // Extraire le nom d'utilisateur d'un token
+    public String getUsernameFromToken(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(secretKey)
-                .setAllowedClockSkewSeconds(60) // Tolérance de 60 secondes
                 .build()
                 .parseClaimsJws(token)
-                .getBody();
+                .getBody()
+                .getSubject();
     }
 
-    // Vérifie si le token est expiré
-    protected Boolean isTokenExpired(String token) {
-        return extractExpiration(token).before(new Date());
+    // Extraire le Refresh Token d'une requête
+    public String getRefreshTokenFromRequest(HttpServletRequest request) {
+        return request.getHeader("Refresh-Token");
     }
 
-    // Valide le token par rapport aux détails de l'utilisateur
-    public Boolean validateToken(String token, UserDetails userDetails) {
-        final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    // Rafraîchir le token d'accès avec un refresh token
+    public String refreshAccessToken(String refreshToken) {
+        // Logique pour valider le refresh token et créer un nouveau access token
+        String username = getUsernameFromToken(refreshToken); // Par exemple, obtenir le nom d'utilisateur à partir du refresh token
+        return generateAccessToken(username); // Générer un nouveau access token
     }
 }
