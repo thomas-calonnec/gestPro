@@ -1,10 +1,13 @@
 package com.thomas.gestPro.controller;
 
 import com.thomas.gestPro.Security.JwtResponse;
+import com.thomas.gestPro.Security.JwtTokenUtil;
 import com.thomas.gestPro.model.User;
 import com.thomas.gestPro.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,15 +18,21 @@ public class LoginController {
 
    private final LoginService loginService;
 
+    private final JwtTokenUtil jwtService;
+
+
+
     @Autowired
-    public LoginController(LoginService loginService) {
+    public LoginController(LoginService loginService, JwtTokenUtil jwtService) {
         this.loginService = loginService;
+        this.jwtService = jwtService;
     }
 
-    @PostMapping
+    @PostMapping("/login")
     public ResponseEntity<JwtResponse> getLogin(@RequestBody User user) {
 
         try {
+
             // Appeler le service pour authentifier l'utilisateur et générer le JWT
             JwtResponse token = loginService.login(user.getUsername(), user.getPassword());
             
@@ -41,6 +50,27 @@ public class LoginController {
         return ResponseEntity.ok().body("Logout successful");
     }
 
+
+
+    @PostMapping("/refresh-token")
+    public ResponseEntity<?> refreshToken(@RequestParam String refreshToken) {
+        // Vérifier si le refresh token est valide
+
+        try {
+            // Appeler le service pour authentifier l'utilisateur et générer le JWT
+            String newAccessToken = this.loginService.refreshAccessToken(refreshToken);
+
+
+            // Retourner le token au client
+            return ResponseEntity.ok(newAccessToken);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(401).body(null);
+        }
+       //
+
+
+    }
 }
 
 

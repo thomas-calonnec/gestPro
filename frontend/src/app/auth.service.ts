@@ -1,6 +1,6 @@
 import {effect, inject, Injectable, signal} from '@angular/core';
-import {catchError, Observable, tap, throwError} from 'rxjs';
-import {HttpClient} from '@angular/common/http';
+import {catchError, Observable, of, switchMap, tap, throwError} from 'rxjs';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Router} from '@angular/router';
 import {jwtDecode} from 'jwt-decode';
 
@@ -42,6 +42,10 @@ export class AuthService {
   getAccessToken(): string | null {
     return this.accessTokenSignal();
   }
+
+  getRefreshToken(): string | null {
+    return this.refreshTokenSignal();
+  }
   // Méthode pour vérifier si le token a été émis il y a moins d'une heure
   isTokenIssuedWithinLastHour(): boolean {
     const token = this.getAccessToken();
@@ -78,30 +82,54 @@ export class AuthService {
     this.refreshTokenSignal.set(null);
   }
 
-  // Méthode pour renouveler le token d'accès en utilisant le token de rafraîchissement
-  refreshToken(): Observable<any> {
-    return this.http.post(this.apiServerUrl+'/refresh-token', { refreshToken: this.refreshTokenSignal() }).pipe(
-      tap((response: any) => {
-        this.setAccessToken(response.accessToken);
-      }),
-      catchError(() => {
-        this.removeTokens();
-        this.router.navigate(['/login']);
-        return throwError(() => new Error('Token de rafraîchissement invalide ou expiré'));
-      })
-    );
+  // Method to check if token is expired based on `exp` field
+  isTokenExpired(token: string): boolean {
+    const decoded: any = jwtDecode(token);
+    if (!decoded.exp) return true; // Treat as expired if no expiry field
+
+    const expiryDate = new Date(decoded.exp * 1000); // Convert `exp` to milliseconds
+    return new Date() > expiryDate;
+  }
+
+  hasValidAccessToken(): boolean {
+    const token = this.getAccessToken();
+    return !!token && !this.isTokenExpired(token);
+  }
+
+  refreshAccessToken(): Observable<any> {
+    if (!this.getRefreshToken()) {
+      return of(null);  // No refresh token available
+    }
+
+    return this.http.post<any>(`${this.apiServerUrl}/refresh-token`, { refreshToken: this.getRefreshToken() })
+      .pipe(
+        switchMap((response: any) => {
+          this.setAccessToken(response.accessToken);
+          return of(true);
+        }),
+        catchError(() => of(false))
+      );
   }
 
 
   login(username: string, password: string): Observable<any> {
 
-    return this.http.post<any>(this.apiServerUrl,{username, password}, {withCredentials: true}).pipe(
-      tap((response: any) => {
+    if (this.getAccessToken()) {
+      return of(true);  // If access token is already present, no need to log in
+    }
 
-        this.setRefreshToken(response.refreshToken);
+    return this.http.post<any>(`${this.apiServerUrl}/login`, { username, password })
+      .pipe(
+        switchMap((response: any) => {
 
-      })
-    );
+          this.setAccessToken(response.accessToken);
+          this.setRefreshToken(response.refreshToken)
+
+          return of(true);
+        }),
+        catchError(() => of(false))
+      );
+
 
   }
 
