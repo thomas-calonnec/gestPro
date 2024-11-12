@@ -1,20 +1,15 @@
 package com.thomas.gestPro.Security;
 
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Function;
 
 @Service
 public class JwtTokenUtil {
@@ -24,11 +19,9 @@ public class JwtTokenUtil {
     private final Key secretKey = Keys.hmacShaKeyFor(SECRET_KEY.getBytes()); // Clé correcte avec taille appropriée
     private static final long ACCESS_TOKEN_VALIDITY = 1000 * 60 * 60; // 1 hours
     private static final long REFRESH_TOKEN_VALIDITY = 1000 * 60 * 60 * 6; // 6 heures
-    private final UserDetailsService userDetailsService;
 
     @Autowired
     public JwtTokenUtil(UserDetailsService userDetailsService) {
-        this.userDetailsService = userDetailsService;
     }
 
     // Générer un Access Token
