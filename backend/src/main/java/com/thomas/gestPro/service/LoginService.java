@@ -2,36 +2,50 @@ package com.thomas.gestPro.service;
 
 import com.thomas.gestPro.Security.JwtResponse;
 import com.thomas.gestPro.Security.JwtTokenUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 @Service
 public class LoginService {
 
-    private final AuthenticationManager authenticationManager;
-    private final JwtTokenUtil jwtTokenUtil;
-    private final TemporaryUserService userDetailsService;
 
-    public LoginService(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, TemporaryUserService userDetailsService) {
+    private final AuthenticationManager authenticationManager;
+
+    private final JwtTokenUtil jwtUtil;
+
+    @Autowired
+    public LoginService(AuthenticationManager authenticationManager, JwtTokenUtil jwtUtil) {
         this.authenticationManager = authenticationManager;
-        this.jwtTokenUtil = jwtTokenUtil;
-        this.userDetailsService = userDetailsService;
+        this.jwtUtil = jwtUtil;
+
     }
 
     public JwtResponse login(String username, String password) {
-        // Authentifier l'utilisateur via le AuthenticationManager de Spring Security
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(username, password));
+        // Authenticate the user
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(username, password)
+        );
 
-        // Si l'authentification réussit, charger les détails de l'utilisateur
-        final UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        if (authentication.isAuthenticated()) {
+            // Generate and return access and refresh tokens
+            String accessToken = jwtUtil.generateAccessToken(username);
+            String refreshToken = jwtUtil.generateRefreshToken(username);
+            // Store refresh token in database or cache if needed for future use
+            return new JwtResponse(accessToken,refreshToken);  // Return the JWT Token
+        }
+        throw new RuntimeException("Invalid username or password");
+    }
 
-        // Générer le token JWT à partir des détails de l'utilisateur
-         String accessToken = jwtTokenUtil.generateAccessToken(userDetails);
-         String refreshToken = jwtTokenUtil.generateRefreshToken(accessToken);
-
-         return new JwtResponse(accessToken, refreshToken);
+    // Method to refresh the access token using the refresh token
+    public String refreshAccessToken(String refreshToken) {
+        String username = jwtUtil.getUsernameFromToken(refreshToken);
+        // Validate refresh token (check expiration, signature, etc.)
+        if (jwtUtil.validateToken(refreshToken)) {
+            throw new RuntimeException("Refresh token expired");
+        }
+        return "Bearer " + jwtUtil.generateAccessToken(username);
     }
 }
