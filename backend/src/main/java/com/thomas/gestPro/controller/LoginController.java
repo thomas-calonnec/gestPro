@@ -5,10 +5,7 @@ import com.thomas.gestPro.Security.JwtTokenUtil;
 import com.thomas.gestPro.model.User;
 import com.thomas.gestPro.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,14 +15,10 @@ public class LoginController {
 
    private final LoginService loginService;
 
-    private final JwtTokenUtil jwtService;
-
-
 
     @Autowired
-    public LoginController(LoginService loginService, JwtTokenUtil jwtService) {
+    public LoginController(LoginService loginService) {
         this.loginService = loginService;
-        this.jwtService = jwtService;
     }
 
     @PostMapping("/login")
