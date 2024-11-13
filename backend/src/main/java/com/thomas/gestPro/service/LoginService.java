@@ -6,7 +6,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.stream.Collectors;
 
 @Service
 public class LoginService {
@@ -16,36 +25,51 @@ public class LoginService {
 
     private final JwtTokenUtil jwtUtil;
 
+    private final UserDetailsService userDetailsService;
+
     @Autowired
-    public LoginService(AuthenticationManager authenticationManager, JwtTokenUtil jwtUtil) {
+    public LoginService(AuthenticationManager authenticationManager, JwtTokenUtil jwtUtil, UserDetailsService userDetailsService) {
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
 
+        this.userDetailsService = userDetailsService;
     }
 
     public JwtResponse login(String username, String password) {
-        // Authenticate the user
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(username, password)
-        );
+        try {
+            // Authenticate the user
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(username, password)
+            );
 
-        if (authentication.isAuthenticated()) {
-            // Generate and return access and refresh tokens
-            String accessToken = jwtUtil.generateAccessToken(username);
-            String refreshToken = jwtUtil.generateRefreshToken(username);
-            // Store refresh token in database or cache if needed for future use
-            return new JwtResponse(accessToken,refreshToken);  // Return the JWT Token
+            // Check if authentication was successful
+            if (authentication.isAuthenticated()) {
+                // Set authentication context
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+
+                // Load user details and generate tokens
+                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                String accessToken = jwtUtil.generateAccessToken(userDetails);
+                String refreshToken = jwtUtil.generateRefreshToken(username);
+
+                // Return the JWT tokens in the response
+                return new JwtResponse(accessToken, refreshToken);
+            } else {
+                throw new RuntimeException("Invalid username or password");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Authentication failed: " + e.getMessage(), e);
         }
-        throw new RuntimeException("Invalid username or password");
     }
 
     // Method to refresh the access token using the refresh token
     public String refreshAccessToken(String refreshToken) {
         String username = jwtUtil.getUsernameFromToken(refreshToken);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
         // Validate refresh token (check expiration, signature, etc.)
         if (jwtUtil.validateToken(refreshToken)) {
             throw new RuntimeException("Refresh token expired");
         }
-        return "Bearer " + jwtUtil.generateAccessToken(username);
+        return "Bearer " + jwtUtil.generateAccessToken(userDetails);
     }
 }
