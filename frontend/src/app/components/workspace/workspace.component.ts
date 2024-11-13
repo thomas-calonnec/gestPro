@@ -1,10 +1,10 @@
 import {Component, inject, OnInit, signal, WritableSignal} from '@angular/core';
-import {Board} from '../../dao/board';
-import {WorkspaceService} from '../../service/workspaces/workspace.service';
+import {Board} from '../../../dao/board';
+import {WorkspaceService} from '../../../service/workspaces/workspace.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {ActivatedRoute, RouterLink} from '@angular/router';
-import {MainService} from '../../service/main/main.service';
-import {BoardService} from '../../service/boards/board.service';
+import {MainService} from '../../../service/main/main.service';
+import {BoardService} from '../../../service/boards/board.service';
 
 @Component({
   selector: 'app-workspace',
