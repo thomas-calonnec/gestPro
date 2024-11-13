@@ -1,11 +1,11 @@
 import {Component, inject, Input, input, OnInit, signal, WritableSignal} from '@angular/core';
 import {RouterLink} from '@angular/router';
-import {AuthService} from '../auth.service';
-import {BoardService} from '../../service/boards/board.service';
-import {MainService} from '../../service/main/main.service';
+import {AuthService} from '../../auth.service';
+import {BoardService} from '../../../service/boards/board.service';
+import {MainService} from '../../../service/main/main.service';
 import {BoardComponent} from '../board/board.component';
-import {WorkspaceService} from '../../service/workspaces/workspace.service';
-import {Board} from '../../dao/board';
+import {WorkspaceService} from '../../../service/workspaces/workspace.service';
+import {Board} from '../../../dao/board';
 
 @Component({
   selector: 'app-sidebar',

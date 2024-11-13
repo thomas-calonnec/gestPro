@@ -1,12 +1,12 @@
 import {Component, computed, inject, OnInit, signal, WritableSignal} from '@angular/core';
-import { BoardService } from '../../service/boards/board.service';
+import { BoardService } from '../../../service/boards/board.service';
 import {ListCardComponent} from '../list-card/list-card.component';
 import {ActivatedRoute, RouterLink} from '@angular/router';
 import {FaIconComponent} from '@fortawesome/angular-fontawesome';
-import {ListCard} from '../../dao/list-card';
-import {MainService} from '../../service/main/main.service';
+import {ListCard} from '../../../dao/list-card';
+import {MainService} from '../../../service/main/main.service';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import {ListCardService} from '../../service/list-cards/list-card.service';
+import {ListCardService} from '../../../service/list-cards/list-card.service';
 import {HorizontalDragDropExampleComponent} from '../horizontal/horizontal.component';
 import {CdkDragDrop, CdkDrag, CdkDropList, moveItemInArray, CdkDragPlaceholder} from '@angular/cdk/drag-drop';
 
