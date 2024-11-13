@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.gestPro</groupId>
-	<artifactId>GestPro</artifactId>
+	<artifactId>backend</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>GestPro</name>
 	<description>Demo project for Spring Boot</description>

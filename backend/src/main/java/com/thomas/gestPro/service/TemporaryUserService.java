@@ -1,5 +1,6 @@
 package com.thomas.gestPro.service;
 
+import com.thomas.gestPro.model.CustomUserDetails;
 import com.thomas.gestPro.model.User;
 import com.thomas.gestPro.repository.UserRepository;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -21,9 +22,11 @@ public class TemporaryUserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        // Fetch user from the database by username
         User user = userRepository.findByUsername(username);
 
 
+        // Convert `User` entity to `CustomUserDetails`
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(),
                 user.getPassword(),

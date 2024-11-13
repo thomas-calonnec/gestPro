@@ -31,7 +31,7 @@ public class SecurityConfig {
 
 
     @Bean
-    public AuthenticationManager authManager(HttpSecurity http) throws Exception {
+    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
         AuthenticationManagerBuilder authenticationManagerBuilder =
                 http.getSharedObject(AuthenticationManagerBuilder.class);
         authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
@@ -47,7 +47,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(registry -> {
                     registry.requestMatchers(HttpMethod.OPTIONS,"/**").permitAll();
                     registry.requestMatchers("/loginForm/**").permitAll();
-                    registry.requestMatchers("/api/**").permitAll();
+                    registry.requestMatchers("/api/**").hasRole("USER");
                     registry.requestMatchers("/admin/**").permitAll();
                     registry.anyRequest().authenticated();
 
