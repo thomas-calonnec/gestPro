@@ -1,5 +1,6 @@
 package com.thomas.gestPro.controller;
 
+import com.thomas.gestPro.Security.JwtTokenUtil;
 import com.thomas.gestPro.model.Card;
 import com.thomas.gestPro.model.User;
 import com.thomas.gestPro.model.Workspace;
@@ -18,10 +19,13 @@ import java.util.List;
 public class UserController {
     
     private final UserService userService;
+  private final JwtTokenUtil jwtTokenUtil;
     
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, JwtTokenUtil jwtTokenUtil) {
         this.userService = userService;
+
+        this.jwtTokenUtil = jwtTokenUtil;
     }
 
     @GetMapping("/{id}")
@@ -44,14 +48,18 @@ public class UserController {
     }*/
    @GetMapping("/username/{name}")
     public ResponseEntity<User> getUserByUsername(@PathVariable String name) {
+
        return ResponseEntity.ok(userService.getUserByUsername(name));
    }
+
 
     @GetMapping("{id}/workspaces")
     public ResponseEntity<List<Workspace>> getWorkspaceByUserId(@PathVariable Long id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        System.err.println(authentication);
-        if (authentication != null && authentication.isAuthenticated()) {
+
+        System.err.println("auth : " + authentication);
+       /* if (authentication != null && authentication.isAuthenticated()) {
+            System.err.println(authentication);
             boolean hasUserRole = authentication.getAuthorities().stream()
                     .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_USER"));
 
@@ -60,10 +68,10 @@ public class UserController {
                 System.out.println("L'utilisateur a le rôle USER");
             } else {
                 // L'utilisateur n'a pas le rôle ADMIN
-                System.err.println(authentication);
+
                 System.out.println("L'utilisateur n'a pas le rôle USER");
             }
-        }
+        }*/
         return ResponseEntity.ok(userService.getWorkspacesByUserId(id));
     }
 

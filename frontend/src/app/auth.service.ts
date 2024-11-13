@@ -118,7 +118,7 @@ export class AuthService {
       return of(true);  // If access token is already present, no need to log in
     }
 
-    return this.http.post<any>(`${this.apiServerUrl}/login`, { username, password })
+    return this.http.post<any>(`${this.apiServerUrl}/login`, { username, password }, {withCredentials: true})
       .pipe(
         switchMap((response: any) => {
 

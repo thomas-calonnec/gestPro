@@ -1,15 +1,21 @@
 package com.thomas.gestPro.Security;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
-import java.util.Date;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class JwtTokenUtil {
@@ -19,16 +25,21 @@ public class JwtTokenUtil {
     private final Key secretKey = Keys.hmacShaKeyFor(SECRET_KEY.getBytes()); // Clé correcte avec taille appropriée
     private static final long ACCESS_TOKEN_VALIDITY = 1000 * 60 * 60; // 1 hours
     private static final long REFRESH_TOKEN_VALIDITY = 1000 * 60 * 60 * 6; // 6 heures
+    private final UserDetailsService userDetailsService;
 
     @Autowired
     public JwtTokenUtil(UserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
     }
 
+
     // Générer un Access Token
-    public String generateAccessToken(String username) {
+    public String generateAccessToken(UserDetails userDetails) {
+
         return Jwts.builder()
-                .setSubject(username)
+                .setSubject(userDetails.getUsername())
                 .signWith(secretKey,SignatureAlgorithm.HS256)
+                .claim("roles","USER")
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_VALIDITY))
                 .compact();
@@ -39,6 +50,7 @@ public class JwtTokenUtil {
         return Jwts.builder()
                 .setSubject(username)
                 .signWith(secretKey,SignatureAlgorithm.HS256 )
+                .claim("roles","USER")
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_VALIDITY))
                 .compact();
@@ -63,7 +75,35 @@ public class JwtTokenUtil {
                 .getBody()
                 .getSubject();
     }
+    // Extract username from JWT token
+    public String extractUsername(String token) {
+        return extractClaim(token, Claims::getSubject);
+    }
 
+    // Extract expiration date from JWT token
+    public Date extractExpiration(String token) {
+        return extractClaim(token, Claims::getExpiration);
+    }
+
+    // Extract claims from token
+    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+        final Claims claims = extractAllClaims(token);
+        return claimsResolver.apply(claims);
+    }
+
+    private Claims extractAllClaims(String token) {
+        return Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody();
+    }
+
+    private Boolean isTokenExpired(String token) {
+        return extractExpiration(token).before(new Date());
+    }
+
+    // Validate JWT token
+    public Boolean validateToken(String token, UserDetails userDetails) {
+        final String username = extractUsername(token);
+        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    }
     // Extraire le Refresh Token d'une requête
     public String getRefreshTokenFromRequest(HttpServletRequest request) {
         return request.getHeader("Refresh-Token");
@@ -73,6 +113,7 @@ public class JwtTokenUtil {
     public String refreshAccessToken(String refreshToken) {
         // Logique pour valider le refresh token et créer un nouveau access token
         String username = getUsernameFromToken(refreshToken); // Par exemple, obtenir le nom d'utilisateur à partir du refresh token
-        return generateAccessToken(username); // Générer un nouveau access token
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        return generateAccessToken(userDetails); // Générer un nouveau access token
     }
 }

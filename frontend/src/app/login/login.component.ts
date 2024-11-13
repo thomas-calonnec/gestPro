@@ -37,7 +37,7 @@ export class LoginComponent {
    this.authService.login(username,password).subscribe({
     next: () => {
 
-
+      console.log("test")
       this.userService.getUserByUsername(username).subscribe({
         next: (user) => {
           this.userId = user.id;
