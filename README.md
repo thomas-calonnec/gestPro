@@ -288,6 +288,7 @@ Lisibilité accrue et gestion plus robuste des données.
 🚫 Les requêtes manuelles nécessitaient beaucoup de logique custom, augmentant la complexité.
 
 ### ✅ Solution : Ajout des relations via JPA
+
 Ajout d’annotations comme `@OneToMany`, `@ManyToOne`, et `@JoinColumn` pour gérer les relations directement dans les entités.
 
 ```java
