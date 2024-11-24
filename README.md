@@ -280,6 +280,7 @@ Lisibilité accrue et gestion plus robuste des données.
 
 ### Impact :
 ❓ Pas de gestion des relations (par exemple, albums favoris liés aux utilisateurs).
+
 🚫 Les requêtes manuelles nécessitaient beaucoup de logique custom, augmentant la complexité.
 
 ### ✅ Solution : Ajout des relations via JPA
@@ -324,7 +325,8 @@ Obtenir un code d'autorisation via une redirection de l'utilisateur vers Spotify
 Cette implémentation permet également de stocker les tokens sensibles dans des cookies sécurisés et uniquement accessibles par le serveur (HTTP-only), garantissant la confidentialité et la sécurité.
 
 ### 🚀 Principales Méthodes Implémentées
-1. **Configuration des Headers**
+1. **Configuration des Headers** 
+
 Cette méthode configure les headers HTTP requis pour interagir avec l'API Spotify, en incluant les identifiants client pour l'authentification.
 
 ```java
@@ -337,10 +339,11 @@ private HttpHeaders configHeader() {
 }
 ```
 2. **Construction du Corps de Requête**
+
 La méthode suivante crée le corps de la requête HTTP pour les échanges de tokens avec Spotify. Selon le type de grant, elle ajoute les paramètres nécessaires :
 
-authorization_code : inclut le code reçu après authentification.
-refresh_token : inclut le token d'actualisation pour générer un nouveau jeton d'accès.
+`authorization_code` : inclut le code reçu après authentification.
+`refresh_token` : inclut le token d'actualisation pour générer un nouveau jeton d'accès.
 
 ```java
 
@@ -358,6 +361,7 @@ private MultiValueMap<String, String> configRequestBody(String grant_type, Strin
 }
 ```
 3. **Stockage Sécurisé du Refresh Token**
+
 Le refresh token est stocké dans un cookie HTTP-only, qui est sécurisé et non accessible par JavaScript, protégeant ainsi contre les attaques XSS.
 
 ```java
@@ -370,6 +374,7 @@ private void setCookieRefreshToken(String refreshToken, HttpServletResponse resp
 }
 ```
 4. **Gestion du Token**
+
 Cette méthode gère l'échange avec l'API Spotify et vérifie si un refresh token est inclus dans la réponse. Si oui, il est stocké dans un cookie.
 
 ```java
@@ -402,6 +407,7 @@ private Map<String, String> configureToken(String tokenType,
 ```
 
 5. **Échange du Code d'Autorisation**
+
 Cette méthode est responsable de l'échange d'un code d'autorisation contre un jeton d'accès et un jeton d'actualisation. Les étapes incluent :
 
 Configuration des headers.
@@ -421,6 +427,7 @@ public Map<String, String> exchangeCodeForToken(Map<String, String> payload,
 }
 ```
 6. Rafraîchissement des Tokens
+
 Cette méthode utilise un refresh token pour demander un nouveau jeton d'accès à l'API Spotify.
 
 ```java
@@ -437,24 +444,4 @@ public Map<String, String> configureRefreshToken(String refreshToken, HttpServle
     return configureToken("access_token", request, httpServletResponse);
 }
 ```
-### 🌐 Résumé du Workflow
-Utilisateur redirigé vers Spotify :
-
-L'utilisateur est redirigé avec l'URL de callback contenant le code d'autorisation.
-Backend : échange de code :
-
-Le code est envoyé à l'API Spotify pour obtenir des tokens.
-Si un refresh token est inclus dans la réponse, il est stocké dans un cookie.
-Rafraîchissement du jeton :
-
-Lorsque le jeton d'accès expire, le refresh token est utilisé pour en obtenir un nouveau.
-### ✅ Avantages
-Sécurité accrue :
-
-Stockage du refresh token dans un cookie HTTP-only sécurisé.
-Les tokens sensibles ne sont pas exposés au frontend.
-Authentification persistante :
-
-Les utilisateurs n'ont pas besoin de se reconnecter tant que le refresh token est valide.
-Conformité OAuth2 :
 
