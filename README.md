@@ -210,7 +210,9 @@ Implémentation correcte et conforme au standard OAuth2 recommandé par Spotify.
 ### ✅ Solution : Adoption de la structure MVC
 
 📂 Création d'un package repository pour les interactions avec la base de données (H2).
+
 📂 Création d'un package service pour contenir la logique métier.
+
 📂 Déplacement des entités dans un package model.
 
 ### Dossiers ajoutés :
