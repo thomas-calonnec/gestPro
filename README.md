@@ -260,9 +260,13 @@ Facilite les tests unitaires et les évolutions du projet.
 ## 🕒 Problème 2 : Lecture inefficace des fichiers CSV
 ### Impact :
 🐢 Le fichier CSV était lu ligne par ligne avec BufferedReader, ce qui compliquait le traitement et la maintenabilité.
+
 💥 En cas de fichier volumineux, cette méthode aurait pu causer des problèmes de performance.
+
 ✅ Solution : Chargement des données via Repository
+
 📥 Déplacement des données nécessaires dans une table H2 via un script d’initialisation dans `/src/main/ressources/db.changelog/master-changelog.xml`.
+
 🗃️ Utilisation de Spring Data JPA pour interagir avec les données.
 
 ```java
@@ -309,8 +313,11 @@ Simplifie les requêtes grâce à la gestion automatique des relations.
 Réduit le risque d’erreurs dans les jointures.
 
 🎉 Résultats des améliorations
+
 🏗️ Structure claire et maintenable grâce à la séparation des responsabilités (MVC).
+
 ⚡ Performance optimisée avec la gestion des données via JPA.
+
 🛡️ Application robuste et résiliente, avec une gestion efficace des exceptions.
 
 
@@ -343,6 +350,7 @@ private HttpHeaders configHeader() {
 La méthode suivante crée le corps de la requête HTTP pour les échanges de tokens avec Spotify. Selon le type de grant, elle ajoute les paramètres nécessaires :
 
 `authorization_code` : inclut le code reçu après authentification.
+
 `refresh_token` : inclut le token d'actualisation pour générer un nouveau jeton d'accès.
 
 ```java
