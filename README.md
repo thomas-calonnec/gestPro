@@ -67,9 +67,14 @@ const handleSearch = async () => {
 ## ❤️ Problème 2 : Gestion des favoris
 ### Impact :
 🚫 Absence de gestion des favoris : les utilisateurs ne pouvaient pas marquer ou consulter leurs albums favoris.
+
 📉 Fonctionnalité manquante qui réduit l'intérêt de l'application.
-✅ Solution : Ajout d'une gestion des favoris
+
+
+### ✅ Solution : Ajout d'une gestion des favoris
+
 💾 Intégration d'une API backend pour récupérer les favoris.
+
 🔄 Synchronisation en temps réel après chaque modification.
 
 ### ✨ Ajout des favoris :
