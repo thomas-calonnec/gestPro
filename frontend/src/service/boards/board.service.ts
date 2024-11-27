@@ -10,7 +10,7 @@ import {environment} from '../../environments/environment.development';
 })
 export class BoardService {
 
-  private apiServerUrl = environment.apiUrl+'/boards';
+  private apiServerUrl = environment.apiUrl+'/user/boards';
 
   constructor(private http: HttpClient) { }
 

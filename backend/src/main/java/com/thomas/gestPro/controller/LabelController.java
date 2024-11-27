@@ -11,7 +11,7 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/api/labels")
+@RequestMapping("/api/user/labels")
 @CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
 public class LabelController {
 

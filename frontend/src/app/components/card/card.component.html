@@ -1,29 +1,45 @@
-<div class="card-container">
-  <div class="card">
-    <div class="card-header">
-      <span class="title">Partie backend</span>
-      <div class="icons">
-        <i class="bi bi-arrows-move"></i> <!-- Icône de déplacement -->
-        <i class="bi bi-three-dots"></i> <!-- Icône de menu -->
-      </div>
-    </div>
-    <div class="card-content">
-      <div class="status-badges">
-        <span class="badge badge-green">Java Spring Boot</span>
-        <span class="badge badge-yellow">Oct 4</span>
-        <span class="badge badge-blue">6/6</span>
-      </div>
-      <div class="task-name">Java Spring Boot</div>
-    </div>
-    <div class="card-footer">
-      <i class="bi bi-plus-circle"></i> Add a card
-    </div>
-  </div>
+<div class="card-content">
+  <!--  <div class="status-badges">
+      <span class="badge badge-green">d</span>
+      <span class="badge badge-yellow">Oct 4</span>
+      <span class="badge badge-blue">6/6</span>
+    </div>-->
+  @if(this.isHover) {
+    <a  (click)="openModal()" ><div (mouseenter)="this.hover()" (mouseleave)="isHover = false"
+                                    class="task-name">{{ taskName }}<i class="fa-regular fa-pen-to-square" style=" text-align: right;"></i></div></a>
+  } @else {
+    <a ><div (mouseenter)="isHover=true" (mouseleave)="isHover = false"  class="task-name">{{ taskName }}</div></a>
+  }
+
+
+
+  @if(this.isModalOpen){
+
+    <app-task-box
+
+      title="{{taskName}}"
+      (confirm)="handleConfirm()"
+      (cancel)="handleCancel()"
+    >
+
+          <mat-form-field>
+
+            <input
+              matInput
+              [matDatepicker]="picker"
+              (dateInput)="addEvent('input', $event)"
+              [(ngModel)]="deadline"
+            />
+
+            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+
+          </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Choose a time</mat-label>
+        <input matInput type="time" [(ngModel)]="selectedTime">
+      </mat-form-field>
+    </app-task-box>
+  }
+
 </div>
-<!--<div class="container">
-
-    <div class="hover-card">
-      <a style=" text-decoration: none;" routerLink="/boards/{{board.id}}"><h3 class="card-title">{{ board.name }}</h3></a>
-    </div>
-
-  </div>-->

@@ -13,7 +13,7 @@ import {AuthService} from '../../app/auth.service';
 })
 export class UserService {
 
-  private apiServerUrl = environment.apiUrl + '/users';
+  private apiServerUrl = environment.apiUrl + '/user/users';
   authService : AuthService = inject(AuthService);
 
   constructor(private http: HttpClient) { }
