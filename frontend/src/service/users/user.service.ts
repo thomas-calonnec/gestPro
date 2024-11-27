@@ -52,13 +52,13 @@ export class UserService {
   }
 
   public getUserByUsername(username: string): Observable<User>{
-   const headers = new HttpHeaders({
+/*   const headers = new HttpHeaders({
       'Authorization': `Bearer ${this.authService.getAccessToken()}`, // Ajouter le token JWT dans l'en-tête Authorization
       'Content-Type': 'application/json'
-    });
-    var tok =  this.authService.getAccessToken();
+    });*/
+    /*var tok =  this.authService.getAccessToken();
     if(tok)
-      console.log("username : " + this.authService.isTokenExpired(tok));
-    return this.http.get<User>(`${this.apiServerUrl}/username/${username}`,{headers});
+      console.log("username : " + this.authService.isTokenExpired(tok));*/
+    return this.http.get<User>(`${this.apiServerUrl}/username/${username}`);
   }
 }

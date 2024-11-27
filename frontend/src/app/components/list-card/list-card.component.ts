@@ -1,6 +1,6 @@
 import {Component, OnInit, inject, signal, Input, WritableSignal} from '@angular/core';
-import { Card } from '../../dao/card';
-import { ListCardService } from '../../service/list-cards/list-card.service';
+import { Card } from '../../../dao/card';
+import { ListCardService } from '../../../service/list-cards/list-card.service';
 import {CardComponent} from '../card/card.component';
 
 import {HorizontalDragDropExampleComponent} from '../horizontal/horizontal.component';
