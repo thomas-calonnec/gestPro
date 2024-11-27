@@ -1,8 +1,8 @@
 import {Component, EventEmitter, inject, OnInit, Output} from '@angular/core';
-import {Workspace} from '../../dao/workspace';
-import {UserService} from '../../service/users/user.service';
+import {Workspace} from '../../../dao/workspace';
+import {UserService} from '../../../service/users/user.service';
 import {ActivatedRoute, RouterLink} from '@angular/router';
-import {MainService} from '../../service/main/main.service';
+import {MainService} from '../../../service/main/main.service';
 
 @Component({
   selector: 'app-user',

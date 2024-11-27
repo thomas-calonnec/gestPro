@@ -1,10 +1,10 @@
 import { Routes } from '@angular/router';
-import {BoardComponent} from './board/board.component';
-import {ListCardComponent} from './list-card/list-card.component';
-import {WorkspaceComponent} from './workspace/workspace.component';
-import { LoginComponent } from './login/login.component';
-import {UserComponent} from './user/user.component';
-import {MainComponent} from './main/main.component';
+import {BoardComponent} from './components/board/board.component';
+import {ListCardComponent} from './components/list-card/list-card.component';
+import {WorkspaceComponent} from './components/workspace/workspace.component';
+import { LoginComponent } from './components/login/login.component';
+import {UserComponent} from './components/user/user.component';
+import {MainComponent} from './components/main/main.component';
 
 
 export const routes: Routes = [

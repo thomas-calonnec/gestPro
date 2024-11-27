@@ -4,6 +4,16 @@
   margin: 0.5rem;
   font-size: 0.9rem;
 }
+/* Create the hover effect with the white line */
+.card-content .task-name:hover{
+  border: 2px solid white;
+  cursor: pointer;
+}
+
+/* On hover, expand the line */
+.card-content .task-name:hover::after {
+  width: 100%; /* Full width when hovered */
+}
 
 .card-content .status-badges {
   display: flex;
@@ -32,6 +42,8 @@
 
 .card-content .task-name {
   background-color: #688fca;
+  display: flex;
+  justify-content: space-between;
   padding: 0.5rem;
   border-radius: 8px;
   color: #ffffff;

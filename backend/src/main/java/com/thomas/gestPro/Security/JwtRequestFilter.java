@@ -40,18 +40,26 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         return null;
     }
     @Override
-    protected void doFilterInternal(HttpServletRequest request, @Nullable HttpServletResponse response, @Nullable FilterChain chain)
+    protected void doFilterInternal(@Nullable HttpServletRequest request, @Nullable HttpServletResponse response, @Nullable FilterChain chain)
             throws ServletException, IOException {
 
+        assert request != null;
         String token = extractJwtFromRequest(request);
 
-        if (token != null && jwtTokenUtil.validateToken(token)) {
+       /* if(jwtTokenUtil.isTokenExpired(token)){
+            System.err.println("error token expired");
+        }*/
+        // Valider le token si il n'est pas expiré
+        if (jwtTokenUtil.validateToken(token)) {
             String username = jwtTokenUtil.getUsernameFromToken(token);
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
             UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(userDetails.getUsername(), null, userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
-        }
+
+       }
+
+
 
         assert chain != null;
         chain.doFilter(request, response);
