@@ -1,11 +1,11 @@
 import {inject, Injectable} from '@angular/core';
 import {
   HttpErrorResponse,
-  HttpEvent, HttpHandler, HttpHandlerFn,
+  HttpEvent, HttpHandler,
   HttpInterceptor,
   HttpRequest
 } from '@angular/common/http';
-import {catchError, Observable, switchMap, tap, throwError} from 'rxjs';
+import {catchError, from, Observable, switchMap, throwError} from 'rxjs';
 import {AuthService} from '../../app/auth.service';
 import {Router} from '@angular/router';
 import {JwtHelperService} from  '@auth0/angular-jwt';
@@ -16,28 +16,37 @@ import {JwtHelperService} from  '@auth0/angular-jwt';
 export class AuthInterceptor implements HttpInterceptor {
 
   private authService: AuthService = inject(AuthService)
-  private jwtHelper = new JwtHelperService();
-  private router : Router = inject(Router);
+
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const authService = inject(AuthService);
+    const accessToken = this.authService.getAccessToken();
+    console.log("token : " + accessToken)
+    if (accessToken) {
+      req = req.clone({
+        setHeaders: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      });
+      return next.handle(req);
+    }
 
     return next.handle(req).pipe(
-      catchError((error: HttpErrorResponse) => {
-        if (error.status === 401) {
-          return authService.revokeToken().pipe(
+      catchError(error => {
+        if (error.status === 401 ) { // Unauthorized, token expired
+          return this.authService.refreshAccessToken().pipe(
             switchMap(() => {
+              const accessToken = this.authService.getAccessToken();
+
+              req = req.clone({
+                setHeaders: {
+                  Authorization: `Bearer ${accessToken}`
+                }
+              });
               return next.handle(req);
-            }),
-            catchError((refreshError) => {
-              // Si le rafraîchissement échoue, déconnectez l'utilisateur
-              authService.logout();
-              return throwError(() => refreshError);
             })
           );
         }
-        return throwError(() => error);
+        return throwError(() =>error);
       })
     );
   }
-
 }

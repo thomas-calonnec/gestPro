@@ -12,7 +12,7 @@ import {AuthService} from '../../app/auth.service';
 })
 export class WorkspaceService {
 
-  private apiServerUrl = environment.apiUrl + '/workspaces';
+  private apiServerUrl = environment.apiUrl + '/user/workspaces';
   private authService : AuthService = inject(AuthService);
   constructor(private http: HttpClient) { }
 

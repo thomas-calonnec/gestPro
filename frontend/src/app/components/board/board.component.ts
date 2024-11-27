@@ -24,7 +24,7 @@ import {CdkDragDrop, CdkDrag, CdkDropList, moveItemInArray, CdkDragPlaceholder} 
     CdkDragPlaceholder
   ],
   templateUrl:'./board.component.html' ,
-  styleUrl: './board.component.css'
+  styleUrl: './board.component.scss'
 })
 export class BoardComponent implements OnInit{
   myForm : FormGroup;

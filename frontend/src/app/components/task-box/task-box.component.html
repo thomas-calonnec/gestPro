@@ -1,0 +1,16 @@
+<div class="modal-overlay" (click)="closeModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <i class="fa-solid fa-table fa-lg"></i> <h2>{{ title }}</h2>
+      <button class="close-button" (click)="closeModal()">&times;</button>
+    </div>
+
+    <div class="modal-body">
+      <ng-content></ng-content>
+    </div>
+    <div class="modal-footer">
+      <button class="primary-button" (click)="onConfirm()">Confirm</button>
+      <button class="secondary-button" (click)="closeModal()">Cancel</button>
+    </div>
+  </div>
+</div>
