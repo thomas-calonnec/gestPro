@@ -9,12 +9,12 @@ import {environment} from '../../environments/environment.development';
 })
 export class ListCardService {
 
-  private apiServerUrl = environment.apiUrl + '/listCards';
+  private apiServerUrl = environment.apiUrl + '/user/listCards';
 
   constructor(private http: HttpClient) { }
 
   public createCard(listCardId: number, card : Card): Observable<Card>{
-    return this.http.put<Card>(`${this.apiServerUrl}/${listCardId}/card                                     `,card);
+    return this.http.put<Card>(`${this.apiServerUrl}/${listCardId}/card`,card);
   }
 
   public getCards(listCardId: number): Observable<Card[]> {
