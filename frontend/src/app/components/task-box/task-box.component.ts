@@ -1,10 +1,13 @@
 import {Component, EventEmitter, inject, Input, Output} from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
+import {MatButton} from '@angular/material/button';
 
 @Component({
   selector: 'app-task-box',
   standalone: true,
-  imports: [],
+  imports: [
+    MatButton
+  ],
   templateUrl: './task-box.component.html',
   styleUrl: './task-box.component.css'
 })
