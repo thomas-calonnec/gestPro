@@ -2,11 +2,14 @@ package com.thomas.gestPro.service;
 
 import com.thomas.gestPro.Exception.ResourceNotFoundException;
 import com.thomas.gestPro.model.Card;
+import com.thomas.gestPro.model.CheckList;
 import com.thomas.gestPro.model.Label;
 import com.thomas.gestPro.model.ListCard;
 import com.thomas.gestPro.repository.CardRepository;
+import com.thomas.gestPro.repository.CheckListRepository;
 import com.thomas.gestPro.repository.LabelRepository;
 import com.thomas.gestPro.repository.ListCardRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +19,7 @@ import java.util.List;
 public class CardService {
 
     private final CardRepository cardRepository;
-
+    private final CheckListRepository checkListRepository;
     private final LabelRepository labelRepository;
     private final ListCardRepository listCardRepository;
 
@@ -28,8 +31,9 @@ public class CardService {
      * @param listCardRepository repository for managing list of cards
      */
     @Autowired
-    public CardService(CardRepository cardRepository, LabelRepository labelRepository, ListCardRepository listCardRepository) {
+    public CardService(CardRepository cardRepository, CheckListRepository checkListRepository, LabelRepository labelRepository, ListCardRepository listCardRepository) {
         this.cardRepository = cardRepository;
+        this.checkListRepository = checkListRepository;
         this.labelRepository = labelRepository;
         this.listCardRepository = listCardRepository;
     }
@@ -52,6 +56,7 @@ public class CardService {
      * @throws ResourceNotFoundException if the card is not found
      */
     public Card getCardById(Long cardId) {
+
         return cardRepository.findById(cardId).orElseThrow(() -> new ResourceNotFoundException("Card not found"));
     }
 
@@ -63,15 +68,48 @@ public class CardService {
      * @param updateCard the new card details
      * @return the updated card
      */
-    public Card updateCard(Long cardId, Card updateCard){
+    @Transactional
+    public Card updateCard(Long cardId, Card updateCard) {
+        // Récupérer l'entité existante
         Card existingCard = getCardById(cardId);
 
+        // Mettre à jour les champs simples
         existingCard.setName(updateCard.getName());
         existingCard.setDeadline(updateCard.getDeadline());
         existingCard.setDescription(updateCard.getDescription());
-        return cardRepository.save(existingCard);
 
+        // Gestion de la liste CheckList
+        List<CheckList> updatedCheckLists = updateCard.getCheckList();
+        List<CheckList> existingCheckLists = existingCard.getCheckList();
+
+        // Supprimer les CheckLists qui ne sont plus présentes
+        existingCheckLists.removeIf(existing ->
+                updatedCheckLists.stream().noneMatch(updated ->
+                        updated.getId() != null && updated.getId().equals(existing.getId()))
+        );
+
+        // Ajouter ou mettre à jour les CheckLists existants
+        for (CheckList updatedCheckList : updatedCheckLists) {
+            if (updatedCheckList.getId() == null) {
+                // Nouveau CheckList : l'ajouter
+                updatedCheckList.setCard(existingCard); // Maintenir la relation bidirectionnelle
+                existingCheckLists.add(updatedCheckList);
+            } else {
+                // Mettre à jour les CheckLists existants
+                existingCheckLists.stream()
+                        .filter(existing -> existing.getId().equals(updatedCheckList.getId()))
+                        .findFirst()
+                        .ifPresent(existing -> {
+                            existing.setName(updatedCheckList.getName());
+                            existing.setCompleted(updatedCheckList.getCompleted());
+                        });
+            }
+        }
+
+        // Sauvegarder automatiquement via la cascade
+        return cardRepository.save(existingCard);
     }
+
 
     /**
      * Deletes a card by its ID and removes it from the associated list of cards.

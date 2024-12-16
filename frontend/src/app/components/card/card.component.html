@@ -1,14 +1,15 @@
 <div class="card-content">
-  <!--  <div class="status-badges">
-      <span class="badge badge-green">d</span>
-      <span class="badge badge-yellow">Oct 4</span>
-      <span class="badge badge-blue">6/6</span>
-    </div>-->
+  <div class="status-badges">
+  @for(label of card.labels; track label.id ){
+      <span [class]="'badge ' + 'badge-'+ label.color "> </span>
+  }
+  </div>
+
   @if(this.isHover) {
     <a  (click)="openModal()" ><div (mouseenter)="this.hover()" (mouseleave)="isHover = false"
-                                    class="task-name">{{ taskName }}<i class="fa-regular fa-pen-to-square" style=" text-align: right;"></i></div></a>
+                                    class="task-name">{{ card.name }}<i class="fa-regular fa-pen-to-square" style=" text-align: right;"></i></div></a>
   } @else {
-    <a ><div (mouseenter)="isHover=true" (mouseleave)="isHover = false"  class="task-name">{{ taskName }}</div></a>
+    <a ><div (mouseenter)="isHover=true" (mouseleave)="isHover = false"  class="task-name">{{ card.name }}</div></a>
   }
 
 
@@ -17,28 +18,119 @@
 
     <app-task-box
 
-      title="{{taskName}}"
-      (confirm)="handleConfirm()"
+      title="{{card.name}}"
+      (confirm)="handleConfirm(card!)"
       (cancel)="handleCancel()"
     >
 
-          <mat-form-field>
+      <div class="container">
+        <div style="display: flex; flex-direction: column; margin-bottom: 30px">
+          <b>Labels</b>
+          <div class="status-labels">
+            @for(label of card.labels; track label.id ){
 
+              <span [class]="'labels ' + 'badge-' + label.color" [matTooltip]="'color:' + label.color" matTooltipPosition="above"></span>
+
+
+            }
+           <button mat-mini-fab > <mat-icon style="border-radius: 2px">add</mat-icon></button>
+          </div>
+        </div>
+
+
+<div style="display: flex; flex-direction: column">
+      <b><i class="fa-regular fa-calendar fa-lg"></i> due date</b>
+
+<div class="datePicker">
+          <mat-form-field style="margin-right: 10px">
+            <mat-label>Choose a date</mat-label>
             <input
               matInput
               [matDatepicker]="picker"
               (dateInput)="addEvent('input', $event)"
-              [(ngModel)]="deadline"
+              [(ngModel)]="card.deadline"
             />
 
             <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-            <mat-datepicker #picker></mat-datepicker>
+            <mat-datepicker #picker>
+              <mat-datepicker-actions>
+                <button mat-button matDatepickerCancel>Cancel</button>
+                <button mat-raised-button matDatepickerApply>Apply</button>
+              </mat-datepicker-actions>
+            </mat-datepicker>
 
           </mat-form-field>
-      <mat-form-field appearance="fill">
+      <mat-form-field  >
         <mat-label>Choose a time</mat-label>
-        <input matInput type="time" [(ngModel)]="selectedTime">
+        <input matInput type="time"  [(ngModel)]="selectedTime" (change)="onTimeChange()">
       </mat-form-field>
+
+</div>
+
+  <span [style]=" this.now > card.deadline ? 'color: red' : 'color:green'"> bien</span>
+  {{ this.now.getTime() }}
+</div>
+
+      <b> <i class="fa-solid fa-bars fa-lg"></i> Description</b>
+   <!--   @if(!isClicked){-->
+        <mat-form-field (mouseup)="isClicked = true" class="example-full-width">
+          <mat-label>Describe your idea</mat-label>
+          <textarea  matInput placeholder="Ex. describe your project..." [value]="card.description"></textarea>
+
+
+        </mat-form-field>
+    <!--  } @else {-->
+
+      <!--<angular-editor [(ngModel)]="descriptionConfig" [config]="editorConfig"></angular-editor>
+        <div class="modal-footer">
+          <button mat-flat-button (click)="onConfirm()">Save</button>
+          <button mat-stroked-button (click)="isClicked = false">Cancel</button>
+        </div>-->
+    <!--  }-->
+        <div>
+          <div class="flex-container">
+            <div class="left-content">
+              <b><i class="fa fa-regular fa-circle-check fa-lg"></i> CheckList ({{this.progress}}%)</b>
+            </div>
+            <div class="right-content">
+              <button (click)="setHideSelected()"  mat-raised-button style="background-color: #e0e0e0" class="buttonHide">
+                {{ !hideCompleted() ? 'hide checked items' : 'show checked items ('+ completedTasksCount+')' }} </button>
+            </div>
+          </div>
+         <mat-progress-bar
+            mode="determinate"
+            [style]=" this.progress === 100 ?
+            '--mdc-linear-progress-active-indicator-color: green;':
+            '--mdc-linear-progress-active-indicator-color: blue;'
+    "
+            [value]="progress">
+          </mat-progress-bar>
+            <ul style="list-style-type: none;  padding: 0;  margin: 0;">
+              @for (task of completedTasks(); track task.id; let i = $index){
+
+
+              <li  [hidden]="hideCompleted() && task.completed">
+                <mat-checkbox [(ngModel)]="task.completed" (change)="updateProgress($event.checked,i)">
+                  <span [style.text-decoration]="task.completed ? 'line-through' : 'none'"> {{ task.name }}</span>
+
+                </mat-checkbox>
+              </li>
+              }
+
+
+            </ul>
+
+
+
+        <!--  <div style="display: flex; flex-direction: column">
+            @for(list of this.checkListSignal(); track list.id ; let i = $index ){
+
+
+              <mat-checkbox [checked]="list.completed" (change)="update($event.checked,i)">{{ list.name }}</mat-checkbox>
+            }
+          </div>-->
+        </div>
+      </div>
     </app-task-box>
   }
 

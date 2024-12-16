@@ -3,6 +3,14 @@
   border-radius: 8px;
   margin: 0.5rem;
   font-size: 0.9rem;
+  &:hover {
+    border: 2px solid white;
+    cursor: pointer;
+    &::after {
+      width: 100%;
+    }
+  }
+
   .task-name {
     background-color: #688fca;
     display: flex;
@@ -10,32 +18,110 @@
     padding: 0.5rem;
     border-radius: 8px;
     color: #ffffff;
-    &:hover {
+    /*&:hover {
       border: 2px solid white;
       cursor: pointer;
       &::after {
         width: 100%;
       }
-    }
+    }*/
+  }
+  .status-labels {
+    display: flex;
+    flex-direction: row;
+    cursor: pointer;
+
   }
   .status-badges {
     display: flex;
-    gap: 0.5rem;
-    margin-bottom: 0.5rem;
+    padding-top: 6px;
+position: relative;
+    flex-direction: row;
+    cursor: pointer;
+    min-width: 120px;
+    max-width: 40px;
+
+    height: 8px;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-right: 0;
+    padding-left: 0;
+    color: transparent;
   }
 }
+.example-full-width {
+  width: 100%;
+}
+.flex-container {
+  display: flex;
+  justify-content: space-between; /* Espace entre les deux contenus */
+  align-items: center; /* Aligne verticalement si nécessaire */
+  padding: 10px; /* Facultatif : un peu d'espace autour */
+}
+
+.left-content {
+  flex: 0 1 auto; /* Facultatif : le contenu de gauche s'adapte à sa taille */
+}
+
+.right-content {
+  flex: 0 1 auto; /* Facultatif : le contenu de droite s'adapte à sa taille */
+}
+.buttonHide {
+
+  border-radius: 2px;
+  width: 190px;
+  padding: 0
+}
+.labels {
+  display: inline-block;
+  position: relative;
+  width: 70px;
+  height: 40px;
+  background-color: #0c66e4;
+  text-overflow: ellipsis;
+  border-radius: 4px;
+  margin-right: 5px;
+  &:hover{
+    opacity: 0.3;
+  }
+}
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* Ajoute un espacement uniforme entre les sections */
+  margin-bottom: 20px;
+}
+.datePicker {
+  display: flex;
+  gap: 20px; /* Espacement entre les champs de date et d'heure */
+  align-items: center; /* Aligne verticalement les éléments */
+  flex-wrap: wrap; /* Permet aux champs de se placer en ligne ou en colonne si nécessaire */
+}
 .badge {
-  padding: 0.25rem 0.5rem;
-  border-radius: 5px;
-  color: white;
-  font-size: 0.8rem;
+  display: inline-block;
+  width: 50%;
+  position: relative;
+  box-sizing: border-box;
+  text-align: left;
+  text-overflow: ellipsis;
+  background-color: #FFA726;
+  border-radius: 4px;
+
+  margin-left: 10px;
+
 }
+
 .badge-green {
-  background-color: #4CAF50;
+  background-color: #237a23;
+
 }
+
 .badge-yellow {
   background-color: #FFA726;
 }
 .badge-blue {
   background-color: #2196F3;
+}
+.badge-red {
+  background-color: #d9352d;
 }

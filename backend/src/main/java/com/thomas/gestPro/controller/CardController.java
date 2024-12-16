@@ -41,7 +41,9 @@ public class CardController {
 
     @PutMapping("/{id}/update")
     public ResponseEntity<Card> updateCardById(@PathVariable Long id, @RequestBody Card card) {
+System.err.println("card : " + card.getDeadline());
         Card updateCard = cardService.updateCard(id,card);
+
         return new ResponseEntity<>(updateCard,HttpStatus.OK);
     }
 

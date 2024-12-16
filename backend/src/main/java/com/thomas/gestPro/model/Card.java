@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +24,7 @@ public class Card {
     private Long id;
     private String name;
     private String description;
-    private LocalDate deadline;
+    private LocalDateTime deadline;
 
     @ManyToOne
     @JoinColumn(name = "list_card_id", nullable = false)
@@ -34,6 +35,9 @@ public class Card {
             joinColumns = @JoinColumn(name = "card_id"),
             inverseJoinColumns = @JoinColumn(name = "label_id"))
     private List<Label> labels = new ArrayList<>();
+
+    @OneToMany(mappedBy = "card",cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CheckList> checkList = new ArrayList<>();
 
     @ManyToMany(mappedBy = "cards")
     private List<User> users = new ArrayList<>();
