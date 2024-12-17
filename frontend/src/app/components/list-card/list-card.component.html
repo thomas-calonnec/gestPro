@@ -9,7 +9,9 @@
     </div>
 
     @for (card of cards(); track card.id) {
-      <app-card [taskName]="card.name" [deadline]="card.deadline"> </app-card>
+
+      <app-card [card]="card">
+      </app-card>
     }
 
     @if(!isClicked){
