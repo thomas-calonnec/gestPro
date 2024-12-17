@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { Card } from '../../dao/card';
 import { Label } from '../../dao/label';
 import {environment} from '../../environments/environment.development';
+import {CheckList} from '../../dao/check-list';
 
 @Injectable({
   providedIn: 'root'
@@ -15,10 +16,12 @@ export class CardService {
   constructor(private http: HttpClient) { }
 
   public updateCard(listCardId: number, card: Card): Observable<Card>{
-
     return this.http.put<Card>(`${this.apiServerUrl}/${listCardId}/update`,card);
   }
 
+  public updateCheckList(cardId: number, checkList: CheckList): Observable<Card> {
+    return this.http.put<Card>(`${this.apiServerUrl}/${cardId}/check-list/update`,checkList);
+  }
   public deleteCard(cardId: number): Observable<void>{
     return this.http.delete<void>(`${this.apiServerUrl}/${cardId}`);
   }

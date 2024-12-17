@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy,
+  ChangeDetectionStrategy, ChangeDetectorRef,
   Component,
   computed, effect,
   inject,
@@ -17,9 +17,9 @@ import {
   MatDatepickerToggle
 } from '@angular/material/datepicker';
 import {MatIconModule} from '@angular/material/icon';
-import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MAT_DATE_LOCALE} from '@angular/material/core';
-import {MatButton, MatFabButton, MatMiniFabButton} from '@angular/material/button';
+import {MatButton, MatFabButton, MatIconButton, MatMiniFabButton} from '@angular/material/button';
 import {AngularEditorConfig, AngularEditorModule} from '@kolkov/angular-editor';
 import {MatTooltip} from '@angular/material/tooltip';
 import {CheckList} from '../../../dao/check-list';
@@ -66,6 +66,7 @@ import {MatTimepickerModule} from '@dhutaryan/ngx-mat-timepicker';
     MatTimepickerModule,
     MatDatepickerModule,
     FormsModule,
+    MatIconButton,
 
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -81,11 +82,17 @@ export class CardComponent implements OnInit {
     description: "",
     deadline: new Date(),
     labels: [],
-    checkList: []
+    checkList: [],
+
   };
+  private formBuilder : FormBuilder = inject(FormBuilder)
+  protected showOptions: boolean[] =[]
   checkListSignal: WritableSignal<CheckList[]> = signal<CheckList[]>([]);
 protected now : Date = new Date()
   protected selectedTime = "";
+  protected readonly formatNumber = formatNumber;
+  protected readonly Number = Number;
+  myForm: FormGroup;
   //protected time = this.selectedTime.split(":").map(Number);
 protected  checkList : CheckList[] | undefined = [];
   private cardService: CardService = inject(CardService);
@@ -144,8 +151,15 @@ protected  checkList : CheckList[] | undefined = [];
   };
 
   progress: number = 0;
+  private cd: ChangeDetectorRef = inject(ChangeDetectorRef);
+ constructor() {
+   this.myForm = this.formBuilder.group({
+     name: ['', Validators.required],
 
+   });
+ }
   // Calcul du nombre de tâches terminées
+  protected isClickedList: boolean  = false;
   get completedTasksCount(): number {
     return this.checkListSignal().filter(task => task.completed).length;
   }
@@ -162,9 +176,6 @@ protected  checkList : CheckList[] | undefined = [];
   }
   events = signal<string[]>([]);
   hideCompleted: WritableSignal<boolean> = signal<boolean>(false);
-
-
-
 
   addEvent(type: string, event: MatDatepickerInputEvent<Date>) {
     this.events.update(events => [...events, `${type}: ${event.value}`]);
@@ -183,12 +194,18 @@ protected  checkList : CheckList[] | undefined = [];
 
   }
   updateProgress(completed: boolean, index: number): void {
-    this.checkListSignal.update(list => {
-      list[index].completed = completed;
-      return list;
-    })
 
-    this.progress = (this.completedTasksCount / this.totalTasksCount) * 100;
+    if(this.completedTasksCount == 0 || this.totalTasksCount == 0)
+      this.progress = 0;
+    else {
+      this.checkListSignal.update(list => {
+        list[index].completed = completed;
+        return list;
+      })
+
+      this.progress = Math.floor((this.completedTasksCount / this.totalTasksCount) * 100);
+    }
+
   }
 
 
@@ -197,19 +214,24 @@ protected  checkList : CheckList[] | undefined = [];
     this.checkList = this.card.checkList;
     this.checkListSignal.set(this.checkList);
    // this.description = this.card.description;
+    this.showOptions = new Array(this.checkListSignal().length).fill(false)
     this.card.deadline = new Date(this.card.deadline)
 
     const hours = (this.card.deadline.getHours() + 1).toString();
     const minutes  = this.card.deadline.getMinutes() >= 0 && this.card.deadline.getMinutes() <= 9 ? "0" +
       this.card.deadline.getMinutes() : this.card.deadline.getMinutes();
     this.selectedTime = hours + ":" + minutes
-    this.progress = (this.completedTasksCount / this.totalTasksCount) * 100;
+    this.progress = this.completedTasksCount === 0 ? 0 : Math.floor((this.completedTasksCount / this.totalTasksCount) * 100);
      console.log( this.selectedTime)
   }
 
   hover() {
     this.isHover = true;
   }
+  hoverList(idx: number) {
+    this.showOptions[idx] = true;
+  }
+
 
 
   openModal() {
@@ -239,9 +261,44 @@ protected  checkList : CheckList[] | undefined = [];
 
 
   setHideSelected() {
-  this.hideCompleted.set(!this.hideCompleted())
+      this.hideCompleted.set(!this.hideCompleted())
   }
 
-  protected readonly formatNumber = formatNumber;
-  protected readonly Number = Number;
+  addItemList() {
+    this.isClickedList = true;
+  }
+  addItemListConfirm() {
+
+    const checkList: CheckList = {
+
+      name: this.myForm.value.name,
+      completed: false
+    };
+
+    // Créez une nouvelle référence pour la liste
+    const updatedCheckList = [...this.card.checkList, checkList];
+
+    // Mettez à jour l'objet card avec la nouvelle liste
+    const updatedCard = { ...this.card, checkList: updatedCheckList };
+    this.cardService.updateCard(this.card.id,this.card).subscribe({
+      next: (response) => {
+        console.log('Success :' + response);
+        this.checkListSignal.set(updatedCheckList);
+        this.cd.markForCheck();
+      },
+      error: (err) => {
+        console.error('Error : ' + err);
+      }
+
+    });
+
+    this.myForm.patchValue({
+      name:""
+    })
+    this.isClickedList = false;
+  }
+
+  hoverListOut(i: number) {
+    this.showOptions[i] = false;
+  }
 }

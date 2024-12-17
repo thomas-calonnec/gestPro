@@ -14,6 +14,7 @@
   .task-name {
     background-color: #688fca;
     display: flex;
+    font-size: 1rem;
     justify-content: space-between;
     padding: 0.5rem;
     border-radius: 8px;
@@ -58,7 +59,16 @@ position: relative;
   align-items: center; /* Aligne verticalement si nécessaire */
   padding: 10px; /* Facultatif : un peu d'espace autour */
 }
+.containerList {
+  display: flex;
+  flex-direction: row;
 
+  &:hover{
+    cursor: pointer;
+    border-radius: 4px;
+    background-color: #e7e5e5;
+  }
+}
 .left-content {
   flex: 0 1 auto; /* Facultatif : le contenu de gauche s'adapte à sa taille */
 }
@@ -66,6 +76,17 @@ position: relative;
 .right-content {
   flex: 0 1 auto; /* Facultatif : le contenu de droite s'adapte à sa taille */
 }
+.example-form {
+  min-width: 150px;
+  max-width: 500px;
+  width: 100%;
+
+}
+
+.example-full-width {
+  width: 100%;
+}
+
 .buttonHide {
 
   border-radius: 2px;
