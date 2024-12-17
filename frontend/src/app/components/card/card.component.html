@@ -1,16 +1,23 @@
 <div class="card-content">
-  <div class="status-badges">
-  @for(label of card.labels; track label.id ){
-      <span [class]="'badge ' + 'badge-'+ label.color "> </span>
-  }
-  </div>
+  @if (card.labels.length > 0) {
+    <div class="status-badges">
 
-  @if(this.isHover) {
-    <a  (click)="openModal()" ><div (mouseenter)="this.hover()" (mouseleave)="isHover = false"
-                                    class="task-name">{{ card.name }}<i class="fa-regular fa-pen-to-square" style=" text-align: right;"></i></div></a>
-  } @else {
-    <a ><div (mouseenter)="isHover=true" (mouseleave)="isHover = false"  class="task-name">{{ card.name }}</div></a>
-  }
+      @for(label of card.labels; track label.id ){
+        <span [class]="'badge ' + 'badge-'+ label.color "> </span>
+      }
+
+    </div>
+    }
+    @if(this.isHover) {
+      <a  (click)="openModal()" ><div (mouseenter)="this.hover()" (mouseleave)="isHover = false"
+                                      class="task-name">{{ card.name }}<i class="fa-regular fa-pen-to-square" style=" text-align: right;"></i></div></a>
+    } @else {
+      <a ><div (mouseenter)="isHover=true" (mouseleave)="isHover = false"  class="task-name">{{ card.name }}</div></a>
+    }
+
+
+
+
 
 
 
@@ -68,7 +75,7 @@
 </div>
 
   <span [style]=" this.now > card.deadline ? 'color: red' : 'color:green'"> bien</span>
-  {{ this.now.getTime() }}
+
 </div>
 
       <b> <i class="fa-solid fa-bars fa-lg"></i> Description</b>
@@ -108,18 +115,52 @@
             <ul style="list-style-type: none;  padding: 0;  margin: 0;">
               @for (task of completedTasks(); track task.id; let i = $index){
 
+              <div class="flex-container containerList"   style="padding-bottom: 0; padding-top: 2px" (mouseover)="this.hoverList(i)" (mouseout)="this.hoverListOut(i)" >
+                <div class="left-content" >
+                <li [hidden]="hideCompleted() && task.completed">
+                  <mat-checkbox [(ngModel)]="task.completed" (change)="updateProgress($event.checked,i)">
+                    <span [style.text-decoration]="task.completed ? 'line-through' : 'none'"> {{ task.name }}</span>
 
-              <li  [hidden]="hideCompleted() && task.completed">
-                <mat-checkbox [(ngModel)]="task.completed" (change)="updateProgress($event.checked,i)">
-                  <span [style.text-decoration]="task.completed ? 'line-through' : 'none'"> {{ task.name }}</span>
+                  </mat-checkbox>
 
-                </mat-checkbox>
-              </li>
+                </li>
+                </div>
+                <div class="right-content">
+                  @if(this.showOptions[i]){
+
+                <button mat-icon-button aria-label="Example icon button with a vertical three dot icon">
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+                  }
+                </div>
+              </div>
+
               }
 
 
             </ul>
+          @if (this.isClickedList) {
+            <form [formGroup]="myForm" class="example-form">
+              <mat-form-field class="example-full-width">
 
+                <mat-label>Add an item</mat-label>
+                <input matInput  formControlName="name" />
+              </mat-form-field>
+            </form>
+            <button (click)="isClickedList = false" mat-raised-button style="color: white;background-color: #d31010; border-radius: 2px;
+  width: 120px;" >
+              {{'Cancel' }} </button>
+
+            <button (click)="addItemListConfirm()" mat-raised-button style="background-color: #e0e0e0; border-radius: 2px;
+  width: 120px;" >
+              {{'Add' }} </button>
+
+          } @else {
+          <button (click)="addItemList()" mat-raised-button style="background-color: #e0e0e0; border-radius: 2px;
+  width: 120px;" >
+            {{'add items' }} </button>
+
+          }
 
 
         <!--  <div style="display: flex; flex-direction: column">

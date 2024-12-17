@@ -1,12 +1,15 @@
 package com.thomas.gestPro.controller;
 
 import com.thomas.gestPro.model.Card;
+import com.thomas.gestPro.model.CheckList;
 import com.thomas.gestPro.model.Label;
 import com.thomas.gestPro.service.CardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @CrossOrigin("http://localhost:4200")
@@ -38,10 +41,18 @@ public class CardController {
         return ResponseEntity.ok(updateCard);
     }
 
+    @PutMapping("/{id}/check-list/update")
+    public ResponseEntity<Card> updateCheckList(@PathVariable Long id, @RequestBody CheckList checkList) {
+
+        Card updateCard = cardService.updateCheckList(id,checkList);
+
+        return ResponseEntity.ok(updateCard);
+
+    }
 
     @PutMapping("/{id}/update")
     public ResponseEntity<Card> updateCardById(@PathVariable Long id, @RequestBody Card card) {
-System.err.println("card : " + card.getDeadline());
+
         Card updateCard = cardService.updateCard(id,card);
 
         return new ResponseEntity<>(updateCard,HttpStatus.OK);
@@ -52,6 +63,7 @@ System.err.println("card : " + card.getDeadline());
         cardService.deleteCard(id);
         return ResponseEntity.noContent().build();
     }
+
     @DeleteMapping("/{id}/label")
     public ResponseEntity<Void> removeLabelFromCard(@PathVariable Long id, @RequestBody Label label) {
         cardService.removeLabelFromCard(id,label.getColor());

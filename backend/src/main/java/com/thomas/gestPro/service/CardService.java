@@ -82,6 +82,7 @@ public class CardService {
         List<CheckList> updatedCheckLists = updateCard.getCheckList();
         List<CheckList> existingCheckLists = existingCard.getCheckList();
 
+
         // Supprimer les CheckLists qui ne sont plus présentes
         existingCheckLists.removeIf(existing ->
                 updatedCheckLists.stream().noneMatch(updated ->
@@ -180,6 +181,14 @@ public class CardService {
         // Save both entities to update the relationship
         cardRepository.save(card);
         labelRepository.save(label);
+    }
+
+    public Card updateCheckList(Long cardId, CheckList checkList) {
+        Card updateCard = this.getCardById(cardId);
+        System.err.println("card : " + updateCard.getCheckList());
+        updateCard.getCheckList().add(checkList);
+        checkListRepository.save(checkList);
+        return cardRepository.save(updateCard);
     }
    /* public void deleteCardAndLabels(Long cardId) {
         Card card = cardRepository.findById(cardId)
