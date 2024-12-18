@@ -72,7 +72,7 @@ public class CardService {
     public Card updateCard(Long cardId, Card updateCard) {
         // Récupérer l'entité existante
         Card existingCard = getCardById(cardId);
-
+System.err.println(updateCard.getDeadline());
         // Mettre à jour les champs simples
         existingCard.setName(updateCard.getName());
         existingCard.setHours(updateCard.getHours());

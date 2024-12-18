@@ -6,15 +6,14 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { UserService } from '../../../service/users/user.service';
 import { MainService } from '../../../service/main/main.service';
 import { catchError, of, switchMap } from 'rxjs';
-import {NgOptimizedImage} from '@angular/common';
-import {MatFormField, MatFormFieldModule} from '@angular/material/form-field';
-import {MatInput, MatInputModule} from '@angular/material/input';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatInputModule} from '@angular/material/input';
 import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, NgOptimizedImage, MatFormFieldModule, MatInputModule],
+  imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
@@ -37,7 +36,7 @@ export class LoginComponent {
 
   openSnackBar() {
     this._snackBar.open('Login accepted!', '', {
-      duration: 3000, // Durée d'affichage en millisecondes (ici 3 secondes)
+      duration: 2000, // Durée d'affichage en millisecondes (ici 3 secondes)
       horizontalPosition: 'center', // Position horizontale : 'start' | 'center' | 'end' | 'left' | 'right'
       verticalPosition: 'bottom', // Position verticale : 'top' | 'bottom'
     });
@@ -63,7 +62,7 @@ export class LoginComponent {
           this.userId = user.id;
           setTimeout(() => {
             this.router.navigateByUrl(`users/${this.userId}/workspaces`).then(r => console.log(r));
-          },3000)
+          },2000)
 
         }
       }

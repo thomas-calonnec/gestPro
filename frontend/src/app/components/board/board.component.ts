@@ -15,13 +15,9 @@ import {CdkDragDrop, CdkDrag, CdkDropList, moveItemInArray, CdkDragPlaceholder} 
   standalone: true,
   imports: [
     ListCardComponent,
-    RouterLink,
-    FaIconComponent,
     ReactiveFormsModule,
-    HorizontalDragDropExampleComponent,
     CdkDropList,
     CdkDrag,
-    CdkDragPlaceholder
   ],
   templateUrl:'./board.component.html' ,
   styleUrl: './board.component.scss'
@@ -50,7 +46,6 @@ export class BoardComponent implements OnInit{
   buttonClicked() {
     this.isClicked = true;
   }
-
 
   addList() {
    const listCard: ListCard =  this.myForm.value;
