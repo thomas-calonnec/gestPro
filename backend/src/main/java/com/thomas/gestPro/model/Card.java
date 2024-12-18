@@ -25,6 +25,9 @@ public class Card {
     private String name;
     private String description;
     private LocalDateTime deadline;
+    private Integer hours;
+    private Integer minutes;
+    private Boolean isCompleted;
 
     @ManyToOne
     @JoinColumn(name = "list_card_id", nullable = false)

@@ -7,6 +7,42 @@ background: #eee;
 }
 
 
+:root {
+  /* Couleurs principales */
+  --primary-color: #2B3A67; /* Bleu foncé professionnel */
+  --secondary-color: #A1B5D8; /* Bleu clair pour les accents */
+  --background-color: #2d3439; /* Gris très clair pour le fond */
+  --text-color: #333333; /* Noir doux pour les textes */
+  --accent-color: #5A7D9A; /* Bleu acier pour les éléments actifs */
+
+  /* Couleurs pour les bordures et ombres */
+  --border-color: #D1D9E6; /* Gris bleu clair pour les bordures */
+  --shadow-color: rgba(0, 0, 0, 0.1); /* Ombre douce */
+}
+
+.login-form input {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.login-form button {
+  background-color: var(--primary-color);
+  color: #ffffff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.login-form button:hover {
+  background-color: var(--accent-color);
+}
 * {
   box-sizing: border-box;
   margin: 0;
@@ -17,9 +53,9 @@ body {
   font-family: Arial, sans-serif;
   min-height: 100vh;
   /*display: flex;*/
-  /*justify-content: center;
-  align-items: center;*/
-  background-color: #f4f4f4;
+  /*justify-content: center;*/
+  /*align-items: center;*/
+  background-color: var(--background-color);
 }
 
 /* Container global qui contient la sidebar et le contenu */

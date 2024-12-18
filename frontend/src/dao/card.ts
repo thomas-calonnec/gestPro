@@ -6,6 +6,9 @@ export interface Card {
     name: string;
     description: string;
     deadline: Date;
+    hours: number;
+    minutes: number;
     labels: Label[];
     checkList: CheckList[];
+    isCompleted: boolean;
 }
