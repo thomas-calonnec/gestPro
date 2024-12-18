@@ -2,12 +2,7 @@ import {Component, OnInit, inject, signal, Input, WritableSignal} from '@angular
 import { Card } from '../../../dao/card';
 import { ListCardService } from '../../../service/list-cards/list-card.service';
 import {CardComponent} from '../card/card.component';
-
-import {HorizontalDragDropExampleComponent} from '../horizontal/horizontal.component';
-
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
-import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from '@angular/material/datepicker';
-import {MatHint, MatInput, MatSuffix} from '@angular/material/input';
 import {provideNativeDateAdapter} from '@angular/material/core';
 
 @Component({
@@ -16,17 +11,8 @@ import {provideNativeDateAdapter} from '@angular/material/core';
   providers: [provideNativeDateAdapter()],
   imports: [
     CardComponent,
-    HorizontalDragDropExampleComponent,
     FormsModule,
-
     ReactiveFormsModule,
-    MatDatepickerInput,
-    MatInput,
-    MatHint,
-    MatDatepickerToggle,
-    MatDatepicker,
-    MatSuffix
-
   ],
   templateUrl:'./list-card.component.html',
   styleUrl: './list-card.component.css'
