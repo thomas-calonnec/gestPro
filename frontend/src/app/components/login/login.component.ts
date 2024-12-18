@@ -6,11 +6,15 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { UserService } from '../../../service/users/user.service';
 import { MainService } from '../../../service/main/main.service';
 import { catchError, of, switchMap } from 'rxjs';
+import {NgOptimizedImage} from '@angular/common';
+import {MatFormField, MatFormFieldModule} from '@angular/material/form-field';
+import {MatInput, MatInputModule} from '@angular/material/input';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, NgOptimizedImage, MatFormFieldModule, MatInputModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
@@ -27,6 +31,15 @@ export class LoginComponent {
       username: ['', Validators.required],
       password: ['', Validators.required]
 
+    });
+  }
+  private _snackBar = inject(MatSnackBar);
+
+  openSnackBar() {
+    this._snackBar.open('Login accepted!', '', {
+      duration: 3000, // Durée d'affichage en millisecondes (ici 3 secondes)
+      horizontalPosition: 'center', // Position horizontale : 'start' | 'center' | 'end' | 'left' | 'right'
+      verticalPosition: 'bottom', // Position verticale : 'top' | 'bottom'
     });
   }
 
@@ -48,29 +61,32 @@ export class LoginComponent {
       next: (user) => {
         if (user) {
           this.userId = user.id;
-          this.router.navigateByUrl(`users/${this.userId}/workspaces`).then(r => console.log(r));
+          setTimeout(() => {
+            this.router.navigateByUrl(`users/${this.userId}/workspaces`).then(r => console.log(r));
+          },3000)
+
         }
       }
     });
     /* this.authService.login(username,password).subscribe({
       next: () => {
-  
+
         console.log("test")
         this.userService.getUserByUsername(username).subscribe({
           next: (user) => {
             this.userId = user.id;
-  
+
             this.router.navigateByUrl(`users/${this.userId}/workspaces`).then(r => console.log(r))
           }
         })
        // console.log(userId)
         //const headers = new HttpHeaders().set('Authorization', `Bearer ${this.authService.getToken()}`);
-  
-  
+
+
       },
       error: (error: HttpErrorResponse) => {
         console.error('Login failed ', error);
-  
+
         alert("Login failed : " + error.message);
       }
      })

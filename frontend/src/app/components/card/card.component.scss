@@ -1,3 +1,4 @@
+@use '@angular/material' as mat;
 .card-content {
   background-color: #688fca;
   border-radius: 8px;
@@ -50,6 +51,24 @@ position: relative;
     color: transparent;
   }
 }
+mat-card {
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+mat-chip {
+ background-color: #237a23 !important;
+  width: 85px !important;
+  padding: 0 !important;
+
+}
+.dateFormat {
+  display: flex;
+  padding: 6px;
+  margin: 0;
+  background-color: #e0e0e0;
+  width: 200px;
+  border-radius: 4px;
+}
 .example-full-width {
   width: 100%;
 }
@@ -71,6 +90,7 @@ position: relative;
 }
 .left-content {
   flex: 0 1 auto; /* Facultatif : le contenu de gauche s'adapte à sa taille */
+  width: 90%;
 }
 
 .right-content {
@@ -132,6 +152,13 @@ position: relative;
 
 }
 
+
+// Customize the entire app. Change :root to your selector if you want to scope the styles.
+:root {
+  @include mat.chips-overrides((
+    outline-color: orange,
+  ));
+}
 .badge-green {
   background-color: #237a23;
 
@@ -145,4 +172,45 @@ position: relative;
 }
 .badge-red {
   background-color: #d9352d;
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  background-color: #f1f1f1;
+  border-radius: 5px;
+  padding-left: 10px;
+ /* padding: 3px;*/
+  margin: 4px;
+
+  font-size: 14px;
+  font-weight: bold;
+  color: #333;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &.chip-clicked {
+    background-color: #007bff;
+    color: white;
+  }
+
+  .chip-text {
+    margin-right: 8px;
+  }
+
+  .chip-delete {
+    background: none;
+    border: none;
+    color: #999;
+    font-size: 14px;
+    cursor: pointer;
+    transition: color 0.3s ease;
+
+    &:hover {
+      color: red;
+    }
+  }
+
+  &:hover {
+    background-color: #e0e0e0;
+  }
 }

@@ -51,6 +51,7 @@ export class BoardComponent implements OnInit{
     this.isClicked = true;
   }
 
+
   addList() {
    const listCard: ListCard =  this.myForm.value;
    if(listCard.name !== ""){

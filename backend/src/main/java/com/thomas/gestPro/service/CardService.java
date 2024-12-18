@@ -75,6 +75,9 @@ public class CardService {
 
         // Mettre à jour les champs simples
         existingCard.setName(updateCard.getName());
+        existingCard.setHours(updateCard.getHours());
+        existingCard.setMinutes(updateCard.getMinutes());
+        existingCard.setIsCompleted(updateCard.getIsCompleted());
         existingCard.setDeadline(updateCard.getDeadline());
         existingCard.setDescription(updateCard.getDescription());
 
@@ -185,8 +188,10 @@ public class CardService {
 
     public Card updateCheckList(Long cardId, CheckList checkList) {
         Card updateCard = this.getCardById(cardId);
-        System.err.println("card : " + updateCard.getCheckList());
-        updateCard.getCheckList().add(checkList);
+        System.err.println("card : " + checkList.getName());
+        CheckList updateChecklist = updateCard.getCheckList().get(checkList.getId().intValue());
+        updateChecklist.setName(checkList.getName());
+        System.err.println(updateCard.getCheckList().get(checkList.getId().intValue()).getName());
         checkListRepository.save(checkList);
         return cardRepository.save(updateCard);
     }

@@ -5,7 +5,7 @@
      (cdkDropListDropped)="drop($event)" xmlns="http://www.w3.org/1999/html">
   @for(list of sortedListCard(); track list.id) {
 
-   <app-list-card [listCardId]="list.id" [title]="list.name" cdkDrag></app-list-card>
+   <app-list-card [listCardId]="list.id" [title]="list.name" cdkDrag ></app-list-card>
 
   }
 

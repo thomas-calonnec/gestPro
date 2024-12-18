@@ -50,7 +50,9 @@ export class ListCardComponent implements OnInit {
     this.getListCard(this.listCardId);
 
   }
-
+  onClickEvent(event: MouseEvent): void {
+    event.stopPropagation(); // Empêche le clic de se propager
+  }
   public getListCard(listCardId : number) : void{
     this.listCardService.getCards(listCardId).subscribe({
       next: (data: Card[]) => {

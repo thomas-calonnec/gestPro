@@ -15,12 +15,6 @@
       <a ><div (mouseenter)="isHover=true" (mouseleave)="isHover = false"  class="task-name">{{ card.name }}</div></a>
     }
 
-
-
-
-
-
-
   @if(this.isModalOpen){
 
     <app-task-box
@@ -47,7 +41,44 @@
 
 <div style="display: flex; flex-direction: column">
       <b><i class="fa-regular fa-calendar fa-lg"></i> due date</b>
+  <div style="display: flex">
+    <mat-checkbox [(ngModel)]="this.dateChecked" (change)="this.dateChecked = $event.checked">
 
+    </mat-checkbox>
+    <div class="dateFormat" (click)="openDateModal()">
+      {{ this.selectedDate + " " + this.selectedTime}}
+    </div>
+    @if(this.dateChecked) {
+      <div class="chip" [style]=" 'background-color:'+ (isDateValid() ? '#eecfcf ' : 'green ')">
+
+        <span class="chip-text" [style]="'color:' + (isDateValid() ? '#f14141' : 'white')">{{isDateValid() ? 'Overdue' : 'Completed'}}</span>
+
+      </div>
+
+    }
+
+  </div>
+
+  @if (this.openDate) {
+    <div style="margin-top: 60px;width: 300px;position: absolute; z-index: 1000;
+  transition: opacity 0.3s ease-in-out; background-color: #e0e0e0; border-radius: 10px;
+  opacity: 1;">
+    <mat-card >
+      <mat-calendar [(selected)]="date" ></mat-calendar>
+    </mat-card>
+      <div style="display: flex">
+
+          <input matInput style="font-size: 16px; width:90%" (change)="onDateChange($event)" [value]="this.datePipe.transform(this.date(), 'dd/MM/yyyy','fr')">
+
+          <input matInput style="width: 100%"  [(ngModel)]="this.selectedTime" (change)="onTimeChange()">
+
+      </div>
+
+      <button mat-button style="background-color: #688fca; color: white;width: 100%;border-radius: 3px" (click)="updateDateTime()">Save</button>
+    </div>
+  }
+
+<!--
 <div class="datePicker">
           <mat-form-field style="margin-right: 10px">
             <mat-label>Choose a date</mat-label>
@@ -75,7 +106,7 @@
 </div>
 
   <span [style]=" this.now > card.deadline ? 'color: red' : 'color:green'"> bien</span>
-
+-->
 </div>
 
       <b> <i class="fa-solid fa-bars fa-lg"></i> Description</b>
@@ -113,20 +144,25 @@
             [value]="progress">
           </mat-progress-bar>
             <ul style="list-style-type: none;  padding: 0;  margin: 0;">
+
               @for (task of completedTasks(); track task.id; let i = $index){
 
-              <div class="flex-container containerList"   style="padding-bottom: 0; padding-top: 2px" (mouseover)="this.hoverList(i)" (mouseout)="this.hoverListOut(i)" >
+                @if(!this.updateOptions[i] ){
+              <div class="flex-container containerList" style="padding-bottom: 0; padding-top: 2px"
+                   (mouseover)="this.hoverList(i)" (mouseout)="this.hoverListOut(i)">
                 <div class="left-content" >
+
                 <li [hidden]="hideCompleted() && task.completed">
                   <mat-checkbox [(ngModel)]="task.completed" (change)="updateProgress($event.checked,i)">
-                    <span [style.text-decoration]="task.completed ? 'line-through' : 'none'"> {{ task.name }}</span>
-
+                    <span [style.text-decoration]="task.completed ? 'line-through' : 'none'" (click)="updateList(i)"> {{ task.name }}</span>
                   </mat-checkbox>
 
                 </li>
+
+
                 </div>
                 <div class="right-content">
-                  @if(this.showOptions[i]){
+                  @if(this.showOptions()[i]){
 
                 <button mat-icon-button aria-label="Example icon button with a vertical three dot icon">
                   <mat-icon>more_vert</mat-icon>
@@ -134,6 +170,21 @@
                   }
                 </div>
               </div>
+                } @else {
+                  <form [formGroup]="myForm" class="example-form">
+                    <mat-form-field class="example-full-width" style="padding: 0;">
+                      <input matInput formControlName="name" />
+                    </mat-form-field>
+
+                    <button (click)="unShowOptions(i)" mat-raised-button style="color: white;background-color: #d31010; border-radius: 2px;
+  width: 120px;" >
+                      {{'Cancel' }} </button>
+
+                    <button (click)="unShowOptions(i)" mat-raised-button style="background-color: #e0e0e0; border-radius: 2px;
+  width: 120px;" >
+                      {{'Update' }} </button>
+                  </form>
+                }
 
               }
 
