@@ -22,7 +22,7 @@
     }
   @if(this.card.checkList.length > 0){
     <div class="chip"
-         [style]="completedTasksCount === totalTasksCount ? 'background-color:green; margin-top: 0;' : 'margin-top: 0;' ">
+         [style]="completedTasksCount === totalTasksCount ? 'background-color:#19863f; margin-top: 0;' : 'margin-top: 0;' ">
 
       <span class="chip-text" style="color:white"><i class="fa-regular fa-square-check fa-lg"></i>
         {{ completedTasksCount + '/' + totalTasksCount}}
@@ -31,19 +31,40 @@
     </div>
   }
   @if(card.isDateActivated){
-    <div class="chip"
-         (mouseenter)="isHoverDate = true"
-         (mouseleave)="isHoverDate = false"
-         [style]="dateChecked ? 'background-color:green;' : ' background-color:#f9afaf ;margin-top: 0;' ">
+    @if(isOverDue()) {
+      <div class="chip"
+           (mouseenter)="isHoverDate = true"
+           (mouseleave)="isHoverDate = false"
+           [style]="dateChecked ? 'background-color:#19863f;' : ' background-color:#f9afaf ;margin-top: 0;' ">
 
-      @if (this.date()) {
-        <span class="chip-text" [style]="dateChecked ? 'color:white':'color:#ae2020'" (click)="updateCompleteDate(card) ">
-      <i [class]=" isHoverDate ? 'fa-regular fa-clock fa-lg' : !isHoverDate && !dateChecked ? 'fa-regular fa-square' : 'fa-regular fa-square-check'"></i>
-          {{ formatDate(this.date())}}
+        @if (this.date()) {
+          <span class="chip-text" [style]="dateChecked ? 'color:white':'color:#ae2020'" (click)="updateCompleteDate(card) ">
+      <i [class]=" !isHoverDate ? 'fa-regular fa-clock fa-lg' : !isHoverDate && !dateChecked ? 'fa-regular fa-square' : 'fa-regular fa-square-check'"></i>
+            {{ formatDate(this.date())}}
     </span>
-      }
+        }
+      </div>
 
-    </div>
+    }
+    @else {
+
+      <div class="chip"
+           (mouseenter)="isHoverDate = true"
+           (mouseleave)="isHoverDate = false"
+           [style]="dateChecked ? 'background-color:#19863f;margin-top: 0;': isDueSoon() ? 'background-color:#e7e409':'' ">
+
+        @if (this.date()) {
+          <span class="chip-text" [style]="isDueSoon() && !dateChecked ? 'color: black': 'color:white'" (click)="updateCompleteDate(card) ">
+      <i [class]="! isHoverDate ? 'fa-regular fa-clock fa-lg' : !isHoverDate && !dateChecked ? 'fa-regular fa-square' : 'fa-regular fa-square-check'"></i>
+            {{ formatDate(this.date())}}
+    </span>
+        }
+      </div>
+
+
+    }
+
+
   }
 
 
@@ -107,24 +128,28 @@
 
       </mat-checkbox>
       <div class="dateFormat" (click)="openDateModal()">
-        {{this.datePipe.transform(this.date(), 'dd/MM/yyyy','fr') + " " + this.selectedTime}}
+        {{this.datePipe.transform(this.date(), 'dd/MM/yyyy','fr') + " " + this.signalTime()}}
       </div>
 
-      @if(!dateChecked){
-          @if (isOverDue()) {
-            <div class="chip" style="background-color: #eecfcf ">
-              <span class="chip-text" style="color: #f14141 ">Overdue</span>
-            </div>
-          } @else if (isSoon()) {
-            <div class="chip" style="background-color: #e7e409">
-                <span class="chip-text" style="color: black">Due soon</span>
-            </div>
-          }
-      }
-          @else {
-        <div class="chip" [style]=" 'background-color:'+ (!dateChecked  ? '#eecfcf ' : 'green ')">
-          <span class="chip-text" [style]="'color:' + (!dateChecked  ? '#f14141' : 'white')">{{!dateChecked ? 'Overdue' : 'Completed'}}</span>
+      @if (!dateChecked) {
+        @if (isDueSoon()) {
+          <div class="chip" style="background-color: #e7e409">
+            <span class="chip-text" style="color: black">Due soon</span>
+          </div>
+        }
+        @else if(isOverDue()){
+          <div class="chip" style="background-color: #eecfcf">
+            <span class="chip-text" style="color: #f14141"> Overdue</span>
+          </div>
+        }
+      } @else {
+
+        <div class="chip" style="background-color:#19863f">
+        <span class="chip-text" style="color:white">
+        Completed
+        </span>
         </div>
+
       }
 
 
@@ -146,7 +171,7 @@
 
             <input matInput formControlName="date" style="font-size: 16px; width:90%"  [value]="this.datePipe.transform(this.date(), 'dd/MM/yyyy','fr')">
 
-            <input matInput style="width: 100%" formControlName="time"  [value]="this.selectedTime" (change)="onTimeChange()">
+            <input matInput style="width: 100%" formControlName="time"  (change)="onTimeChange()">
 
           </div>
         </form>

@@ -1,9 +1,11 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   computed,
   inject,
-  Input, model,
+  Input,
+  model,
   OnInit,
   signal,
   WritableSignal
@@ -13,9 +15,9 @@ import {TaskBoxComponent} from '../task-box/task-box.component';
 
 import {MatIconModule} from '@angular/material/icon';
 import {FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
-import {MAT_DATE_LOCALE} from '@angular/material/core';
+import {MAT_DATE_LOCALE, provideNativeDateAdapter} from '@angular/material/core';
 import {MatButton, MatIconButton, MatMiniFabButton} from '@angular/material/button';
-import { AngularEditorModule} from '@kolkov/angular-editor';
+import {AngularEditorModule} from '@kolkov/angular-editor';
 import {MatTooltip} from '@angular/material/tooltip';
 import {CheckList} from '../../../dao/check-list';
 import {MatCheckbox} from '@angular/material/checkbox';
@@ -25,7 +27,6 @@ import {MatProgressBar} from '@angular/material/progress-bar';
 import {DatePipe} from '@angular/common';
 import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
-import {provideNativeDateAdapter} from '@angular/material/core';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatTimepickerModule} from '@dhutaryan/ngx-mat-timepicker';
 import {MatCard, MatCardHeader} from '@angular/material/card';
@@ -108,6 +109,7 @@ export class CardComponent implements OnInit {
   protected selectedDate: string | null = "";
   dateChecked: boolean = false;
   openLabel: boolean = false;
+  protected signalTime = signal("");
 
 
   constructor() {
@@ -147,10 +149,16 @@ export class CardComponent implements OnInit {
 
   hideCompleted: WritableSignal<boolean> = signal<boolean>(false);
   onTimeChange() {
-    const [hours, minutes] = this.selectedTime.split(":").map(Number);
+    const timeValue = this.formDate.get("time");
+    if(timeValue != null) {
+      const [hours, minutes] = timeValue.value.split(":").map(Number);
 
-    this.card.hours = hours // Définit l'heure
-    this.card.minutes = minutes;
+      this.card.hours = hours // Définit l'heure
+      this.card.minutes = minutes;
+      this.signalTime.set(timeValue.value)
+
+    }
+
 
   }
   onCheckedChange(dateChecked: boolean){
@@ -176,6 +184,7 @@ export class CardComponent implements OnInit {
   ngOnInit(): void {
     if(this.card !== null && this.card.checkList !== undefined){
 
+      const now = new Date();
       this.checkList = this.card.checkList.length > 0 ? this.card.checkList : [];
       this.checkListSignal.set(this.checkList);
       this.showOptions.set(Array(this.checkListSignal().length).fill(false));
@@ -184,11 +193,12 @@ export class CardComponent implements OnInit {
       this.card.deadline = new Date(this.card.deadline)
       this.count = 0;
       this.isSoon.set(this.isDueSoon());
-      const hours = this.card.hours === null ? 0 : this.card.hours;
-      const minutes  = this.card.minutes === null? 0 : this.card.minutes;
+      const hours = this.card.hours === null ? now.getHours() : this.card.hours;
+      const minutes  = this.card.minutes === null? now.getMinutes() : this.card.minutes;
       this.date.set(new Date(this.card.deadline.toISOString().split('T')[0]));
-      this.selectedDate = this.datePipe.transform(this.date(), 'dd/MM/yyyy','fr')
+      this.selectedDate = this.datePipe.transform(this.date(), 'dd/MM/yyyy','fr') || ''
       this.selectedTime = hours + ":" + minutes
+      this.signalTime.set(this.selectedTime);
       this.progress = this.completedTasksCount === 0 ? 0 : Math.floor((this.completedTasksCount / this.totalTasksCount) * 100);
       this.labelService.getLabels().subscribe({
         next: (labels) => {
@@ -204,29 +214,48 @@ export class CardComponent implements OnInit {
   }
 
   isOverDue(): boolean {
-    // Vérifie si selectedDate est différent de null et si c'est une date valide
+    if (!this.date() || !this.signalTime()) {
+      return false; // Si la date ou l'heure est absente, retournez false
+    }
 
-    const date = this.datePipe.transform(this.date(), 'dd/MM/yyyy','fr')
-    if (date !== null) {
+    // Formater et parser la date avec DatePipe
+    const formattedDate = this.datePipe.transform(this.date(), 'yyyy-MM-dd', 'fr') || '';
+    const deadlineDate = new Date(formattedDate); // Crée un objet Date pour la date limite
 
-      const deadline = this.parseDate(date) // Convertit selectedDate en objet Date
 
-      // Vérifie que selectedDate est une date valide avant la comparaison
+    // Extraire les heures et minutes depuis signalTime
+    const [hours, minutes] = this.signalTime().split(':').map(Number);
+    deadlineDate.setHours(hours, minutes, 0, 0); // Ajouter l'heure limite à la date
 
-      return  this.now > deadline;
+    // Comparer la date et l'heure actuelles avec la date limite
+    const now = new Date();
+    return now > deadlineDate; // Retourne true si maintenant dépasse la date limite
+  }
 
+  isDueSoon(): boolean {
+    if (this.selectedDate !== null) {
+      const selectedDateObj = this.parseDate(this.date().toLocaleDateString());
+      const now = new Date(); // Obtenez la date actuelle
+
+      // Calculer la différence en millisecondes
+      const [hours, minutes] = this.signalTime().split(':').map(Number);
+      // Créer un nouvel objet Date pour la limite de temps (aujourd'hui à signalTime())
+      const targetDate = new Date(selectedDateObj.getFullYear(), selectedDateObj.getMonth(), selectedDateObj.getDate(), hours, minutes, 0, 0);
+
+// Calculer la différence en millisecondes
+      const diffInMs = targetDate.getTime() - now.getTime();
+
+      // Convertir la différence en jours
+      const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
+
+      // Si la date n'est pas en retard et est à moins de 1 jour
+      if (!this.isOverDue() && diffInDays <= 1 && diffInDays >= 0) {
+        return true;
+      }
     }
     return false;
   }
-  isDueSoon(): boolean {
-    if (this.selectedDate !== null) {
-      const selectedDateObj = this.parseDate(this.selectedDate);
-      if (!this.isOverDue() && (selectedDateObj.getUTCDay() === this.now.getUTCDay())){
-        return true
-      }
-    }
-    return false
-  }
+
 
   parseDate(dateStr: string): Date {
     const [day, month, year] = dateStr.split('/').map(Number);
@@ -253,6 +282,7 @@ export class CardComponent implements OnInit {
       this.date().getMonth(),
       this.date().getDate()+1
     ))
+
 
     this.card.isCompleted = this.dateChecked;
 
@@ -384,6 +414,7 @@ export class CardComponent implements OnInit {
 
     if(this.selectedDate !== undefined && this.date() !== null){
       this.selectedDate = this.date().toDateString()
+      this.isSoon.set(this.isDueSoon());
       this.openDate = false
     }
 
