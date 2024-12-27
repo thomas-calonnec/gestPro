@@ -40,8 +40,8 @@
 position: relative;
     flex-direction: row;
     cursor: pointer;
-    min-width: 120px;
-    max-width: 40px;
+    width: 100%;
+
 
     height: 8px;
     margin-top: 0;
@@ -126,6 +126,33 @@ mat-chip {
     opacity: 0.3;
   }
 }
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 10px;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.5em;
+  font-weight: bold;
+  color: #333;
+}
+
+/* Bouton de fermeture */
+.close-button {
+  font-size: 1.5rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #888;
+}
+
+.close-button:hover {
+  color: #555;
+}
 .container {
   display: flex;
   flex-direction: column;
@@ -140,7 +167,7 @@ mat-chip {
 }
 .badge {
   display: inline-block;
-  width: 50%;
+  width: 40px;
   position: relative;
   box-sizing: border-box;
   text-align: left;
@@ -160,23 +187,33 @@ mat-chip {
   ));
 }
 .badge-green {
-  background-color: #237a23;
+  background-color: #5bbf5b;
 
 }
-
 .badge-yellow {
   background-color: #FFA726;
 }
+.badge-orange {
+  background-color: #f39562;
+}
+
+.badge-pink {
+  background-color: #ed6dd8;
+}
+
+.badge-purple{
+  background-color: mediumpurple;
+}
+
 .badge-blue {
-  background-color: #2196F3;
+  background-color: #59a6e3;
 }
 .badge-red {
-  background-color: #d9352d;
+  background-color: #ed5d58;
 }
 .chip {
   display: inline-flex;
   align-items: center;
-  background-color: #f1f1f1;
   border-radius: 5px;
   padding-left: 10px;
  /* padding: 3px;*/
@@ -187,11 +224,6 @@ mat-chip {
   color: #333;
   cursor: pointer;
   transition: background-color 0.3s ease;
-
-  &.chip-clicked {
-    background-color: #007bff;
-    color: white;
-  }
 
   .chip-text {
     margin-right: 8px;
@@ -210,7 +242,4 @@ mat-chip {
     }
   }
 
-  &:hover {
-    background-color: #e0e0e0;
-  }
 }

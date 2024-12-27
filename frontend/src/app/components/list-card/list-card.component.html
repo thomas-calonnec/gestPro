@@ -1,10 +1,13 @@
-<div class="card-container" (click)="onClickEvent($event)">
+<div class="card-container" >
   <div class="card">
     <div class="card-header">
-      <span class="title">{{ title }}</span>
+      @if(!modifyTitle) {  <span (mouseup)="modifyTitle = true"  style="cursor:pointer"  (mouseout)=" modifyTitle=false" class="title">{{ listCard.name }}</span> }
+      @else {
+        <input class="form-control h-25 opacity-75 inputListCard" [(ngModel)]="listCard.name"  (keyup.enter)="modifyTitleConfirm()">
+      }
 
-      <div class="icons">
-        <i class="fa-solid fa-ellipsis"></i> <!-- Icône de menu -->
+      <div class="icons" style="cursor: pointer" (click)="archiveListCard()">
+        <i class="fa-solid fa-box-archive"></i> <!-- Icône de menu -->
       </div>
     </div>
 

@@ -5,8 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +26,7 @@ public class Card {
     private Integer hours;
     private Integer minutes;
     private Boolean isCompleted;
+    private Boolean isDateActivated;
 
     @ManyToOne
     @JoinColumn(name = "list_card_id", nullable = false)

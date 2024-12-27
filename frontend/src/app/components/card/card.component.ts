@@ -28,7 +28,9 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {provideNativeDateAdapter} from '@angular/material/core';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatTimepickerModule} from '@dhutaryan/ngx-mat-timepicker';
-import {MatCard} from '@angular/material/card';
+import {MatCard, MatCardHeader} from '@angular/material/card';
+import {LabelService} from '../../../service/labels/label.service';
+import {Label} from '../../../dao/label';
 
 @Component({
   selector: 'app-card',
@@ -56,6 +58,7 @@ import {MatCard} from '@angular/material/card';
     FormsModule,
     MatIconButton,
     MatCard,
+    MatCardHeader,
 
 
   ],
@@ -65,9 +68,9 @@ import {MatCard} from '@angular/material/card';
 })
 export class CardComponent implements OnInit {
   value: Date = new Date();
-  // @ts-ignore
+
   @Input() card: Card = {
-    id:0,
+    id: 0,
     name: "",
     description: "",
     deadline: new Date(),
@@ -75,6 +78,9 @@ export class CardComponent implements OnInit {
     minutes: 0,
     labels: [],
     checkList: [],
+    isCompleted: false,
+    isHovered: false,
+    isDateActivated: false
 
   };
   errorMessage = signal('');
@@ -83,23 +89,26 @@ export class CardComponent implements OnInit {
   private formBuilder : FormBuilder = inject(FormBuilder)
   protected showOptions: WritableSignal<boolean[]> = signal([])
   checkListSignal: WritableSignal<CheckList[]> = signal<CheckList[]>([]);
-protected now : Date = new Date()
+  isSoon = signal(false);
+  protected now : Date = new Date()
   protected selectedTime = ""
   myForm: FormGroup;
   protected  checkList : CheckList[] | undefined = [];
   private cardService: CardService = inject(CardService);
-  protected isHover = false;
-  protected labelColor: string[] = [];
+  protected labels: Label[] = [];
   protected isClicked = false;
   isModalOpen = false;
   protected datePipe: DatePipe = inject(DatePipe)
   progress: number = 0;
+  private labelService = inject(LabelService);
   private cd: ChangeDetectorRef = inject(ChangeDetectorRef);
   protected updateOptions: boolean[] = [];
   protected count: number = 0;
   protected openDate: boolean = false;
   protected selectedDate: string | null = "";
   dateChecked: boolean = false;
+  openLabel: boolean = false;
+
 
   constructor() {
    this.myForm = this.formBuilder.group({
@@ -114,11 +123,22 @@ protected now : Date = new Date()
     return this.checkListSignal().filter(task => task.completed).length;
   }
 
+  onMouseEnter(task: Card): void {
+    task.isHovered = true;
+  }
+
+  onMouseLeave(task: Card): void {
+    task.isHovered = false;
+  }
+
   completedTasks = computed(() => {
 
     return this.checkListSignal().filter((item => !this.hideCompleted() || !item.completed)) ;
 
   })
+   formatDate(date: Date): string {
+    return new Intl.DateTimeFormat('en-US', { day: '2-digit', month: 'short' }).format(date);
+  }
 
   // Total des tâches
   get totalTasksCount(): number {
@@ -131,6 +151,11 @@ protected now : Date = new Date()
 
     this.card.hours = hours // Définit l'heure
     this.card.minutes = minutes;
+
+  }
+  onCheckedChange(dateChecked: boolean){
+    this.dateChecked = dateChecked;
+    this.isSoon.set(this.isDueSoon());
 
   }
   updateProgress(completed: boolean, index: number): void {
@@ -148,43 +173,65 @@ protected now : Date = new Date()
 
   }
 
-
   ngOnInit(): void {
-    this.labelColor = this.card.labels.map(label => label.color)
-    this.checkList = this.card.checkList;
-    this.checkListSignal.set(this.checkList);
-    this.showOptions.set(Array(this.checkListSignal().length).fill(false));
-    this.updateOptions = new Array(this.checkListSignal().length).fill(false);
-    this.dateChecked = this.card.isCompleted;
-    this.card.deadline = new Date(this.card.deadline)
-    this.count = 0;
-    const hours = this.card.hours === null ? 0 : this.card.hours;
-    const minutes  = this.card.minutes === null? 0 : this.card.minutes;
-    this.date.set(new Date(this.card.deadline.toISOString().split('T')[0]));
-    this.selectedDate = this.datePipe.transform(this.date(), 'dd/MM/yyyy','fr')
-    this.selectedTime = hours + ":" + minutes
-    this.progress = this.completedTasksCount === 0 ? 0 : Math.floor((this.completedTasksCount / this.totalTasksCount) * 100);
-console.log(this.selectedTime)
+    if(this.card !== null && this.card.checkList !== undefined){
+
+      this.checkList = this.card.checkList.length > 0 ? this.card.checkList : [];
+      this.checkListSignal.set(this.checkList);
+      this.showOptions.set(Array(this.checkListSignal().length).fill(false));
+      this.updateOptions = new Array(this.checkListSignal().length).fill(false);
+      this.dateChecked = this.card.isCompleted;
+      this.card.deadline = new Date(this.card.deadline)
+      this.count = 0;
+      this.isSoon.set(this.isDueSoon());
+      const hours = this.card.hours === null ? 0 : this.card.hours;
+      const minutes  = this.card.minutes === null? 0 : this.card.minutes;
+      this.date.set(new Date(this.card.deadline.toISOString().split('T')[0]));
+      this.selectedDate = this.datePipe.transform(this.date(), 'dd/MM/yyyy','fr')
+      this.selectedTime = hours + ":" + minutes
+      this.progress = this.completedTasksCount === 0 ? 0 : Math.floor((this.completedTasksCount / this.totalTasksCount) * 100);
+      this.labelService.getLabels().subscribe({
+        next: (labels) => {
+          this.labels = labels;
+        }
+      })
+    }
+
     this.formDate = this.formBuilder.group({
       time: [[this.selectedTime || ''], Validators.required],
       date: [[this.selectedDate || ''], Validators.required]
     })
   }
 
-  isDateValid(): boolean {
+  isOverDue(): boolean {
     // Vérifie si selectedDate est différent de null et si c'est une date valide
-    if (this.selectedDate !== null) {
-      const selectedDateObj = new Date(this.selectedDate) // Convertit selectedDate en objet Date
+
+    const date = this.datePipe.transform(this.date(), 'dd/MM/yyyy','fr')
+    if (date !== null) {
+
+      const deadline = this.parseDate(date) // Convertit selectedDate en objet Date
 
       // Vérifie que selectedDate est une date valide avant la comparaison
-      if (!isNaN(selectedDateObj.getTime())) {
-        return  this.now > selectedDateObj;
-      }
+
+      return  this.now > deadline;
+
     }
     return false;
   }
-  hover() {
-    this.isHover = true;
+  isDueSoon(): boolean {
+    if (this.selectedDate !== null) {
+      const selectedDateObj = this.parseDate(this.selectedDate);
+      if (!this.isOverDue() && (selectedDateObj.getUTCDay() === this.now.getUTCDay())){
+        return true
+      }
+    }
+    return false
+  }
+
+  parseDate(dateStr: string): Date {
+    const [day, month, year] = dateStr.split('/').map(Number);
+
+    return new Date(`${year}/${month}/${day}`); // Les mois commencent à zéro
   }
   hoverList(idx: number) {
     this.showOptions.update(list => {
@@ -206,12 +253,12 @@ console.log(this.selectedTime)
       this.date().getMonth(),
       this.date().getDate()+1
     ))
-    console.log(this.card.deadline)
+
     this.card.isCompleted = this.dateChecked;
 
       this.cardService.updateCard(this.card.id, card).subscribe({
-        next: (response) => {
-          console.log('Success :' + response);
+        next: () => {
+
         },
         error: (err) => {
           console.error('Error : ' + err);
@@ -247,12 +294,11 @@ console.log(this.selectedTime)
     };
 
     // Créez une nouvelle référence pour la liste
-    const updatedCheckList = [...this.card.checkList, checkList];
-
-    this.cardService.updateCard(this.card.id,this.card).subscribe({
-      next: (response) => {
-        console.log('Success :' + response);
-        this.checkListSignal.set(updatedCheckList);
+    this.checkListSignal.update((currentList) => [...currentList, checkList])
+  this.card.checkList = this.checkListSignal()
+    this.cardService.updateCard(this.card.id, this.card).subscribe({
+      next: () => {
+       // this.checkListSignal.set(updatedCheckList);
         this.cd.markForCheck();
       },
       error: (err) => {
@@ -310,8 +356,23 @@ console.log(this.selectedTime)
     this.updateOptions[i] = false
   }
 
+  updateCompleteDate(card: Card) {
+    this.dateChecked = !this.dateChecked;
+    this.card.isCompleted = this.dateChecked;
+    this.cardService.updateCard(this.card.id, card).subscribe({
+      next: () => {
+
+      },
+      error: (err) => {
+        console.error('Error : ' + err);
+      },
+    });
+  }
+
   protected readonly length = length;
   formDate: FormGroup;
+  isHoverDate: boolean = false;
+
 
 
   openDateModal() {
@@ -332,5 +393,57 @@ console.log(this.selectedTime)
     if(this.time.hasError('required')){
       this.errorMessage.set('You must enter a value')
     }
+  }
+
+  testLabel(color: string) {
+    return this.card.labels.some((l) => l.color === color)
+  }
+
+  addLabelFromCard(label: Label) {
+    this.card.labels.push(label);
+    this.cardService.addLabelToCard(this.card.id,label).subscribe({
+      next: () => {
+        console.log("test réussi !")
+      },
+      error: (err) => {
+        console.error("error : " + err)
+      }
+    });
+  }
+
+  removeLabel(label : Label) {
+    this.card.labels = this.card.labels.filter((l) => l.color !== label.color)
+    this.cardService.removeLabelToCard(this.card.id,label).subscribe({
+      next: () => {
+        console.log("test réussi !")
+      },
+      error: (err) => {
+        console.error("error : " + err)
+      }
+    })
+  }
+
+  confirmTitle(title: string,card: Card) {
+   this.card.name = title;
+    this.cardService.updateCard(this.card.id, card).subscribe({
+      next: () => {
+
+      },
+      error: (err) => {
+        console.error('Error : ' + err);
+      },
+    });
+  }
+
+  activateDueDate(card: Card) {
+    this.card.isDateActivated = true;
+    this.cardService.updateCard(this.card.id, card).subscribe({
+      next: () => {
+
+      },
+      error: (err) => {
+        console.error('Error : ' + err);
+      },
+    });
   }
 }
