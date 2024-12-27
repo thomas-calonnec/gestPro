@@ -9,9 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
-
 @CrossOrigin("http://localhost:4200")
 @RestController
 @RequestMapping("/api/user/cards")
@@ -30,7 +27,7 @@ public class CardController {
     }
 
 
-    @PostMapping("/{id}/setColor")
+    @PostMapping("/{id}/label/create")
     public ResponseEntity<Card> addLabelColor(@PathVariable Long id, @RequestBody Label label) {
        Card updateCard = cardService.addCardLabelColor(id,label);
         return ResponseEntity.ok(updateCard);
@@ -64,8 +61,9 @@ public class CardController {
         return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping("/{id}/label")
-    public ResponseEntity<Void> removeLabelFromCard(@PathVariable Long id, @RequestBody Label label) {
+    @PostMapping("/{id}/label/remove")
+    public ResponseEntity<Card> removeLabelFromCard(@PathVariable Long id, @RequestBody Label label) {
+
         cardService.removeLabelFromCard(id,label.getColor());
         return ResponseEntity.noContent().build();
     }

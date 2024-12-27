@@ -23,7 +23,7 @@ public class Board {
     private Long id;
     private String name;
 
-    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "board")
     @JsonIgnore
     private List<ListCard> listCards = new ArrayList<>();
 

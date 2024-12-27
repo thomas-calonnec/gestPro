@@ -23,10 +23,10 @@ public class ListCard {
     private Long id;
     private String name;
     private int orderIndex;
+    private Boolean isArchived;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "board_id", nullable = false)
-    @JsonIgnore
     private Board board;
 
     @OneToMany(mappedBy = "listCard", cascade = CascadeType.ALL, orphanRemoval = true)

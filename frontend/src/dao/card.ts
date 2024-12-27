@@ -11,4 +11,6 @@ export interface Card {
     labels: Label[];
     checkList: CheckList[];
     isCompleted: boolean;
+    isHovered?: boolean;
+    isDateActivated: boolean;
 }

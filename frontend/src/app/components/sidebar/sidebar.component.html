@@ -5,7 +5,7 @@
   @if(this.mainService.getListBoards().length !== 0) {
     <ul class="nav nav-pills flex-column mb-auto">
       <li class="nav-item">
-        <a class="nav-link text-white" routerLink="/board">
+        <a class="nav-link text-white" href="http://localhost:4200/workspaces/{{this.workspaceId}}/boards" >
           <i class="fa-solid fa-table"></i> Boards
         </a>
       </li>
@@ -21,7 +21,7 @@
       <ul class="custom-list">
         @for (board of this.mainService.getListBoards()[0]  ; track board.id) {
 
-          <li><a class="nav-link text-white" routerLink="/boards/{{board.id}}">{{board.name}}</a></li>
+          <li><a class="nav-link text-white" href="http://localhost:4200/boards/{{board.id}}" >{{board.name}}</a></li>
         }
       </ul>
     </ul>

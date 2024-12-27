@@ -1,6 +1,8 @@
-<div class="card-content">
+<div class="card-content" (mouseenter)="onMouseEnter(card)"
+     (mouseleave)="onMouseLeave(card)">
   @if (card.labels.length > 0) {
-    <div class="status-badges">
+
+    <div class="status-badges" >
 
       @for(label of card.labels; track label.id ){
         <span [class]="'badge ' + 'badge-'+ label.color "> </span>
@@ -8,20 +10,51 @@
 
     </div>
     }
-    @if(this.isHover) {
-      <a  (click)="openModal()" style="text-decoration: none"><div (mouseenter)="this.hover()" (mouseleave)="isHover = false"
+    @if(card.isHovered) {
+      <a  (click)="openModal()" style="text-decoration: none"><div
                                       class="task-name">{{ card.name }}<i class="fa-regular fa-pen-to-square" style=" text-align: right;"></i></div></a>
     } @else {
-      <a ><div (mouseenter)="isHover=true" (mouseleave)="isHover = false"  class="task-name">{{ card.name }}</div></a>
+
+      <div [style]="completedTasksCount !== totalTasksCount ? 'height: 30px' : ''">
+      <a ><div  class="task-name">{{ card.name }} </div></a>
+      </div>
+
     }
+  @if(this.card.checkList.length > 0){
+    <div class="chip"
+         [style]="completedTasksCount === totalTasksCount ? 'background-color:green; margin-top: 0;' : 'margin-top: 0;' ">
+
+      <span class="chip-text" style="color:white"><i class="fa-regular fa-square-check fa-lg"></i>
+        {{ completedTasksCount + '/' + totalTasksCount}}
+      </span>
+
+    </div>
+  }
+  @if(card.isDateActivated){
+    <div class="chip"
+         (mouseenter)="isHoverDate = true"
+         (mouseleave)="isHoverDate = false"
+         [style]="dateChecked ? 'background-color:green;' : ' background-color:#f9afaf ;margin-top: 0;' ">
+
+      @if (this.date()) {
+        <span class="chip-text" [style]="dateChecked ? 'color:white':'color:#ae2020'" (click)="updateCompleteDate(card) ">
+      <i [class]=" isHoverDate ? 'fa-regular fa-clock fa-lg' : !isHoverDate && !dateChecked ? 'fa-regular fa-square' : 'fa-regular fa-square-check'"></i>
+          {{ formatDate(this.date())}}
+    </span>
+      }
+
+    </div>
+  }
+
 
   @if(this.isModalOpen){
 
     <app-task-box
 
       title="{{card.name}}"
-      (confirm)="handleConfirm(card!)"
+      (confirm)="handleConfirm(card)"
       (cancel)="handleCancel()"
+      (confirmTitle)="confirmTitle($event,card)"
     >
 
       <div class="container">
@@ -31,30 +64,73 @@
             @for(label of card.labels; track label.id ){
               <span [class]="'labels ' + 'badge-' + label.color" [matTooltip]="'color:' + label.color" matTooltipPosition="above"></span>
             }
-           <button mat-mini-fab > <mat-icon style="border-radius: 2px">add</mat-icon></button>
+           <button mat-mini-fab style="border-radius: 5px;box-shadow: none" (click)="this.openLabel = true"> <mat-icon style="border-radius: 2px">add</mat-icon></button>
           </div>
         </div>
+        @if (this.openLabel) {
+
+          <div style="margin-top: 60px;width: 300px;position: absolute; z-index: 1000;
+  transition: opacity 0.3s ease-in-out; background-color: #e0e0e0; border-radius: 10px;
+  opacity: 1;">
+           <mat-card>
+             <div class="modal-header">
+               <mat-card-header> Add Label</mat-card-header>
+               <button class="close-button" (click)="this.openLabel = false">x</button>
+             </div>
 
 
+             @for(label of this.labels; track label.id ){
+
+        @if(testLabel(label.color)) {
+          <span [class]="'labels ' + 'badge-' + label.color" style="display: flex; justify-content: center;width: 100%; opacity: 0.4;align-items: center" [matTooltip]="'color:' + label.color">
+            <i class="fa fa-solid fa-circle-check fa-lg" (click)="removeLabel(label)"></i></span>
+
+        } @else {
+          <span [class]="'labels ' + 'badge-' + label.color" (click)="addLabelFromCard(label)" style="width: 100%" [matTooltip]="'color:' + label.color"></span>
+        }
+
+             }
+           </mat-card>
+
+          </div>
+            }
 <div style="display: flex; flex-direction: column">
       <b><i class="fa-regular fa-calendar fa-lg"></i> due date</b>
-  <div style="display: flex">
-    <mat-checkbox [(ngModel)]="this.dateChecked" (change)="this.dateChecked = $event.checked">
 
-    </mat-checkbox>
-    <div class="dateFormat" (click)="openDateModal()">
-      {{ this.selectedDate + " " + this.selectedTime}}
-    </div>
-    @if(this.dateChecked) {
-      <div class="chip" [style]=" 'background-color:'+ (isDateValid() ? '#eecfcf ' : 'green ')">
+  @if (!card.isDateActivated) {
+  <button mat-raised-button style="border-radius: 5px; width: 150px;" (click)="activateDueDate(card)">Add Due Date</button>
 
-        <span class="chip-text" [style]="'color:' + (isDateValid() ? '#f14141' : 'white')">{{isDateValid() ? 'Overdue' : 'Completed'}}</span>
+  }@else{
+    <div style="display: flex">
 
+      <mat-checkbox [(ngModel)]="this.dateChecked" (change)="onCheckedChange($event.checked)">
+
+      </mat-checkbox>
+      <div class="dateFormat" (click)="openDateModal()">
+        {{this.datePipe.transform(this.date(), 'dd/MM/yyyy','fr') + " " + this.selectedTime}}
       </div>
 
-    }
+      @if(!dateChecked){
+          @if (isOverDue()) {
+            <div class="chip" style="background-color: #eecfcf ">
+              <span class="chip-text" style="color: #f14141 ">Overdue</span>
+            </div>
+          } @else if (isSoon()) {
+            <div class="chip" style="background-color: #e7e409">
+                <span class="chip-text" style="color: black">Due soon</span>
+            </div>
+          }
+      }
+          @else {
+        <div class="chip" [style]=" 'background-color:'+ (!dateChecked  ? '#eecfcf ' : 'green ')">
+          <span class="chip-text" [style]="'color:' + (!dateChecked  ? '#f14141' : 'white')">{{!dateChecked ? 'Overdue' : 'Completed'}}</span>
+        </div>
+      }
 
-  </div>
+
+    </div>
+  }
+
 
   @if (this.openDate) {
 
@@ -74,8 +150,6 @@
 
           </div>
         </form>
-
-
 
         <button mat-button style="background-color: #688fca; color: white;width: 100%;border-radius: 3px" (click)="updateDateTime()">Save</button>
       </div>
@@ -160,11 +234,8 @@
             </ul>
           @if (this.isClickedList) {
             <form [formGroup]="myForm" class="example-form">
-              <mat-form-field class="example-full-width">
+                <input  class="form-control h-25 opacity-75 inputListCard" placeholder="add an item" formControlName="name" />
 
-                <mat-label>Add an item</mat-label>
-                <input matInput  formControlName="name" />
-              </mat-form-field>
             </form>
             <button (click)="isClickedList = false" mat-raised-button style="color: white;background-color: #d31010; border-radius: 2px;
   width: 120px;" >
@@ -175,7 +246,7 @@
               {{'Add' }} </button>
 
           } @else {
-          <button (click)="addItemList()" mat-raised-button style="background-color: #e0e0e0; border-radius: 2px;
+          <button  (click)="addItemList()" mat-raised-button style="background-color: #e0e0e0; padding: 2px;border-radius: 2px;
   width: 120px;" >
             {{'add items' }} </button>
 
