@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Card } from '../../dao/card';
-import { Observable } from 'rxjs';
+import {Observable} from 'rxjs';
 import {environment} from '../../environments/environment.development';
 
 @Injectable({
@@ -14,10 +14,12 @@ export class ListCardService {
   constructor(private http: HttpClient) { }
 
   public createCard(listCardId: number, card : Card): Observable<Card>{
+
     return this.http.put<Card>(`${this.apiServerUrl}/${listCardId}/card`,card);
   }
 
   public getCards(listCardId: number): Observable<Card[]> {
     return this.http.get<Card[]>(`${this.apiServerUrl}/${listCardId}/cards`);
   }
+
 }

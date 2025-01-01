@@ -112,6 +112,7 @@ public class BoardService {
 
         // Mettre à jour chaque ListCard dans la base de données
         for (ListCard card : listCard) {
+
             // Trouver la carte correspondante dans la liste actuelle du board
             ListCard existingCard = existingBoard.getListCards().stream()
                     .filter(c -> c.getId().equals(card.getId()))
@@ -120,6 +121,8 @@ public class BoardService {
 
             // Mettre à jour l'ordre de la carte
             existingCard.setOrderIndex(card.getOrderIndex());
+            existingCard.setName(card.getName());
+            existingCard.setIsArchived(card.getIsArchived());
         }
 
         // Sauvegarder toutes les cartes mises à jour

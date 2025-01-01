@@ -15,11 +15,11 @@ export class CardService {
 
   constructor(private http: HttpClient) { }
 
-  public updateCard(listCardId: number, card: Card): Observable<Card>{
+  public updateCard(listCardId: number | undefined, card: Card): Observable<Card>{
     return this.http.put<Card>(`${this.apiServerUrl}/${listCardId}/update`,card);
   }
 
-  public updateCheckList(cardId: number, checkList: CheckList): Observable<Card> {
+  public updateCheckList(cardId: number | undefined, checkList: CheckList): Observable<Card> {
     return this.http.put<Card>(`${this.apiServerUrl}/${cardId}/check-list/update`,checkList);
   }
   public deleteCard(cardId: number): Observable<void>{
@@ -27,12 +27,12 @@ export class CardService {
   }
 
   public addLabelToCard(cardId: number, label: Label): Observable<Card> {
-    return this.http.post<Card>(`${this.apiServerUrl}/${cardId}`,label);
+    return this.http.post<Card>(`${this.apiServerUrl}/${cardId}/label/create`,label);
   }
 
-  public removeLabelToCard(cardId: number, label: Label): Observable<ArrayBuffer> {
-     // @ts-ignore
-    return this.http.delete<void>(`${this.apiServerUrl}/${cardId}`,label);
+  public removeLabelToCard(cardId: number, label: Label): Observable<Card> {
+
+    return this.http.post<Card>(`${this.apiServerUrl}/${cardId}/label/remove`,label);
   }
 
 }

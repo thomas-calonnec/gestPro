@@ -1,3 +1,4 @@
+@use '@angular/material' as mat;
 .card-content {
   background-color: #688fca;
   border-radius: 8px;
@@ -39,8 +40,8 @@
 position: relative;
     flex-direction: row;
     cursor: pointer;
-    min-width: 120px;
-    max-width: 40px;
+    width: 100%;
+
 
     height: 8px;
     margin-top: 0;
@@ -49,6 +50,24 @@ position: relative;
     padding-left: 0;
     color: transparent;
   }
+}
+mat-card {
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+mat-chip {
+ background-color: #237a23 !important;
+  width: 85px !important;
+  padding: 0 !important;
+
+}
+.dateFormat {
+  display: flex;
+  padding: 6px;
+  margin: 0;
+  background-color: #e0e0e0;
+  width: 200px;
+  border-radius: 4px;
 }
 .example-full-width {
   width: 100%;
@@ -71,6 +90,7 @@ position: relative;
 }
 .left-content {
   flex: 0 1 auto; /* Facultatif : le contenu de gauche s'adapte à sa taille */
+  width: 90%;
 }
 
 .right-content {
@@ -106,6 +126,33 @@ position: relative;
     opacity: 0.3;
   }
 }
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 10px;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.5em;
+  font-weight: bold;
+  color: #333;
+}
+
+/* Bouton de fermeture */
+.close-button {
+  font-size: 1.5rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #888;
+}
+
+.close-button:hover {
+  color: #555;
+}
 .container {
   display: flex;
   flex-direction: column;
@@ -120,7 +167,7 @@ position: relative;
 }
 .badge {
   display: inline-block;
-  width: 50%;
+  width: 40px;
   position: relative;
   box-sizing: border-box;
   text-align: left;
@@ -132,17 +179,67 @@ position: relative;
 
 }
 
+
+// Customize the entire app. Change :root to your selector if you want to scope the styles.
+:root {
+  @include mat.chips-overrides((
+    outline-color: orange,
+  ));
+}
 .badge-green {
-  background-color: #237a23;
+  background-color: #5bbf5b;
 
 }
-
 .badge-yellow {
   background-color: #FFA726;
 }
+.badge-orange {
+  background-color: #f39562;
+}
+
+.badge-pink {
+  background-color: #ed6dd8;
+}
+
+.badge-purple{
+  background-color: mediumpurple;
+}
+
 .badge-blue {
-  background-color: #2196F3;
+  background-color: #59a6e3;
 }
 .badge-red {
-  background-color: #d9352d;
+  background-color: #ed5d58;
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 5px;
+  padding-left: 10px;
+ /* padding: 3px;*/
+  margin: 4px;
+
+  font-size: 14px;
+
+  color: #333;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  .chip-text {
+    margin-right: 8px;
+  }
+
+  .chip-delete {
+    background: none;
+    border: none;
+    color: #999;
+    font-size: 14px;
+    cursor: pointer;
+    transition: color 0.3s ease;
+
+    &:hover {
+      color: red;
+    }
+  }
+
 }

@@ -1,14 +1,21 @@
-import {Component, OnInit, inject, signal, Input, WritableSignal} from '@angular/core';
+import {
+  Component,
+  OnInit,
+  inject,
+  signal,
+  Input,
+  WritableSignal,
+  Output,
+  EventEmitter,
+  HostListener, ElementRef
+} from '@angular/core';
 import { Card } from '../../../dao/card';
 import { ListCardService } from '../../../service/list-cards/list-card.service';
 import {CardComponent} from '../card/card.component';
-
-import {HorizontalDragDropExampleComponent} from '../horizontal/horizontal.component';
-
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
-import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from '@angular/material/datepicker';
-import {MatHint, MatInput, MatSuffix} from '@angular/material/input';
 import {provideNativeDateAdapter} from '@angular/material/core';
+import {ListCard} from '../../../dao/list-card';
+import {BoardService} from '../../../service/boards/board.service';
 
 @Component({
   selector: 'app-list-card',
@@ -16,39 +23,59 @@ import {provideNativeDateAdapter} from '@angular/material/core';
   providers: [provideNativeDateAdapter()],
   imports: [
     CardComponent,
-    HorizontalDragDropExampleComponent,
     FormsModule,
-
     ReactiveFormsModule,
-    MatDatepickerInput,
-    MatInput,
-    MatHint,
-    MatDatepickerToggle,
-    MatDatepicker,
-    MatSuffix
-
   ],
   templateUrl:'./list-card.component.html',
   styleUrl: './list-card.component.css'
 })
 export class ListCardComponent implements OnInit {
-  @Input() title = '';
-  @Input() listCardId = 0;
+
+  @Output() listCardEmit  = new EventEmitter<ListCard>()
   myForm : FormGroup;
+  protected card : Card = {
+    id:0,
+    name: "",
+    description: "",
+    deadline: new Date(),
+    hours: 0,
+    minutes: 0,
+    labels: [],
+    checkList: [],
+    isCompleted: false,
+    isDateActivated: false
+  }
+  @Input() listCard : ListCard = {
+    id: 0,
+    name: '',
+    orderIndex: 0,
+    isArchived: false
+  }
   public cards : WritableSignal<Card[]> = signal<Card[]>([]);
   private formBuilder : FormBuilder = inject(FormBuilder)
   public listCardService = inject(ListCardService);
+  public boardService = inject(BoardService);
   isClicked: boolean = false;
-
-  constructor() {
+  modifyTitle: boolean = false;
+  // Écoute globale des clics sur le document
+  @HostListener('document:click', ['$event'])
+  handleOutsideClick(event: MouseEvent) {
+    const clickedInside = this.elementRef.nativeElement.contains(event.target);
+    if (!clickedInside) {
+      this.disableEdit();
+    }
+  }
+  disableEdit() {
+    this.modifyTitle = false;
+  }
+  constructor(private elementRef: ElementRef) {
     this.myForm = this.formBuilder.group({
       name: ['', Validators.required],
 
     });
   }
   ngOnInit(): void {
-    this.getListCard(this.listCardId);
-
+    this.getListCard(this.listCard.id);
   }
 
   public getListCard(listCardId : number) : void{
@@ -60,13 +87,25 @@ export class ListCardComponent implements OnInit {
   }
 
   addCard() {
-    const card = this.myForm.value
-    this.listCardService.createCard(this.listCardId,card).subscribe({
-      next: (response: Card ) => {
-        console.log(response);
-        this.cards.update((currentCard) => [...currentCard,card]);
+    this.card.name = this.myForm.value.name;
+    this.listCardService.createCard(this.listCard.id,this.card).subscribe({
+      next: (data: Card ) => {
         this.isClicked = false;
+        this.cards.update((currentCard) => [...currentCard, data]);
+
       }
     })
+  }
+
+
+  modifyTitleConfirm() {
+   this.modifyTitle = false;
+    this.listCardEmit.emit(this.listCard);
+
+  }
+
+  archiveListCard() {
+    this.listCard.isArchived = true;
+    this.listCardEmit.emit(this.listCard);
   }
 }

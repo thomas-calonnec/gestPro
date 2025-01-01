@@ -1,27 +1,19 @@
 import {Component, computed, inject, OnInit, signal, WritableSignal} from '@angular/core';
 import { BoardService } from '../../../service/boards/board.service';
 import {ListCardComponent} from '../list-card/list-card.component';
-import {ActivatedRoute, RouterLink} from '@angular/router';
-import {FaIconComponent} from '@fortawesome/angular-fontawesome';
+import {ActivatedRoute} from '@angular/router';
 import {ListCard} from '../../../dao/list-card';
-import {MainService} from '../../../service/main/main.service';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import {ListCardService} from '../../../service/list-cards/list-card.service';
-import {HorizontalDragDropExampleComponent} from '../horizontal/horizontal.component';
-import {CdkDragDrop, CdkDrag, CdkDropList, moveItemInArray, CdkDragPlaceholder} from '@angular/cdk/drag-drop';
+import {CdkDragDrop, CdkDrag, CdkDropList, moveItemInArray} from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-board',
   standalone: true,
   imports: [
     ListCardComponent,
-    RouterLink,
-    FaIconComponent,
     ReactiveFormsModule,
-    HorizontalDragDropExampleComponent,
     CdkDropList,
     CdkDrag,
-    CdkDragPlaceholder
   ],
   templateUrl:'./board.component.html' ,
   styleUrl: './board.component.scss'
@@ -30,11 +22,9 @@ export class BoardComponent implements OnInit{
   myForm : FormGroup;
   public listCard: WritableSignal<ListCard[]> = signal<ListCard[]>([]);
   sortedListCard = computed(() =>
-    this.listCard().slice().sort((a, b) => a.orderIndex - b.orderIndex)
+    this.listCard().slice().sort((a, b) => a.orderIndex - b.orderIndex).filter((list) => !list.isArchived)
   );
-  public listCardService : ListCardService = inject(ListCardService);
   public boardService : BoardService = inject(BoardService);
-  mainService : MainService = inject(MainService)
   private route : ActivatedRoute = inject(ActivatedRoute);
   private boardId : number = 0;
   protected isClicked: boolean = false;
@@ -58,7 +48,7 @@ export class BoardComponent implements OnInit{
        next: (data: ListCard) =>{
          this.isClicked = false;
          this.listCard.update((currentList) => [...currentList, data])
-
+         console.log(this.listCard())
        }
      })
    }
@@ -75,6 +65,7 @@ export class BoardComponent implements OnInit{
       next: (data: ListCard[]) => {
         console.log(data)
         this.listCard.set(data);
+
       }
     });
 
@@ -101,5 +92,34 @@ export class BoardComponent implements OnInit{
 
   closeButton() {
     this.isClicked = false;
+  }
+
+  updateListCard(updateListCard: ListCard) {
+
+   this.listCard().map(list => {
+     console.log(updateListCard.id)
+     if (list.id === updateListCard.id) {
+       // Mettre à jour les champs nécessaires
+
+       list.isArchived = updateListCard.isArchived
+
+       return {...list, ...updateListCard};
+     }
+     return list; // Les autres cartes restent inchangées
+   })
+
+
+    this.boardService.updateListCard(this.boardId, this.listCard()).subscribe({
+      next: (response) => {
+        console.log("Ordre mis à jour avec succès", response);
+      },
+      error: (err) => {
+        console.error("Erreur lors de la mise à jour de l'ordre", err);
+        // Vous pouvez également restaurer l'état précédent si nécessaire en cas d'erreur
+      }
+    });
+    this.listCard.update(list => {
+      return list.filter(l => !l.isArchived);
+    })
   }
 }
