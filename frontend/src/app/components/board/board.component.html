@@ -5,14 +5,14 @@
      (cdkDropListDropped)="drop($event)" xmlns="http://www.w3.org/1999/html">
   @for(list of sortedListCard(); track list.id) {
 
-   <app-list-card [listCardId]="list.id" [title]="list.name" cdkDrag></app-list-card>
+   <app-list-card [listCard]="list" (listCardEmit)="updateListCard($event)" cdkDrag ></app-list-card>
 
   }
 
 </div>
 @if(!isClicked) {
   <button class="buttonAddList"
-          (click)="buttonClicked()">  <i class="fa-solid fa-circle-plus"></i> Add an another list</button>
+          (click)="buttonClicked()">  <i class="fa-solid fa-plus"></i> Add an another list</button>
 } @else {
   <div class="buttonAddList2">
     <form  [formGroup]="myForm" (ngSubmit)="addList()" style="background-color: #2A3E52; border-radius: 12px ;">

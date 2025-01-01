@@ -38,14 +38,13 @@ public class ListCardController {
 
     @PutMapping("{id}/card")
     public ResponseEntity<Card> createCard(@PathVariable Long id, @RequestBody Card card) {
-
         listCardService.createCard(id,card);
         return new ResponseEntity<>(card, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}/update")
+    @PutMapping("/{id}")
     public ResponseEntity<ListCard> updateListCardById(@PathVariable Long id, @RequestBody ListCard listCard) {
-        ListCard updateListCard =  listCardService.updateListCard(id,listCard);
+        ListCard updateListCard = listCardService.updateListCard(id,listCard);
         return ResponseEntity.ok(updateListCard);
     }
 

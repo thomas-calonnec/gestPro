@@ -36,7 +36,13 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Ombre pour le relief */
   font-family: Arial, sans-serif;
 }
-
+.inputListCard {
+  background-color: var(--bg-card);
+  font-weight: bold;
+  font-size: medium;
+  margin-top: 10px;
+  color: white;
+}
 .card-header {
   display: flex;
   justify-content: space-between;
@@ -45,6 +51,7 @@
   align-items: center;
   font-weight: bold;
   color: #ffffff;
+  border-bottom: none;
 }
 
 .card-header .title {
@@ -67,6 +74,7 @@
   cursor: pointer;
   display: flex;
   align-items: center;
+  border-top: none;
 }
 
 .card-footer:hover {

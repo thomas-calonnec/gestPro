@@ -2,8 +2,10 @@ package com.thomas.gestPro.service;
 
 
 import com.thomas.gestPro.Exception.ResourceNotFoundException;
+import com.thomas.gestPro.model.Board;
 import com.thomas.gestPro.model.Card;
 import com.thomas.gestPro.model.ListCard;
+import com.thomas.gestPro.repository.BoardRepository;
 import com.thomas.gestPro.repository.CardRepository;
 import com.thomas.gestPro.repository.ListCardRepository;
 import jakarta.transaction.Transactional;
@@ -16,6 +18,7 @@ public class ListCardService {
 
     private final ListCardRepository listCardRepository;
     private final CardRepository cardRepository;
+    private final BoardRepository boardRepository;
 
     /**
      * Constructor with dependency injection for ListCardRepository and CardRepository.
@@ -24,9 +27,10 @@ public class ListCardService {
      * @param cardRepository repository for managing cards
      */
     @Autowired
-    public ListCardService(ListCardRepository listCardRepository, CardRepository cardRepository) {
+    public ListCardService(ListCardRepository listCardRepository, CardRepository cardRepository, BoardRepository boardRepository) {
         this.listCardRepository = listCardRepository;
         this.cardRepository = cardRepository;
+        this.boardRepository = boardRepository;
     }
 
     /**
@@ -73,9 +77,20 @@ public class ListCardService {
      * @return the updated ListCard
      */
     public ListCard updateListCard(Long listCardId, ListCard updateListCard){
-       ListCard existingCard = findListCardById(listCardId);
-       existingCard.setName(updateListCard.getName());
 
+       ListCard existingListCard = findListCardById(listCardId);
+
+        existingListCard.setName(updateListCard.getName());
+        existingListCard.setOrderIndex(updateListCard.getOrderIndex());
+        System.err.println(updateListCard.getIsArchived());
+        existingListCard.setIsArchived(updateListCard.getIsArchived());
+        // Si le board est modifié, vérifier et mettre à jour
+        if (updateListCard.getBoard() != null && !updateListCard.getBoard().getId().equals(existingListCard.getBoard().getId())) {
+
+            Board board = boardRepository.findById(updateListCard.getBoard().getId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Board not found with id: " + updateListCard.getBoard().getId()));
+            existingListCard.setBoard(board);
+        }
         return listCardRepository.save(updateListCard);
     }
 

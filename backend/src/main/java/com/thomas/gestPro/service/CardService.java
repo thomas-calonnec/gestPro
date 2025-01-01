@@ -40,15 +40,6 @@ public class CardService {
 
 
     /**
-     * Retrieves all the cards.
-     *
-     * @return a list of all cards
-     */
-    public List<Card> getAllCard() {
-        return cardRepository.findAll();
-    }
-
-    /**
      * Finds a card by its ID.
      *
      * @param cardId the ID of the card to retrieve
@@ -75,7 +66,11 @@ public class CardService {
 
         // Mettre à jour les champs simples
         existingCard.setName(updateCard.getName());
+        existingCard.setHours(updateCard.getHours());
+        existingCard.setMinutes(updateCard.getMinutes());
+        existingCard.setIsCompleted(updateCard.getIsCompleted());
         existingCard.setDeadline(updateCard.getDeadline());
+        existingCard.setIsDateActivated(updateCard.getIsDateActivated());
         existingCard.setDescription(updateCard.getDescription());
 
         // Gestion de la liste CheckList
@@ -185,8 +180,10 @@ public class CardService {
 
     public Card updateCheckList(Long cardId, CheckList checkList) {
         Card updateCard = this.getCardById(cardId);
-        System.err.println("card : " + updateCard.getCheckList());
-        updateCard.getCheckList().add(checkList);
+        System.err.println("card : " + checkList.getName());
+        CheckList updateChecklist = updateCard.getCheckList().get(checkList.getId().intValue());
+        updateChecklist.setName(checkList.getName());
+        System.err.println(updateCard.getCheckList().get(checkList.getId().intValue()).getName());
         checkListRepository.save(checkList);
         return cardRepository.save(updateCard);
     }
