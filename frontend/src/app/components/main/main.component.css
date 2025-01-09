@@ -39,7 +39,6 @@ main {
 
 /* Styles pour le panneau latéral */
 
-
 .sidebar h2 {
   margin-bottom: 20px;
 }
@@ -86,7 +85,7 @@ main {
 /* Conteneur principal pour la mise en page */
 .layout {
   display: flex;
-  height: calc(100vh - 60px); /* Hauteur de la vue moins la hauteur de la navbar */
+  height: calc(100vh); /* Hauteur de la vue moins la hauteur de la navbar */
   overflow: hidden;
 }
 
@@ -99,7 +98,6 @@ main {
 /* Sidebar fixe sur la gauche */
 .sidebar {
   width: 250px;
-  background-color: #444;
   color: #fff;
 
   /*overflow-y: auto; /* Scroll uniquement si le contenu de la sidebar dépasse sa taille */
