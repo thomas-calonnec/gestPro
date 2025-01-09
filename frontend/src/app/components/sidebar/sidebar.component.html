@@ -1,9 +1,12 @@
-
+<!--<div class="nav-item" style="width: 100%; background-color: #0c66e4; display: flex; justify-content: center">
+  {{this.workspaceName}}
+</div>
 <div class="d-flex flex-column h-100 flex-shrink-0 p-3 text-white bg-dark" style="width: 280px;">
-  <!-- <aside class="sidebar"> -->
-
+   <aside class="sidebar">
   @if(this.mainService.getListBoards().length !== 0) {
+
     <ul class="nav nav-pills flex-column mb-auto">
+
       <li class="nav-item">
         <a class="nav-link text-white" href="http://localhost:4200/workspaces/{{this.workspaceId}}/boards" >
           <i class="fa-solid fa-table"></i> Boards
@@ -18,10 +21,10 @@
 
       <li><a class="nav-link text-white" routerLink="/workpsace"><strong>Your boards</strong></a></li>
 
-      <ul class="custom-list">
+      <ul class=" colored-squares-list">
         @for (board of this.mainService.getListBoards()[0]  ; track board.id) {
 
-          <li><a class="nav-link text-white" href="http://localhost:4200/boards/{{board.id}}" >{{board.name}}</a></li>
+          <li [class]="''+this.board.name+'-square'"><a style="text-decoration: none" class="text-white" href="http://localhost:4200/boards/{{board.id}}" >{{board.name}}</a></li>
         }
       </ul>
     </ul>
@@ -42,4 +45,60 @@
       <li><a class="dropdown-item" href="#">Sign out</a></li>
     </ul>
   </div>
+</div>-->
+
+<!-- Sidebar -->
+<div class="sidebar">
+
+  <div class="logo">
+    <img src="https://flowbite.com/docs/images/logo.svg" alt="Logo">
+    <span style="color:white">GestPro</span>
+  </div>
+  <div class="nav-item" style="width: 100%; background-color: #0c66e4; display: flex; justify-content: center">
+    {{this.workspaceName}}
+  </div>
+  <ul>
+    <li><a  href="http://localhost:4200/workspaces/{{this.workspaceId}}/boards" >
+      <span class="icon"> <i class="fa-solid fa-table"></i> Boards</span>
+    </a>
+    </li>
+<!--    <li><a href="#"><span class="icon"><i class="fas fa-home"></i></span> Dashboard</a></li>-->
+    <li>
+      <a routerLink="/user">
+        <span class="icon">  <i class="fa-solid fa-users"></i> Members</span>
+      </a>
+    </li>
+    <li><a routerLink="/workpsace"><span class="icon"> <i class="fa-solid fa-gear"></i> Workspace settings</span></a></li>
+
+    <li><a routerLink="/workpsace"><strong>Your boards</strong></a></li>
+
+
+    <ul class="dropdown-menu">
+      @for (board of this.mainService.getListBoards()[0]  ; track board.id) {
+
+        <li [class]="''+this.board.name+'-square'"><a style="text-decoration: none" class="text-white" href="http://localhost:4200/boards/{{board.id}}" >{{board.name}}</a></li>
+      }
+    </ul>
+    <li><a href="#" (click)="logout()"><span class="icon"><i class="fas fa-door-open"></i></span> Logout</a></li>
+
+
+<!--    <li><a href="#"><span class="icon"><i class="fas fa-tasks"></i></span> Kanban <span class="badge">Pro</span></a></li>-->
+<!--    <li><a href="#"><span class="icon"><i class="fas fa-envelope"></i></span> Inbox <span class="badge">3</span></a></li>-->
+<!--    <li><a href="#"><span class="icon"><i class="fas fa-users"></i></span> Users</a></li>-->
+<!--    <li><a href="#"><span class="icon"><i class="fas fa-box"></i></span> Products</a></li>-->
+<!--    <li><a href="#"><span class="icon"><i class="fas fa-sign-in-alt"></i></span> Sign In</a></li>-->
+<!--    <li><a href="#"><span class="icon"><i class="fas fa-user-plus"></i></span> Sign Up</a></li>-->
+  </ul>
+  <div class="profile">
+    <div class="dropdown" id="dropdown">
+      <a href="#">Neil Sims</a>
+      <a href="#">Dashboard</a>
+      <a href="#">Settings</a>
+      <a href="#">Earnings</a>
+      <a href="#">Sign out</a>
+    </div>
+  </div>
 </div>
+
+
+

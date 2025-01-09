@@ -1,4 +1,4 @@
-import {Injectable, Signal, signal, WritableSignal} from '@angular/core';
+import {Injectable, signal, WritableSignal} from '@angular/core';
 import {Workspace} from '../../dao/workspace';
 import {Board} from '../../dao/board';
 
@@ -22,6 +22,7 @@ export class MainService {
     this.boards().push(boards);
   }
   getListBoards(): Board[][] {
+    console.log(this.boards())
     return this.boards();
   }
 
