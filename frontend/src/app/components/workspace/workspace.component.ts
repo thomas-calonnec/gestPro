@@ -1,4 +1,4 @@
-import {Component, inject, OnInit, signal, WritableSignal} from '@angular/core';
+import {Component, inject, OnInit} from '@angular/core';
 import {Board} from '../../../dao/board';
 import {WorkspaceService} from '../../../service/workspaces/workspace.service';
 import {HttpErrorResponse} from '@angular/common/http';
@@ -13,13 +13,20 @@ import {BoardService} from '../../../service/boards/board.service';
     RouterLink
   ],
   template: `
+    <h3>Your boards</h3>
     <div class="containerBoard">
       @for(board of this.mainService.boards()[0]; track board.id){
-        <div class="hover-card">
-          <a style=" text-decoration: none;" routerLink="/boards/{{board.id}}"><h3 class="card-title">{{ board.name }}</h3></a>
-        </div>
 
-      } </div>
+        <a style=" text-decoration: none;" routerLink="/boards/{{board.id}}"> <div class="hover-card">
+         <h3 class="card-title">{{ board.name }}</h3>
+        </div>
+        </a>
+
+      }
+      <div>
+        <a style=" text-decoration: none;" href="#"><h3 class="card-title"><i class="fa fa-plus-circle"></i> Add a board </h3></a>
+      </div>
+    </div>
 
   `,
   styleUrl: './workspace.component.css'
