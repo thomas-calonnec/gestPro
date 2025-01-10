@@ -11,20 +11,28 @@ pipeline {
 
         stage('Install dependencies') {
             steps{
-                sh 'cd frontend'
-                sh 'npm install'
+                sh '''
+                cd frontend
+                npm install
+                '''
             }
         }
 
         stage('Run tests'){
             steps{
-                sh 'npm test'
+                sh '''
+                cd frontend
+                npm test
+                '''
             }
         }
 
         stage('Build') {
             steps{
-                sh 'ng build --prod'
+                sh '''
+                cd frontend
+                ng build --prod
+                '''
             }
         }
 
