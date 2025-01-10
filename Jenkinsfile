@@ -40,11 +40,11 @@ pipeline {
             }
         }
 
-        stage('Compile Backend'){
+        stage('Clean and install Backend'){
             steps{
                 sh '''
                 cd backend
-                mvn clean compile
+                mvn clean install
                 '''
             }
         }
