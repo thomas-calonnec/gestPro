@@ -1,10 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Card } from '../../dao/card';
-import { Label } from '../../dao/label';
-import {environment} from '../../environments/environment.development';
-import {CheckList} from '../../dao/check-list';
+import { Card } from '@/models/card';
+import { Label } from '@/models/label';
+import {environment} from '@/environments/environment.development';
+import {CheckList} from '@/models/check-list';
 
 @Injectable({
   providedIn: 'root'

@@ -3,8 +3,8 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Router } from '@angular/router';
 import { AuthService } from '../../auth.service';
 import { HttpErrorResponse } from '@angular/common/http';
-import { UserService } from '../../../service/users/user.service';
-import { MainService } from '../../../service/main/main.service';
+import { UserService } from '@/services/users/user.service';
+import { MainService } from '@/services/main/main.service';
 import { catchError, of, switchMap } from 'rxjs';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';

@@ -1,10 +1,9 @@
-import {inject, Injectable} from '@angular/core';
+import {Injectable} from '@angular/core';
 import { Observable } from 'rxjs';
-import { Board } from '../../dao/board';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {environment} from '../../environments/environment.development';
-import {Workspace} from '../../dao/workspace';
-import {AuthService} from '../../app/auth.service';
+import { Board } from '@/models/board';
+import {HttpClient} from '@angular/common/http';
+import {environment} from '@/environments/environment.development';
+import {Workspace} from '@/models/workspace';
 
 
 @Injectable({
@@ -13,7 +12,6 @@ import {AuthService} from '../../app/auth.service';
 export class WorkspaceService {
 
   private apiServerUrl = environment.apiUrl + '/user/workspaces';
-  private authService : AuthService = inject(AuthService);
   constructor(private http: HttpClient) { }
 
   public getBoards(workspaceId: string | null) : Observable<Board[]> {
