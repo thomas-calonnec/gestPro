@@ -9,13 +9,13 @@ import {
   EventEmitter,
   HostListener, ElementRef
 } from '@angular/core';
-import { Card } from '../../../dao/card';
-import { ListCardService } from '../../../service/list-cards/list-card.service';
+import { Card } from '@/models/card';
+import { ListCardService } from '@/services/list-cards/list-card.service';
 import {CardComponent} from '../card/card.component';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {provideNativeDateAdapter} from '@angular/material/core';
-import {ListCard} from '../../../dao/list-card';
-import {BoardService} from '../../../service/boards/board.service';
+import {ListCard} from '@/models/list-card';
+import {BoardService} from '@/services/boards/board.service';
 
 @Component({
   selector: 'app-list-card',
