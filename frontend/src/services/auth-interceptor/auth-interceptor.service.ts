@@ -1,14 +1,11 @@
 import {inject, Injectable} from '@angular/core';
 import {
-  HttpErrorResponse,
   HttpEvent, HttpHandler,
   HttpInterceptor,
   HttpRequest
 } from '@angular/common/http';
-import {catchError, from, Observable, switchMap, throwError} from 'rxjs';
-import {AuthService} from '../../app/auth.service';
-import {Router} from '@angular/router';
-import {JwtHelperService} from  '@auth0/angular-jwt';
+import {catchError, Observable, switchMap, throwError} from 'rxjs';
+import {AuthService} from '@/app/auth.service';
 
 @Injectable({
   providedIn: 'root'

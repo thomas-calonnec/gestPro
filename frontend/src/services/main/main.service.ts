@@ -1,6 +1,6 @@
 import {Injectable, signal, WritableSignal} from '@angular/core';
-import {Workspace} from '../../dao/workspace';
-import {Board} from '../../dao/board';
+import {Workspace} from '@/models/workspace';
+import {Board} from '@/models/board';
 
 @Injectable({
   providedIn: 'root'

@@ -1,12 +1,12 @@
-import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 import {inject, Injectable} from '@angular/core';
 import { Observable } from 'rxjs';
-import { Workspace } from '../../dao/workspace';
+import { Workspace } from '@/models/workspace';
 
-import { Card } from '../../dao/card';
-import { User } from '../../dao/user';
-import { environment } from '../../environments/environment.development';
-import {AuthService} from '../../app/auth.service';
+import { Card } from '@/models/card';
+import { User } from '@/models/user';
+import { environment } from '@/environments/environment.development';
+import {AuthService} from '@/app/auth.service';
 
 @Injectable({
   providedIn: 'root'
