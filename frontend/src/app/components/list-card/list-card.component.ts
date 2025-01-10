@@ -9,13 +9,12 @@ import {
   EventEmitter,
   HostListener, ElementRef
 } from '@angular/core';
-import { Card } from '@/models/card';
-import { ListCardService } from '@/services/list-cards/list-card.service';
+import { Card } from '@models/card';
+import { ListCardService } from '@services/list-cards/list-card.service';
 import {CardComponent} from '../card/card.component';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {provideNativeDateAdapter} from '@angular/material/core';
-import {ListCard} from '@/models/list-card';
-import {BoardService} from '@/services/boards/board.service';
+import {ListCard} from '@models/list-card';
 
 @Component({
   selector: 'app-list-card',
@@ -54,7 +53,6 @@ export class ListCardComponent implements OnInit {
   public cards : WritableSignal<Card[]> = signal<Card[]>([]);
   private formBuilder : FormBuilder = inject(FormBuilder)
   public listCardService = inject(ListCardService);
-  public boardService = inject(BoardService);
   isClicked: boolean = false;
   modifyTitle: boolean = false;
   // Écoute globale des clics sur le document
