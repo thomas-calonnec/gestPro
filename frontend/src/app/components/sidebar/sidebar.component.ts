@@ -1,8 +1,8 @@
 import {Component, inject, OnInit} from '@angular/core';
 import {RouterLink} from '@angular/router';
-import {MainService} from '../../../service/main/main.service';
-import {WorkspaceService} from '../../../service/workspaces/workspace.service';
-import {Board} from '../../../dao/board';
+import {MainService} from '@/services/main/main.service';
+import {WorkspaceService} from '@/services/workspaces/workspace.service';
+import {Board} from '@/models/board';
 import {AuthService} from '../../auth.service';
 
 @Component({

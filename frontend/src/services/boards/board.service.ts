@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
-import {Injectable, signal, WritableSignal} from '@angular/core';
+import {Injectable} from '@angular/core';
 import { Observable } from 'rxjs';
-import { Board } from '../../dao/board';
-import { ListCard } from '../../dao/list-card';
-import {environment} from '../../environments/environment.development';
+import { Board } from '@/models/board';
+import { ListCard } from '@/models/list-card';
+import {environment} from '@/environments/environment.development';
 
 @Injectable({
   providedIn: 'root'
