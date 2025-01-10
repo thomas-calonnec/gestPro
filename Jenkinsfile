@@ -35,7 +35,7 @@ pipeline {
             steps{
                 sh '''
                 cd frontend
-                ng build --prod
+                ng build --configuration production
                 '''
             }
         }
