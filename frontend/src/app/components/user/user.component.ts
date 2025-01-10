@@ -1,24 +1,26 @@
 import {Component, EventEmitter, inject, OnInit, Output} from '@angular/core';
-import {Workspace} from '@/models/workspace';
-import {UserService} from '@/services/users/user.service';
+import {Workspace} from '@models/workspace';
+import {UserService} from '@services/users/user.service';
 import {ActivatedRoute, RouterLink} from '@angular/router';
-import {MainService} from '@/services/main/main.service';
+import {MainService} from '@services/main/main.service';
 
 @Component({
   selector: 'app-user',
   standalone: true,
+
+  template: `
+
+    <div class="containerWorkspace">
+      @for (workspace of workspaces; track workspace.id) {
+        <div class="hover-card">
+          <a style=" text-decoration: none;" routerLink="/workspaces/{{workspace.id}}/boards"><h3
+            class="card-title">{{ workspace.name }}</h3></a>
+        </div>
+
+      } </div>`,
   imports: [
     RouterLink
   ],
-  template: `
-
-<div class="containerWorkspace">
-    @for(workspace of workspaces; track workspace.id){
-      <div class="hover-card">
-        <a style=" text-decoration: none;" routerLink="/workspaces/{{workspace.id}}/boards"><h3 class="card-title">{{ workspace.name }}</h3></a>
-      </div>
-
-    } </div>`,
   styleUrl: './user.component.css'
 })
 export class UserComponent implements  OnInit{

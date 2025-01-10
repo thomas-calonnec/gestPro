@@ -1,10 +1,10 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AuthService } from '../../auth.service';
+import { AuthService } from '@app/auth.service';
 import { HttpErrorResponse } from '@angular/common/http';
-import { UserService } from '@/services/users/user.service';
-import { MainService } from '@/services/main/main.service';
+import { UserService } from '@services/users/user.service';
+import { MainService } from '@services/main/main.service';
 import { catchError, of, switchMap } from 'rxjs';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';

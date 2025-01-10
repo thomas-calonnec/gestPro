@@ -1,8 +1,8 @@
 import {Component, computed, inject, OnInit, signal, WritableSignal} from '@angular/core';
-import { BoardService } from '@/services/boards/board.service';
-import {ListCardComponent} from '../list-card/list-card.component';
+import { BoardService } from '@services/boards/board.service';
+import {ListCardComponent} from '@components/list-card/list-card.component';
 import {ActivatedRoute} from '@angular/router';
-import {ListCard} from '@/models/list-card';
+import {ListCard} from '@models/list-card';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {CdkDragDrop, CdkDrag, CdkDropList, moveItemInArray} from '@angular/cdk/drag-drop';
 
