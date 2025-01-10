@@ -1,9 +1,9 @@
 import {Injectable} from '@angular/core';
 import { Observable } from 'rxjs';
-import { Board } from '@/models/board';
+import { Board } from '@models/board';
 import {HttpClient} from '@angular/common/http';
-import {environment} from '@/environments/environment.development';
-import {Workspace} from '@/models/workspace';
+import {environment} from '@environments/environment.development';
+import {Workspace} from '@models/workspace';
 
 
 @Injectable({

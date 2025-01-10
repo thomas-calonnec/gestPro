@@ -1,34 +1,36 @@
 import {Component, inject, OnInit} from '@angular/core';
-import {Board} from '@/models/board';
-import {WorkspaceService} from '@/services/workspaces/workspace.service';
+import {Board} from '@models/board';
+import {WorkspaceService} from '@services/workspaces/workspace.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {ActivatedRoute, RouterLink} from '@angular/router';
-import {MainService} from '@/services/main/main.service';
-import {BoardService} from '@/services/boards/board.service';
+import {MainService} from '@services/main/main.service';
+import {BoardService} from '@services/boards/board.service';
 
 @Component({
   selector: 'app-workspace',
   standalone: true,
-  imports: [
-    RouterLink
-  ],
   template: `
     <h3>Your boards</h3>
     <div class="containerBoard">
-      @for(board of this.mainService.boards()[0]; track board.id){
+      @for (board of this.mainService.boards()[0]; track board.id) {
 
-        <a style=" text-decoration: none;" routerLink="/boards/{{board.id}}"> <div class="hover-card">
-         <h3 class="card-title">{{ board.name }}</h3>
-        </div>
+        <a style=" text-decoration: none;" routerLink="/boards/{{board.id}}">
+          <div class="hover-card">
+            <h3 class="card-title">{{ board.name }}</h3>
+          </div>
         </a>
 
       }
       <div>
-        <a style=" text-decoration: none;" href="#"><h3 class="card-title"><i class="fa fa-plus-circle"></i> Add a board </h3></a>
+        <a style=" text-decoration: none;" href="#"><h3 class="card-title"><i class="fa fa-plus-circle"></i> Add a board
+        </h3></a>
       </div>
     </div>
 
   `,
+  imports: [
+    RouterLink
+  ],
   styleUrl: './workspace.component.css'
 })
 export class WorkspaceComponent implements OnInit{

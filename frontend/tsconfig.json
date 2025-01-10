@@ -3,8 +3,13 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "baseUrl": "./src",
     "paths": {
-      "@/*": ["src/*"],
+      "@components/*": ["app/components/*"],
+      "@services/*": ["services/*"],
+      "@models/*": ["models/*"],
+      "@app/*" :  ["app/*"],
+      "@environments/*" : ["environments/*"]
     },
     "outDir": "./dist/out-tsc",
     "strict": true,

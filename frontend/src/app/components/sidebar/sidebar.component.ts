@@ -1,9 +1,9 @@
 import {Component, inject, OnInit} from '@angular/core';
 import {RouterLink} from '@angular/router';
-import {MainService} from '@/services/main/main.service';
-import {WorkspaceService} from '@/services/workspaces/workspace.service';
-import {Board} from '@/models/board';
-import {AuthService} from '../../auth.service';
+import {MainService} from '@services/main/main.service';
+import {WorkspaceService} from '@services/workspaces/workspace.service';
+import {Board} from '@models/board';
+import {AuthService} from '@app/auth.service';
 
 @Component({
   selector: 'app-sidebar',

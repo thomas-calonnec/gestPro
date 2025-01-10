@@ -19,10 +19,10 @@ import {MAT_DATE_LOCALE, provideNativeDateAdapter} from '@angular/material/core'
 import {MatButton, MatIconButton, MatMiniFabButton} from '@angular/material/button';
 import {AngularEditorModule} from '@kolkov/angular-editor';
 import {MatTooltip} from '@angular/material/tooltip';
-import {CheckList} from '@/models/check-list';
+import {CheckList} from '@models/check-list';
 import {MatCheckbox} from '@angular/material/checkbox';
-import {CardService} from '@/services/cards/card.service';
-import {Card} from '@/models/card';
+import {CardService} from '@services/cards/card.service';
+import {Card} from '@models/card';
 import {MatProgressBar} from '@angular/material/progress-bar';
 import {DatePipe} from '@angular/common';
 import {MatInputModule} from '@angular/material/input';
@@ -30,8 +30,8 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatTimepickerModule} from '@dhutaryan/ngx-mat-timepicker';
 import {MatCard, MatCardHeader} from '@angular/material/card';
-import {LabelService} from '@/services/labels/label.service';
-import {Label} from '@/models/label';
+import {LabelService} from '@services/labels/label.service';
+import {Label} from '@models/label';
 
 @Component({
   selector: 'app-card',
