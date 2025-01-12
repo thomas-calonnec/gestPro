@@ -1,1 +1,42 @@
+<h3>Your boards</h3>
+<div>
 
+  @if (boardCreated) {
+    <button  mat-flat-button  disabled style="text-decoration: none; border-radius: 5px"  (click)="boardCreated = false">
+      <i class="fa fa-plus"></i> add board</button>
+  } @else {
+    <button mat-flat-button style="text-decoration: none; border-radius: 5px" (click)="boardCreated = true">
+      <i class="fa fa-plus"></i> add board
+    </button>
+  }
+
+
+</div>
+<div class="containerBoard">
+
+  @for (board of this.boards(); track board.id) {
+
+      <div class="hover-card" routerLink="/boards/{{board.id}}">
+        <h3 class="card-title">{{ board.name }}</h3>
+
+      </div>
+
+  }
+  @if (boardCreated) {
+    <div >
+
+      <form  [formGroup]="myForm" (ngSubmit)="addBoard()" style="background-color: white; border-radius: 12px ;">
+        <div class="myInput">
+
+          <input type="text"  class="form-control h-25 opacity-75" style="background-color: whitesmoke;font-weight: bold" formControlName="name" maxlength="512" required="required" aria-label="Small"  placeholder="Enter board name" aria-describedby="inputGroup-sizing-sm">
+        </div>
+        <button type="submit" class="btn btn-sm" style="margin: 10px; background-color: #579DFF; text-decoration: none;"> Add board </button>
+        <button type="submit"   style="background-color: darkgrey; color:white " class="btn btn-light btn-sm" (click)="this.boardCreated = false" ><i class="fa-solid fa-times" ></i></button>
+      </form>
+
+
+    </div>
+  }
+
+
+</div>

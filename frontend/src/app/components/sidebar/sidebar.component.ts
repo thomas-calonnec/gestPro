@@ -52,4 +52,5 @@ export class SidebarComponent implements OnInit{
 
   }
 
+  protected readonly localStorage = localStorage;
 }

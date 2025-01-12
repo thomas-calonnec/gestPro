@@ -52,14 +52,14 @@
 
   <div class="logo">
     <img src="https://flowbite.com/docs/images/logo.svg" alt="Logo">
-    <span style="color:white">GestPro</span>
+    <a style="text-decoration: none" [routerLink]="'/users/'+localStorage.getItem('USER_ID')+'/workspaces'" ><span style="color:white" >GestPro</span></a>
   </div>
   <div class="nav-item" style="width: 100%; background-color: #0c66e4; display: flex; justify-content: center">
     {{this.workspaceName}}
   </div>
   <ul>
     <li><a  href="http://localhost:4200/workspaces/{{this.workspaceId}}/boards" >
-      <span class="icon"> <i class="fa-solid fa-table"></i> Boards</span>
+      <span class="icon"> <i class="fa-regular fa-window-maximize"></i> Boards</span>
     </a>
     </li>
 <!--    <li><a href="#"><span class="icon"><i class="fas fa-home"></i></span> Dashboard</a></li>-->
@@ -73,12 +73,16 @@
     <li><a routerLink="/workpsace"><strong>Your boards</strong></a></li>
 
 
-    <ul class="dropdown-menu">
-      @for (board of this.mainService.getListBoards()[0]  ; track board.id) {
+    <div class="colored-squares-list" >
 
-        <li [class]="''+this.board.name+'-square'"><a style="text-decoration: none" class="text-white" href="http://localhost:4200/boards/{{board.id}}" >{{board.name}}</a></li>
-      }
-    </ul>
+      <ul >
+        @for (board of this.mainService.getListBoards()[0]  ; track board.id) {
+
+          <li [class]="''+this.board.color+'-square'"><a style=" margin-top: 2px; padding: 3px; background: none"  href="http://localhost:4200/boards/{{board.id}}" >{{board.name}}</a></li>
+        }
+      </ul>
+    </div>
+
     <li><a href="#" (click)="logout()"><span class="icon"><i class="fas fa-door-open"></i></span> Logout</a></li>
 
 

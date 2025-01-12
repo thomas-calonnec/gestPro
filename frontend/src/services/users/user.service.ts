@@ -31,8 +31,8 @@ export class UserService {
   }
 
 
-  public addCardToUser(userId: number, card: Card): Observable<User>{
-    return this.http.post<User>(`${this.apiServerUrl}/${userId}/addCard`,card);
+  public addCardToUser(userId: number, card: Card): Observable<Workspace>{
+    return this.http.post<Workspace>(`${this.apiServerUrl}/${userId}/addCard`,card);
   }
 
   public createUser(user : User): Observable<User>{
@@ -48,7 +48,7 @@ export class UserService {
   }
 
   public createWorkspace(userId: number, workspace: Workspace): Observable<Workspace>{
-    return this.http.put<Workspace>(`${this.apiServerUrl}/${userId}/workspace`,workspace);
+    return this.http.post<Workspace>(`${this.apiServerUrl}/${userId}/workspace`,workspace);
   }
 
   public getUserByUsername(username: string): Observable<User>{

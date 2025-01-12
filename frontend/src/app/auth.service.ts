@@ -46,7 +46,6 @@ export class AuthService {
 
     const issuedAt = new Date(decoded.iat * 1000); // Convertir `iat` en millisecondes
     const now = new Date();
-    console.log("issued at : " );
     // Calculer la différence en millisecondes et la convertir en heures
     const diffInHours = (now.getTime() - issuedAt.getTime()) / (1000 * 60 * 60);
 

@@ -82,7 +82,7 @@ public class ListCardService {
 
         existingListCard.setName(updateListCard.getName());
         existingListCard.setOrderIndex(updateListCard.getOrderIndex());
-        System.err.println(updateListCard.getIsArchived());
+
         existingListCard.setIsArchived(updateListCard.getIsArchived());
         // Si le board est modifié, vérifier et mettre à jour
         if (updateListCard.getBoard() != null && !updateListCard.getBoard().getId().equals(existingListCard.getBoard().getId())) {
