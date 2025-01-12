@@ -62,17 +62,17 @@ export class UserComponent implements  OnInit{
 
 
   addWorkspace() {
-   const workspace:Workspace =  {
-     id: 0,
-     name: this.myForm.value.name
-   };
-   this.userService.createWorkspace(Number(this.userId),workspace).subscribe({
-     next: data => {
-       this.workspaceCreated = false;
-      this.workspaces.update(currentValue => [...currentValue,data]);
+    const workspace:Workspace =  {
+      id: 0,
+      name: this.myForm.value.name
+    };
+    this.userService.createWorkspace(Number(this.userId),workspace).subscribe({
+      next: data => {
+        this.workspaceCreated = false;
+        this.workspaces.update(currentValue => [...currentValue,data]);
 
-     }
-   })
+      }
+    })
   }
   openDialog(enterAnimationDuration: string, exitAnimationDuration: string, workspace : Workspace): void {
     const name = workspace.name;
