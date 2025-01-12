@@ -6,9 +6,9 @@
 
 <div>
 
-    <button mat-flat-button style="text-decoration: none; border-radius: 5px" (click)="createBoardDialog()">
-      <i class="fa fa-plus"></i> add board
-    </button>
+  <button mat-flat-button style="text-decoration: none; border-radius: 5px" (click)="createBoardDialog()">
+    <i class="fa fa-plus"></i> add board
+  </button>
 
 </div>
 
@@ -25,7 +25,7 @@
         <p>{{ board.description }}</p>
       </div>
       <p class="board-meta" style="padding-left: 15px">
-       last updated:  {{ board.lastUpdated | date: 'short' :'fr'}}
+        last updated:  {{ board.lastUpdated | date: 'short' :'fr'}}
       </p>
       <div class="card-footer">
         <p class="board-meta">
@@ -51,30 +51,30 @@
       <a [routerLink]="'/boards/' + board.id" class="btn-access">Open</a>
     </div>-->
 
-    <!--  <div class="hover-card" >
-        <div class="deleteWorkspace" >
-          <button mat-raised-button (click)="openDialog('0ms', '0ms', board)"> <i class="fa-solid fa-trash" style="color: #e74c3c"></i></button>
-        </div>
-        <h3 class="card-title" routerLink="/boards/{{board.id}}">{{ board.name }}</h3>
-      </div>-->
+      <!--  <div class="hover-card" >
+          <div class="deleteWorkspace" >
+            <button mat-raised-button (click)="openDialog('0ms', '0ms', board)"> <i class="fa-solid fa-trash" style="color: #e74c3c"></i></button>
+          </div>
+          <h3 class="card-title" routerLink="/boards/{{board.id}}">{{ board.name }}</h3>
+        </div>-->
 
 
 
   }
   @if (boardCreated) {
     <div>
-<!--
-      <form  [formGroup]="myForm" (ngSubmit)="addBoard()" style="background-color: white; border-radius: 12px ;">
-        <div class="myInput">
-          <p>name</p>
-          <input type="text"  class="form-control h-25 opacity-75" style="background-color: whitesmoke;font-weight: bold" formControlName="name" maxlength="512" required="required" aria-label="Small"  placeholder="Enter board name" aria-describedby="inputGroup-sizing-sm">
-          <p>description</p>
-          <textarea  class="form-control h-25 opacity-75" style="background-color: whitesmoke;font-weight: bold" formControlName="description" maxlength="512"  aria-label="Small"  placeholder="Enter description" aria-describedby="inputGroup-sizing-sm"></textarea>
-        </div>
-        <button type="submit" class="btn btn-sm" style="margin: 10px; background-color: #579DFF; text-decoration: none;"> Add board </button>
-        <button type="submit"  style="background-color: darkgrey; color:white " class="btn btn-light btn-sm" (click)="this.boardCreated = false" ><i class="fa-solid fa-times" ></i></button>
-      </form>
--->
+      <!--
+            <form  [formGroup]="myForm" (ngSubmit)="addBoard()" style="background-color: white; border-radius: 12px ;">
+              <div class="myInput">
+                <p>name</p>
+                <input type="text"  class="form-control h-25 opacity-75" style="background-color: whitesmoke;font-weight: bold" formControlName="name" maxlength="512" required="required" aria-label="Small"  placeholder="Enter board name" aria-describedby="inputGroup-sizing-sm">
+                <p>description</p>
+                <textarea  class="form-control h-25 opacity-75" style="background-color: whitesmoke;font-weight: bold" formControlName="description" maxlength="512"  aria-label="Small"  placeholder="Enter description" aria-describedby="inputGroup-sizing-sm"></textarea>
+              </div>
+              <button type="submit" class="btn btn-sm" style="margin: 10px; background-color: #579DFF; text-decoration: none;"> Add board </button>
+              <button type="submit"  style="background-color: darkgrey; color:white " class="btn btn-light btn-sm" (click)="this.boardCreated = false" ><i class="fa-solid fa-times" ></i></button>
+            </form>
+      -->
 
     </div>
   }
