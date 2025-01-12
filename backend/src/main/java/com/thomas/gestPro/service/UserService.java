@@ -147,11 +147,16 @@ public class UserService {
     public Workspace createWorkspace(Long userId, Workspace workspace) {
         User existingUser = getById(userId);
 
-        workspace.getUsers().add(existingUser);
-        workspaceRepository.save(workspace);
-        existingUser.getWorkspaces().add(workspace);
+        Workspace newWorkspace = new Workspace();
+        newWorkspace.setName(workspace.getName());
+        newWorkspace.getUsers().add(existingUser);
+
+        workspaceRepository.save(newWorkspace);
+
+        existingUser.getWorkspaces().add(newWorkspace);
+
         userRepository.save(existingUser);
-        return workspace;
+        return newWorkspace;
     }
 
     public User getUserByUsername(String username) {

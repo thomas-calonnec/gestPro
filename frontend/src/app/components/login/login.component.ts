@@ -53,13 +53,14 @@ export class LoginComponent {
       }),
       catchError((error: HttpErrorResponse) => {
         console.error('Login failed', error);
-        alert("Login failed: " + error.message);
+        alert("Login failed: your login and/or password is incorrect");
         return of(null); // Renvoyer un observable vide pour éviter des erreurs supplémentaires
       })
     ).subscribe({
       next: (user) => {
         if (user) {
           this.userId = user.id;
+          localStorage.setItem("USER_ID",this.userId.toLocaleString())
           setTimeout(() => {
             this.router.navigateByUrl(`users/${this.userId}/workspaces`).then(r => console.log(r));
           },2000)

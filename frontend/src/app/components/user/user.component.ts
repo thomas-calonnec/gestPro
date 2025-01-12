@@ -1,36 +1,39 @@
-import {Component, EventEmitter, inject, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, inject, OnInit, Output, signal, WritableSignal} from '@angular/core';
 import {Workspace} from '@models/workspace';
 import {UserService} from '@services/users/user.service';
 import {ActivatedRoute, RouterLink} from '@angular/router';
 import {MainService} from '@services/main/main.service';
+import {MatButton} from '@angular/material/button';
+import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 
 @Component({
   selector: 'app-user',
   standalone: true,
 
-  template: `
-
-    <div class="containerWorkspace">
-      @for (workspace of workspaces; track workspace.id) {
-        <div class="hover-card">
-          <a style=" text-decoration: none;" routerLink="/workspaces/{{workspace.id}}/boards"><h3
-            class="card-title">{{ workspace.name }}</h3></a>
-        </div>
-
-      } </div>`,
+  templateUrl:'user.component.html',
   imports: [
-    RouterLink
+    RouterLink,
+    MatButton,
+    ReactiveFormsModule
   ],
   styleUrl: './user.component.css'
 })
 export class UserComponent implements  OnInit{
-  workspaces : Workspace[] = [];
+  workspaces : WritableSignal<Workspace[]> = signal([]);
   userId: string = "";
   userService : UserService = inject(UserService);
   route : ActivatedRoute = inject(ActivatedRoute);
   mainService : MainService = inject(MainService);
   @Output() paramId  = new EventEmitter<string>();
+  workspaceCreated: boolean = false;
+  private formBuilder : FormBuilder = inject(FormBuilder);
+  myForm: FormGroup;
 
+  constructor() {
+    this.myForm = this.formBuilder.group({
+      name: ['', Validators.required]
+    })
+  }
   ngOnInit(): void{
     this.userId = this.route.snapshot.params['userId'];
     this.paramId.emit(this.userId);
@@ -44,11 +47,24 @@ export class UserComponent implements  OnInit{
 
     this.userService.getWorkspaces(this.userId).subscribe({
       next: (workspaces: Workspace[]) => {
-        this.workspaces = workspaces;
+        this.workspaces.set(workspaces);
       },
       error: err => {console.error(err)}
     })
   }
 
 
+  addWorkspace() {
+   const workspace:Workspace =  {
+     id: 0,
+     name: this.myForm.value.name
+   };
+   this.userService.createWorkspace(Number(this.userId),workspace).subscribe({
+     next: data => {
+       this.workspaceCreated = false;
+      this.workspaces.update(currentValue => [...currentValue,data]);
+
+     }
+   })
+  }
 }
