@@ -22,7 +22,6 @@ export class MainService {
     this.boards().push(boards);
   }
   getListBoards(): Board[][] {
-    console.log(this.boards())
     return this.boards();
   }
 

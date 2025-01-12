@@ -26,4 +26,8 @@ export class WorkspaceService {
   public deleteListCard(boardId: number): Observable<void>{
     return this.http.delete<void>(`${this.apiServerUrl}/${boardId}`);
   }
+
+  public createBoard(workspaceId: string | null, board: Board): Observable<Board> {
+    return this.http.post<Board>(`${this.apiServerUrl}/${workspaceId}/board`,board)
+  }
 }

@@ -1,1 +1,37 @@
-<p>user works!</p>
+<h3>Your boards</h3>
+<div>
+
+  @if (workspaceCreated) {
+    <button  mat-flat-button  disabled style="text-decoration: none; border-radius: 5px"  (click)="workspaceCreated = false">
+      <i class="fa fa-plus"></i> add a workspace</button>
+  } @else {
+    <button mat-flat-button style="text-decoration: none; border-radius: 5px" (click)="workspaceCreated = true">
+      <i class="fa fa-plus"></i> add a workspace
+    </button>
+  }
+
+
+</div>
+<div class="containerWorkspace">
+  @for (workspace of this.workspaces(); track workspace.id) {
+    <div class="hover-card" routerLink="/workspaces/{{workspace.id}}/boards">
+      <h3 class="card-title">{{ workspace.name }}</h3>
+    </div>
+
+  }
+  @if (workspaceCreated) {
+    <div >
+
+      <form  [formGroup]="myForm" (ngSubmit)="addWorkspace()" style="background-color: white; border-radius: 12px ;">
+        <div class="myInput">
+
+          <input type="text"  class="form-control h-25 opacity-75" style="background-color: whitesmoke;font-weight: bold" formControlName="name" maxlength="512" required="required" aria-label="Small"  placeholder="Enter workspace name" aria-describedby="inputGroup-sizing-sm">
+        </div>
+        <button type="submit" class="btn btn-sm" style="margin: 10px; background-color: #579DFF; text-decoration: none;"> Add workspace </button>
+        <button type="submit"   style="background-color: darkgrey; color:white " class="btn btn-light btn-sm" (click)="this.workspaceCreated = false" ><i class="fa-solid fa-times" ></i></button>
+      </form>
+
+
+    </div>
+  }
+</div>
