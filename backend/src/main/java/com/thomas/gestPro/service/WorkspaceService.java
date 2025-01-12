@@ -2,7 +2,6 @@ package com.thomas.gestPro.service;
 
 
 import com.thomas.gestPro.model.Board;
-import com.thomas.gestPro.model.User;
 import com.thomas.gestPro.model.Workspace;
 import com.thomas.gestPro.repository.BoardRepository;
 import com.thomas.gestPro.repository.UserRepository;
@@ -12,6 +11,7 @@ import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Workspace management service.
@@ -63,18 +63,6 @@ public class WorkspaceService {
     }
 
     /**
-     * Retrieves the list of workspaces associated with a specific user.
-     *
-     * @param userId the user's identifier
-     * @return a list of Workspaces associated with the user
-     * @throws RuntimeException if the user with the specified ID does not exist
-     */
-    public List<Workspace> getListWorkspaceByUserId(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
-        return user.getWorkspaces();
-    }
-
-    /**
      * Récupère un Workspace par son ID.
      *
      * @param workspaceId l'identifiant du Workspace
@@ -95,10 +83,24 @@ public class WorkspaceService {
      */
     @Transactional
     public Board createBoard(Long workspaceId, Board board) {
-        Workspace workspace = workspaceRepository.findById(workspaceId).orElseThrow(() -> new RuntimeException("Workspace not found"));
 
+        Workspace workspace = workspaceRepository.findById(workspaceId).orElseThrow(() -> new RuntimeException("Workspace not found"));
+        List<String> colors = List.of(
+                "red", "blue", "green", "yellow", "purple",
+                "orange", "pink", "brown", "mediumaquamarine", "cyan"
+        );
+
+        // Generate a random index
+        Random random = new Random();
+        int randomIndex = random.nextInt(colors.size());
+
+        // Pick one random color
+        String randomColor = colors.get(randomIndex);
+
+        // Print the random color
+        System.err.println("Random Color: " + randomColor);
+        board.setColor(randomColor);
         workspace.getBoards().add(board);
-        boardRepository.save(board);
         workspaceRepository.save(workspace);
 
         return board;

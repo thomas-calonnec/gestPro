@@ -5,16 +5,18 @@ import {ActivatedRoute} from '@angular/router';
 import {ListCard} from '@models/list-card';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {CdkDragDrop, CdkDrag, CdkDropList, moveItemInArray} from '@angular/cdk/drag-drop';
+import {MatButton} from "@angular/material/button";
 
 @Component({
   selector: 'app-board',
   standalone: true,
-  imports: [
-    ListCardComponent,
-    ReactiveFormsModule,
-    CdkDropList,
-    CdkDrag,
-  ],
+    imports: [
+        ListCardComponent,
+        ReactiveFormsModule,
+        CdkDropList,
+        CdkDrag,
+        MatButton,
+    ],
   templateUrl:'./board.component.html' ,
   styleUrl: './board.component.scss'
 })
@@ -48,7 +50,7 @@ export class BoardComponent implements OnInit{
        next: (data: ListCard) =>{
          this.isClicked = false;
          this.listCard.update((currentList) => [...currentList, data])
-         console.log(this.listCard())
+
        }
      })
    }
@@ -63,7 +65,7 @@ export class BoardComponent implements OnInit{
   getListCards(boardId: number): void {
     this.boardService.getListCards(boardId).subscribe({
       next: (data: ListCard[]) => {
-        console.log(data)
+
         this.listCard.set(data);
 
       }
@@ -97,7 +99,7 @@ export class BoardComponent implements OnInit{
   updateListCard(updateListCard: ListCard) {
 
    this.listCard().map(list => {
-     console.log(updateListCard.id)
+
      if (list.id === updateListCard.id) {
        // Mettre à jour les champs nécessaires
 
