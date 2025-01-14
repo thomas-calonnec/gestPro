@@ -100,4 +100,30 @@ export class UserComponent implements  OnInit{
       }
     })
   }
+  openDialog(enterAnimationDuration: string, exitAnimationDuration: string, workspace : Workspace): void {
+    const name = workspace.name;
+    const type = "workspace";
+    const dialogRef = this.dialog.open(DialogAnimationsExampleDialogComponent, {
+      width: '380px',
+      enterAnimationDuration,
+      exitAnimationDuration,
+      data: {name, type}
+    });
+
+    dialogRef.afterClosed().subscribe((result: any) => {
+
+      if (result) {
+        this.workspaceService.deleteWorkspaceById(workspace.id).subscribe({
+          next: () => {
+            //this.router.href = "http://localhost:4200/workspaces/"+this.workspaceId+"/boards";
+
+            window.location.href = "http://localhost:4200/users/" + this.userId + "/workspaces"
+          },
+          error: err => {
+            console.error("test false : ", err)
+          }
+        })
+      }
+    })
+  }
 }
