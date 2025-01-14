@@ -6,6 +6,7 @@ import {ListCard} from '@models/list-card';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {CdkDragDrop, CdkDrag, CdkDropList, moveItemInArray} from '@angular/cdk/drag-drop';
 import {MatButton} from "@angular/material/button";
+import {MainService} from '@services/main/main.service';
 
 @Component({
   selector: 'app-board',
@@ -30,8 +31,11 @@ export class BoardComponent implements OnInit{
   private route : ActivatedRoute = inject(ActivatedRoute);
   private boardId : number = 0;
   protected isClicked: boolean = false;
-
+  cpt = 0
   formBuilder : FormBuilder = inject(FormBuilder);
+  mainService: MainService = inject(MainService);
+  private workspaceId: string | null = "";
+
   constructor() {
     this.myForm = this.formBuilder.group({
       name: ['', Validators.required],
@@ -44,7 +48,13 @@ export class BoardComponent implements OnInit{
   }
 
   addList() {
-   const listCard: ListCard =  this.myForm.value;
+   const listCard: ListCard = {
+     id: 0,
+     name:  this.myForm.value.name.toLowerCase(),
+     orderIndex: -1,
+     isArchived: false
+   }
+
    if(listCard.name !== ""){
      this.boardService.createListCard(this.boardId,listCard).subscribe({
        next: (data: ListCard) =>{
@@ -58,16 +68,15 @@ export class BoardComponent implements OnInit{
   ngOnInit() {
 
     this.boardId = this.route.snapshot.params['id'];
-    this.getListCards(this.boardId)
+    this.getListCards(this.boardId);
+    this.workspaceId = this.mainService.getWorkspaceId();
 
   }
 
   getListCards(boardId: number): void {
     this.boardService.getListCards(boardId).subscribe({
       next: (data: ListCard[]) => {
-
         this.listCard.set(data);
-
       }
     });
 

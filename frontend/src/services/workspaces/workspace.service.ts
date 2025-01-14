@@ -21,6 +21,9 @@ export class WorkspaceService {
   public getWorkspaceById(workspaceId: string | null) : Observable<Workspace> {
     return this.http.get<Workspace>(`${this.apiServerUrl}/${workspaceId}`);
   }
+  public deleteWorkspaceById(workspaceId: number) : Observable<Workspace> {
+    return this.http.delete<Workspace>(`${this.apiServerUrl}/${workspaceId}/delete`);
+  }
 
 
   public deleteListCard(boardId: number): Observable<void>{
