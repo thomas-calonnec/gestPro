@@ -5,6 +5,11 @@ import {ActivatedRoute, RouterLink} from '@angular/router';
 import {MainService} from '@services/main/main.service';
 import {MatButton} from '@angular/material/button';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {
+  DialogAnimationsExampleDialogComponent
+} from '@components/dialog-animations-example-dialog/dialog-animations-example-dialog.component';
+import {WorkspaceService} from '@services/workspaces/workspace.service';
+import {MatDialog} from '@angular/material/dialog';
 
 @Component({
   selector: 'app-user',
@@ -28,6 +33,8 @@ export class UserComponent implements  OnInit{
   workspaceCreated: boolean = false;
   private formBuilder : FormBuilder = inject(FormBuilder);
   myForm: FormGroup;
+  readonly dialog = inject(MatDialog);
+  private workspaceService: WorkspaceService = inject(WorkspaceService);
 
   constructor() {
     this.myForm = this.formBuilder.group({
@@ -38,7 +45,7 @@ export class UserComponent implements  OnInit{
     this.userId = this.route.snapshot.params['userId'];
     this.paramId.emit(this.userId);
     this.getWorkspaces();
-    localStorage.removeItem("workspaceId")
+    localStorage.setItem("workspaceName","");
     this.mainService.removeListBoard()
 
   }
@@ -66,5 +73,31 @@ export class UserComponent implements  OnInit{
 
      }
    })
+  }
+  openDialog(enterAnimationDuration: string, exitAnimationDuration: string, workspace : Workspace): void {
+    const name = workspace.name;
+    const type = "workspace";
+    const dialogRef = this.dialog.open(DialogAnimationsExampleDialogComponent, {
+      width: '380px',
+      enterAnimationDuration,
+      exitAnimationDuration,
+      data: {name, type}
+    });
+
+    dialogRef.afterClosed().subscribe((result: any) => {
+
+      if (result) {
+        this.workspaceService.deleteWorkspaceById(workspace.id).subscribe({
+          next: () => {
+            //this.router.href = "http://localhost:4200/workspaces/"+this.workspaceId+"/boards";
+
+            window.location.href = "http://localhost:4200/users/" + this.userId + "/workspaces"
+          },
+          error: err => {
+            console.error("test false : ", err)
+          }
+        })
+      }
+    })
   }
 }

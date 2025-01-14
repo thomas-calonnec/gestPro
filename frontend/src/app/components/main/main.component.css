@@ -18,6 +18,7 @@
 
   overflow-x: auto;
 }
+
 main {
   background-color: #ebf1fb;/* Dégradé doux du gris clair au bleu pastel */
   min-height: 100vh;
@@ -106,7 +107,7 @@ main {
 /* Main Component avec défilement dynamique */
 .main-component {
   flex: 1; /* Prend tout l'espace restant */
-  padding: 20px;
+
   overflow-y: auto; /* Permet le défilement vertical uniquement dans ce composant */
   background-color: #ecf0f1;
   font-family: Arial, sans-serif;

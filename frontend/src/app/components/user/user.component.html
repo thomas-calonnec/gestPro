@@ -1,4 +1,8 @@
-<h3>Your boards</h3>
+
+  <div class="workspace-header-gradient">
+    <h1 class="workspace-title-gradient">Your workspaces</h1>
+  </div>
+
 <div>
 
   @if (workspaceCreated) {
@@ -14,8 +18,11 @@
 </div>
 <div class="containerWorkspace">
   @for (workspace of this.workspaces(); track workspace.id) {
-    <div class="hover-card" routerLink="/workspaces/{{workspace.id}}/boards">
-      <h3 class="card-title">{{ workspace.name }}</h3>
+    <div class="hover-card" >
+      <div class="deleteWorkspace">
+        <button mat-raised-button (click)="openDialog('0ms', '0ms', workspace)"> <i class="fa-solid fa-trash" style="color: #e74c3c"></i></button>
+      </div>
+      <h3 class="card-title" routerLink="/workspaces/{{workspace.id}}/boards">{{ workspace.name }}</h3>
     </div>
 
   }
@@ -28,7 +35,7 @@
           <input type="text"  class="form-control h-25 opacity-75" style="background-color: whitesmoke;font-weight: bold" formControlName="name" maxlength="512" required="required" aria-label="Small"  placeholder="Enter workspace name" aria-describedby="inputGroup-sizing-sm">
         </div>
         <button type="submit" class="btn btn-sm" style="margin: 10px; background-color: #579DFF; text-decoration: none;"> Add workspace </button>
-        <button type="submit"   style="background-color: darkgrey; color:white " class="btn btn-light btn-sm" (click)="this.workspaceCreated = false" ><i class="fa-solid fa-times" ></i></button>
+        <button type="submit" style="background-color: darkgrey; color:white " class="btn btn-light btn-sm" (click)="this.workspaceCreated = false" ><i class="fa-solid fa-times" ></i></button>
       </form>
 
 

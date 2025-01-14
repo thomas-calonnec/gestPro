@@ -62,7 +62,8 @@ export class LoginComponent {
           this.userId = user.id;
           localStorage.setItem("USER_ID",this.userId.toLocaleString())
           setTimeout(() => {
-            this.router.navigateByUrl(`users/${this.userId}/workspaces`).then(r => console.log(r));
+           // this.router.navigateByUrl(`users/${this.userId}/workspaces`).then(r => console.log(r));
+            window.location.href = `users/${this.userId}/workspaces`;
           },2000)
 
         }

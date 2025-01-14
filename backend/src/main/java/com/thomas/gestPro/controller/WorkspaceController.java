@@ -35,7 +35,6 @@ public class WorkspaceController {
     }
 
 
-
     @GetMapping("{id}/boards")
     public ResponseEntity<List<Board>> getListBoardByWorkspaceId(@PathVariable Long id) {
         List<Board> boards = workspaceService.getListBoardByWorkspaceId(id);

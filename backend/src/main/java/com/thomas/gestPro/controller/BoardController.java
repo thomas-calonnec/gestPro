@@ -7,10 +7,6 @@ import com.thomas.gestPro.service.ListCardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 @CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
@@ -55,6 +51,7 @@ public class BoardController {
     @PutMapping("/{id}/update")
     public ResponseEntity<Board> updateBoardById(@PathVariable Long id, @RequestBody Board board) {
         Board updateBoard = boardService.updateBoard(id,board);
+
         return ResponseEntity.ok(updateBoard);
     }
 

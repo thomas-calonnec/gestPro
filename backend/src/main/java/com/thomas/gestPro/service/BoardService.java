@@ -97,7 +97,7 @@ public class BoardService {
 
         listCard.setOrderIndex(existingboard.getListCards().size() + 1);
         listCard.setBoard(existingboard);
-
+        existingboard.setCardCount(existingboard.getListCards().size()+1);
         listCardRepository.save(listCard);
        // existingboard.getListCards().add(listCard);
         boardRepository.save(existingboard);
