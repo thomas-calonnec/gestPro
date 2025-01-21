@@ -1,10 +1,10 @@
 import { Routes } from '@angular/router';
-import { BoardComponent } from './components/board/board.component';
-import { ListCardComponent } from './components/list-card/list-card.component';
-import { WorkspaceComponent } from './components/workspace/workspace.component';
-import { LoginComponent } from './components/login/login.component';
-import { UserComponent } from './components/user/user.component';
-import { MainComponent } from './components/main/main.component';
+import { BoardComponent } from '@components/board/board.component';
+import { ListCardComponent } from '@components/list-card/list-card.component';
+import { WorkspaceComponent } from '@components/workspace/workspace.component';
+import { LoginComponent } from '@components/login/login.component';
+import { UserComponent } from '@components/user/user.component';
+import { MainComponent } from '@components/main/main.component';
 import { AuthGuard } from './auth-guard';
 
 

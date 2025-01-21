@@ -10,6 +10,8 @@ import jakarta.transaction.Transactional;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -100,6 +102,8 @@ public class WorkspaceService {
         // Print the random color
         System.err.println("Random Color: " + randomColor);
         board.setColor(randomColor);
+        board.setLastUpdated(new Date());
+        board.setCardCount(0);
         workspace.getBoards().add(board);
         workspaceRepository.save(workspace);
 
