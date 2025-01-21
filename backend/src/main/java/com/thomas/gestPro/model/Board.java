@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -23,6 +24,9 @@ public class Board {
     private Long id;
     private String name;
     private String color;
+    private String description;
+    private Date lastUpdated;
+    private Integer cardCount;
 
     @OneToMany(mappedBy = "board")
     @JsonIgnore

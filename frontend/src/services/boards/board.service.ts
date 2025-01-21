@@ -18,6 +18,10 @@ export class BoardService {
     return this.http.get<Board>(`${this.apiServerUrl}/${boardId}`);
   }
 
+  public deleteBoardById(boardId: number) : Observable<Board> {
+    return this.http.delete<Board>(`${this.apiServerUrl}/${boardId}`);
+  }
+
   public getListCards(boardId: number): Observable<ListCard[]>{
     return this.http.get<ListCard[]>(`${this.apiServerUrl}/${boardId}/listCards`);
   }
