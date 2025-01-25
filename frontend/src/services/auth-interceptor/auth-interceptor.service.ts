@@ -1,21 +1,40 @@
 import {inject, Injectable} from '@angular/core';
 import {
+  HttpErrorResponse,
   HttpEvent, HttpHandler,
   HttpInterceptor,
   HttpRequest
 } from '@angular/common/http';
 import {catchError, Observable, switchMap, throwError} from 'rxjs';
-import {AuthService} from '@app/auth.service';
+import {AuthService} from '@services/auth/auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthInterceptor implements HttpInterceptor {
 
-  private authService: AuthService = inject(AuthService)
-
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const accessToken = this.authService.getAccessToken();
+    const authService = inject(AuthService);
+
+    return next.handle(req).pipe(
+      catchError((error: HttpErrorResponse) => {
+        if (error.status === 401) {
+          return authService.revokeToken().pipe(
+            switchMap(() => {
+              return next.handle(req);
+            }),
+            catchError((refreshError) => {
+              // Si le rafraîchissement échoue, déconnectez l'utilisateur
+              authService.logout();
+              return throwError(() => refreshError);
+            })
+          );
+        }
+        return throwError(() => error);
+      })
+    );
+  }
+  /*  const accessToken = this.authService.getAccessToken();
 
     if (accessToken) {
       req = req.clone({
@@ -45,5 +64,5 @@ export class AuthInterceptor implements HttpInterceptor {
         return throwError(() =>error);
       })
     );
-  }
+  }*/
 }

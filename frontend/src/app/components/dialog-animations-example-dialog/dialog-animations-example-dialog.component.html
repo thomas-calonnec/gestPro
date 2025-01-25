@@ -1,0 +1,8 @@
+<h2 mat-dialog-title>Delete {{data.type}} "{{data.name}}"</h2>
+<mat-dialog-content>
+  Would you like to delete this {{data.type}} ?
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button [mat-dialog-close]="false">No</button>
+  <button mat-button [mat-dialog-close]="true" cdkFocusInitial>Ok</button>
+</mat-dialog-actions>
