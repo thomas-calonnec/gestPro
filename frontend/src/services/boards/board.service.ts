@@ -23,7 +23,7 @@ export class BoardService {
   }
 
   public getListCards(boardId: number): Observable<ListCard[]>{
-    return this.http.get<ListCard[]>(`${this.apiServerUrl}/${boardId}/listCards`);
+    return this.http.get<ListCard[]>(`${this.apiServerUrl}/${boardId}/listCards`,{withCredentials: true});
   }
 
   public createListCard(boardId: number, listCard : ListCard): Observable<ListCard>{

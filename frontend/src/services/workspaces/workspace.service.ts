@@ -16,10 +16,10 @@ export class WorkspaceService {
 
   public getBoards(workspaceId: string | null) : Observable<Board[]> {
 
-    return this.http.get<Board[]>(`${this.apiServerUrl}/${workspaceId}/boards`);
+    return this.http.get<Board[]>(`${this.apiServerUrl}/${workspaceId}/boards`,{withCredentials: true});
   }
   public getWorkspaceById(workspaceId: string | null) : Observable<Workspace> {
-    return this.http.get<Workspace>(`${this.apiServerUrl}/${workspaceId}`);
+    return this.http.get<Workspace>(`${this.apiServerUrl}/${workspaceId}`,{withCredentials: true});
   }
   public deleteWorkspaceById(workspaceId: number) : Observable<Workspace> {
     return this.http.delete<Workspace>(`${this.apiServerUrl}/${workspaceId}/delete`);

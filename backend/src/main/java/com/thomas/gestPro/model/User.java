@@ -23,6 +23,9 @@ public class User {
     private String username;
     private String password;
     private String email;
+    private String googleId;
+    private String pictureUrl;
+
 
 
     @ManyToMany(mappedBy = "users")
@@ -41,6 +44,7 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private List<Role> roles = new ArrayList<>();
+
 
 
 }

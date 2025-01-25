@@ -1,6 +1,6 @@
 import {Component, inject, OnInit} from '@angular/core';
 import {ActivatedRoute, RouterOutlet} from "@angular/router";
-import {AuthService} from '@app/auth.service';
+import {AuthService} from '@services/auth/auth.service';
 import {FormsModule} from '@angular/forms';
 import { FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 import {WorkspaceService} from '@services/workspaces/workspace.service';

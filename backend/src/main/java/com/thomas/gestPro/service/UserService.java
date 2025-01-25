@@ -168,5 +168,22 @@ public class UserService {
         return this.getById(userId).getWorkspaces();
     }
 
+    public void createGoogleUser(String username, String email, String pictureUrl, String googleId) {
+
+        if(userRepository.findByUsername(username) != null)
+            return;
+
+        User googleUser = new User();
+        googleUser.setEmail(email);
+        googleUser.setPictureUrl(pictureUrl);
+        googleUser.setUsername(username);
+        googleUser.setGoogleId(googleId);
+
+        Role userRole = roleRepository.findByName("ROLE_USER");
+        googleUser.getRoles().add(userRole);
+
+        userRepository.save(googleUser);
+
+    }
 
 }
