@@ -168,10 +168,10 @@ public class UserService {
         return this.getById(userId).getWorkspaces();
     }
 
-    public void createGoogleUser(String username, String email, String pictureUrl, String googleId) {
+    public User createGoogleUser(String username, String email, String pictureUrl, String googleId) {
 
         if(userRepository.findByUsername(username) != null)
-            return;
+            return userRepository.findByUsername(username);
 
         User googleUser = new User();
         googleUser.setEmail(email);
@@ -183,6 +183,9 @@ public class UserService {
         googleUser.getRoles().add(userRole);
 
         userRepository.save(googleUser);
+
+
+        return googleUser;
 
     }
 

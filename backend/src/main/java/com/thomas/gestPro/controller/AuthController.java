@@ -145,7 +145,7 @@ public class AuthController {
     }
 
     @PostMapping("/oauth2")
-    public ResponseEntity<JwtResponseGoogle> authenticateOAuth(@RequestBody TokenRequest tokenRequest,HttpServletResponse response) {
+    public ResponseEntity<JwtResponse> authenticateOAuth(@RequestBody TokenRequest tokenRequest,HttpServletResponse response) {
         try {
             // Initialize the verifier
             GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(
@@ -170,28 +170,32 @@ public class AuthController {
                 System.out.printf("Google User Info: userId=%s, email=%s, name=%s, pictureUrl=%s%n",
                         userId, email, name, pictureUrl);
 
-                this.userService.createGoogleUser(name,email,pictureUrl,userId);
+               User googleUser = this.userService.createGoogleUser(name,email,pictureUrl,userId);
 
-                Cookie refreshTokenCookie = new Cookie("accessToken",tokenRequest.getToken());
-                refreshTokenCookie.setHttpOnly(true);
-                refreshTokenCookie.setSecure(true);
-                refreshTokenCookie.setMaxAge(7 * 60 * 60 * 24);
-                response.addCookie(refreshTokenCookie);
+                ResponseCookie refreshTokenCookie = ResponseCookie.from("accessToken",tokenRequest.getToken())
+                .httpOnly(true)
+                        .secure(true)
+                        .sameSite("Strict")
+                        .path("/")
+                        .maxAge(3600)
+                        .build(); // Supprimer immédiatement le cookie
                 // Example response: Only include necessary user details
                // JwtResponseGoogle jwtResponseGoogle = new JwtResponseGoogle(expiration, email, name, pictureUrl, userId);
               //  JwtResponse jwtResponse = new JwtResponse(tokenRequest.getToken());
-                return ResponseEntity.ok(new JwtResponseGoogle("Successfully logged in"));
+                return ResponseEntity.ok()
+                        .header("Set-Cookie",refreshTokenCookie.toString())
+                        .body(new JwtResponse(googleUser));
             } else {
                 // Invalid token
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body(new JwtResponseGoogle("No authorization"));
+                        .body(new JwtResponse(false));
             }
         } catch (Exception e) {
             // Log the exception
             e.printStackTrace();
             // Return an error response
             String errorResponse =  "error : " + e.getMessage();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new JwtResponseGoogle(errorResponse));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new JwtResponse(false));
         }
 
     }

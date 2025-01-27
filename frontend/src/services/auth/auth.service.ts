@@ -1,12 +1,12 @@
-import {effect, inject, Injectable, NgZone, signal} from '@angular/core';
-import {catchError, Observable, tap, throwError} from 'rxjs';
+import {computed, effect, inject, Injectable, signal} from '@angular/core';
+import {catchError, map, Observable, of, tap, throwError} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {Router} from '@angular/router';
-import {environment} from '@environments/environment.development';
-import {Token} from '@models/token';
 import {jwtDecode} from 'jwt-decode';
-
-declare const google: any;
+import {environment} from '@environments/environment.development';
+import { CookieService } from 'ngx-cookie-service';
+import {User} from '@models/user';
+import {UserService} from '@services/users/user.service';
 
 @Injectable({
   providedIn: 'root',
@@ -15,31 +15,36 @@ export class AuthService {
 
   private apiServerUrl= environment.apiUrl + '/auth'
   private accessTokenSignal = signal<string | null>(localStorage.getItem('accessToken'));
+  private cookieService = inject(CookieService);
 
   private router : Router = inject(Router);
   private http: HttpClient = inject(HttpClient);
+  private _currentUser = signal<User | null>(null);
+  currentUser = this._currentUser.asReadonly();
+  isConnected = computed(() => this.currentUser() !== null)
 
-  constructor(private ngZone: NgZone) {
+  constructor() {
     // Effet qui écoute l'accessToken pour le stocker dans localStorage quand il change
     effect(() => {
-      const accessToken = this.accessTokenSignal();
-      if (accessToken) {
-        localStorage.setItem('accessToken', accessToken);
-      } else {
-        localStorage.removeItem('accessToken');
-      }
+      /*  const accessToken = this.accessTokenSignal();
+        if (accessToken) {
+          localStorage.setItem('accessToken', accessToken);
+        } else {
+          localStorage.removeItem('accessToken');
+        }*/
     });
 
   }
 
   getAccessToken(): string | null {
-    return this.accessTokenSignal();
+    //return this.accessTokenSignal();
+    return this.cookieService.get('accessToken');
   }
-
 
   // Méthode pour vérifier si le token a été émis il y a moins d'une heure
   isTokenIssuedWithinLastHour(): boolean {
     const token = this.getAccessToken();
+
     if (!token) return false;
 
     // Décoder le token pour obtenir la date d'émission (iat)
@@ -55,40 +60,54 @@ export class AuthService {
   }
 
 
-  isAuthenticated(): boolean {
-
-    return this.getAccessToken() !== null && this.isTokenIssuedWithinLastHour();
+  setCurrentUser(user: User){
+    this._currentUser.set(user);
   }
+  getCurrentUser() {
+    return this._currentUser();
+  }
+
   setAccessToken(token: string): void {
-    this.accessTokenSignal.set(token);
+    // this.accessTokenSignal.set(token);
+
   }
 
 
   removeTokens(): void {
-    this.accessTokenSignal.set(null);
+    this.cookieService.delete('accessToken');
 
   }
-
+  public isAuthenticated(): Observable<boolean> {
+    return this.http.get<boolean>(`http://localhost:8080/api/user/users/current-user`, { withCredentials: true });
+  }
   // Method to check if token is expired based on `exp` field
-  isTokenExpired(token: Token): boolean {
-    //const decoded: any = jwtDecode(token);
-    if (!token.exp) return true; // Treat as expired if no expiry field
+  isTokenExpired(token: string): boolean {
+    const decoded: any = jwtDecode(token);
+    if (!decoded.exp) return true; // Treat as expired if no expiry field
 
-    const expiryDate = new Date(token.exp * 1000); // Convert `exp` to milliseconds
+    const expiryDate = new Date(decoded.exp * 1000); // Convert `exp` to milliseconds
     return new Date() > expiryDate;
   }
 
-  // hasValidAccessToken(): boolean {
-  //   const token = this.getAccessToken();
-  //   return !!token && !this.isTokenExpired(token);
-  // }
+  hasAccessToken(): boolean {
+    return this.cookieService.check('accessToken');
+  }
+
+  deleteAccessToken(): void {
+    this.cookieService.delete('accessToken');
+  }
+  hasValidAccessToken(): boolean {
+    const token = this.getAccessToken();
+    return !!token && !this.isTokenExpired(token);
+  }
+
 
   refreshAccessToken(): Observable<any> {
 
     return this.http.post<any>(`${this.apiServerUrl}/refresh`, {})
       .pipe(
         tap((response: any) => {
-          this.setAccessToken(response.accessToken);
+//          this.setAccessToken(response.accessToken);
 
         }),
         catchError(error => {
@@ -101,71 +120,57 @@ export class AuthService {
 
   login(username: string, password: string): Observable<any> {
 
+    return this.http.post<User>(`${this.apiServerUrl}/login`, { username, password }, {withCredentials: true})
 
-    return this.http.post<any>(`${this.apiServerUrl}/login`, { username, password }, {withCredentials: true})
-      .pipe(
-        tap((response) => {
-          this.setAccessToken(response.accessToken)
-        })
-      );
   }
 
   logout() {
-    this.removeTokens();
+
     localStorage.removeItem('workspaceId');
-    this.router.navigate(['/login']);
+
+    this.cookieService.delete('accessToken');
+    this.cookieService.delete('refreshToken');
+    this.http.post<any>(`${this.apiServerUrl}/logout`,{},{withCredentials: true}).subscribe({
+      next : ()=> {
+        this._currentUser.set(null);
+        this.router.navigate(['/login']);
+      }
+    })
+
   }
 
   getOAuthGoogle(idToken: string):Observable<any> {
 
     return this.http.post<any>(`${this.apiServerUrl}/oauth2`, { token: idToken }, // Payload
-      { headers: { 'Content-Type': 'application/json' }
+      { headers: { 'Content-Type': 'application/json' },
+        withCredentials: true
       })
   }
-
-
-  initializeGoogleAuth(): void {
-    // Vérifiez si la bibliothèque Google est chargée
-    if (typeof google === 'undefined') {
-      console.error('Google Identity Services n’est pas chargé.');
-      return;
-    }
-
-    google.accounts.id.initialize({
-      client_id: '392803604648-s1fsi45jpjictprj577ev1akjtcivopr.apps.googleusercontent.com',
-      callback: (response: any) => this.handleCredentialResponse(response),
-      use_fedcm_for_prompt: true, // Activer FedCM
-    });
-
-    // Rendre le bouton Google Sign-In
-
-
-    // Optionnel : affichage automatique du prompt
-    google.accounts.id.prompt();
-  }
-
-  // Fonction callback pour gérer la réponse après authentification
-  handleCredentialResponse(response: any): void {
-    this.ngZone.run(() => {
-      console.log('Token JWT reçu via FedCM :', response.credential);
-
-      // Envoyer le token au backend si nécessaire
-      this.verifyTokenWithBackend(response.credential);
-    });
-  }
-
   verifyTokenWithBackend(idToken: string) {
 
 
     this.getOAuthGoogle(idToken).subscribe({
       next: googleResponse => {
+        console.log(googleResponse.user.id)
+        // this.setAccessToken(googleResponse.accessToken);
+        this._currentUser.set(googleResponse.user)
+        localStorage.setItem("USER_ID",googleResponse.user.id.toString())
+        this.router.navigateByUrl(`users/${googleResponse.user.id}/workspaces`);
 
-        this.setAccessToken(googleResponse.expiration);
-        this.router.navigate([`users/${googleResponse.googleId}/workspaces`]);
-
-        // window.location.href = `users/${googleResponse.googleId}/workspaces`;
+        // window.location.href = `users/${googleResponse.userId}/workspaces`;
       }
     })
 
   }
+
+  revokeToken() {
+    return this.http.post<any>(`${this.apiServerUrl}/revoke-token`, {}, { withCredentials: true })
+      .pipe(
+        tap(response => {
+          // Les nouveaux tokens sont automatiquement stockés dans des cookies HTTP-only
+          console.log('Tokens refreshed successfully');
+        })
+      );
+  }
 }
+
