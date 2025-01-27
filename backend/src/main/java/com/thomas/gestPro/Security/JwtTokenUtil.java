@@ -1,22 +1,23 @@
 package com.thomas.gestPro.Security;
 
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.gson.GsonFactory;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
 import java.util.*;
 import java.util.function.Function;
-import java.util.stream.Collectors;
+
 
 @Service
 public class JwtTokenUtil {
@@ -27,6 +28,10 @@ public class JwtTokenUtil {
     private static final long ACCESS_TOKEN_VALIDITY = 1000 * 60 * 60; // 1 hours
     private static final long REFRESH_TOKEN_VALIDITY = 1000 * 60 * 60 * 24 * 7; // 7 jours
     private final UserDetailsService userDetailsService;
+    @Value("${spring.security.oauth2.client.registration.google.client-id}")
+    private String clientId;
+    private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
+
 
     @Autowired
     public JwtTokenUtil(UserDetailsService userDetailsService) {
@@ -57,6 +62,26 @@ public class JwtTokenUtil {
                 .compact();
     }
 
+    public boolean validateGoogleToken(String token) {
+        try{
+            GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(
+                    GoogleNetHttpTransport.newTrustedTransport(), JSON_FACTORY)
+                    .setAudience(Collections.singletonList(clientId)) // Replace with your actual client ID
+                    .build();
+
+
+            // Validate the token
+            GoogleIdToken idToken = verifier.verify(token);
+
+            if(idToken != null) {
+                return true;
+            }
+        } catch (Exception e ) {
+            e.printStackTrace();
+            return false;
+        }
+       return false;
+    }
     // Valider un token
     public boolean validateToken(String token) {
         try {

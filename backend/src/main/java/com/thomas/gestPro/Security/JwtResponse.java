@@ -7,12 +7,14 @@ import lombok.Setter;
 @Getter
 @Setter
 public class JwtResponse {
-    private  User currentUser;
+    private  User user;
     private  Boolean isConnected;
-    public JwtResponse(User currentUser) {
-        this.currentUser = currentUser;
+
+    public JwtResponse(User user) {
+        this.user = user;
     }
     public JwtResponse(Boolean isConnected) {
         this.isConnected = isConnected;
     }
+
 }

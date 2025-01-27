@@ -76,7 +76,6 @@ export class LoginComponent implements OnInit{
 
           this.authService.setCurrentUser(user);
           setTimeout(() => {
-
             this.router.navigateByUrl(`users/${this.userId}/workspaces`);
          //   window.location.href = `users/${this.authService.getCurrentUser()?.id}/workspaces`;
           },2000)
