@@ -35,8 +35,8 @@ registerLocaleData(localeFr);
 export class WorkspaceComponent implements OnInit{
 
   private workspaceId : string | null = "null";
-  workspaceService: WorkspaceService = inject(WorkspaceService);
-  mainService: MainService = inject(MainService)
+   workspaceService: WorkspaceService = inject(WorkspaceService);
+   mainService: MainService = inject(MainService)
   workspaceName: string = "";
   private route: ActivatedRoute = inject(ActivatedRoute);
   boardCreated: boolean = false;
@@ -98,7 +98,7 @@ export class WorkspaceComponent implements OnInit{
           this.boards.set(data)
           console.log(this.boards())
           //this.boardService.boards().push(data);
-          // console.log(this.mainService.getListBoards())
+         // console.log(this.mainService.getListBoards())
         },
         error: (error: HttpErrorResponse) => {
           alert("error -> " + error.message)
@@ -108,8 +108,8 @@ export class WorkspaceComponent implements OnInit{
   }
 
   openDialog(enterAnimationDuration: string, exitAnimationDuration: string, board : Board): void {
-    const name = board.name;
-    const type = "board";
+   const name = board.name;
+   const type = "board";
     const dialogRef = this.dialog.open(DialogAnimationsExampleDialogComponent, {
       width: '290px',
       enterAnimationDuration,
@@ -117,21 +117,21 @@ export class WorkspaceComponent implements OnInit{
       data: { name, type}
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+   dialogRef.afterClosed().subscribe(result => {
 
-      if(result) {
-        this.boardService.deleteBoardById(board.id).subscribe({
-          next: () => {
-            //this.router.href = "http://localhost:4200/workspaces/"+this.workspaceId+"/boards";
+     if(result) {
+       this.boardService.deleteBoardById(board.id).subscribe({
+         next: () => {
+           //this.router.href = "http://localhost:4200/workspaces/"+this.workspaceId+"/boards";
 
-            window.location.href = "http://localhost:4200/workspaces/"+this.workspaceId+"/boards"
-          },
-          error: err => {
-            console.error("test false : ", err)
-          }
-        })
-      }
-    })
+           window.location.href = "http://localhost:4200/workspaces/"+this.workspaceId+"/boards"
+         },
+         error: err => {
+           console.error("test false : ", err)
+         }
+       })
+     }
+   })
 
   }
 
