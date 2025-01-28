@@ -15,6 +15,7 @@ import {CardComponent} from '../card/card.component';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {provideNativeDateAdapter} from '@angular/material/core';
 import {ListCard} from '@models/list-card';
+import {CdkDragHandle} from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-list-card',
@@ -24,6 +25,7 @@ import {ListCard} from '@models/list-card';
     CardComponent,
     FormsModule,
     ReactiveFormsModule,
+    CdkDragHandle,
   ],
   templateUrl:'./list-card.component.html',
   styleUrl: './list-card.component.css'
@@ -73,6 +75,7 @@ export class ListCardComponent implements OnInit {
     });
   }
   ngOnInit(): void {
+    console.log(this.listCard.id)
     this.getListCard(this.listCard.id);
   }
 
