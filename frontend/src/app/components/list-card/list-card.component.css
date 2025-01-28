@@ -19,13 +19,21 @@
   padding-bottom: 8px;
   margin-left: 0.7rem;
   margin-right: 0.7rem;
- /* border-radius: 8px;*/
-  background-color: #2A3E52;
+  border-radius: 8px;
+  background-color: #f1f2f4;
   box-shadow: var(--ds-shadow-raised, 0px 1px 1px #091e4240, 0px 0px 1px #091e424f);
   /*color: var(--accent-text, var(--ds-text-subtle, #44546f));*/
   vertical-align: top;
   white-space: normal;
   scroll-margin: 8px;
+  font-family:  Helvetica, sans-serif;
+}
+.buttonAddList {
+  height: 40px;
+  margin-top: 10px;
+  border-radius: 0;
+  border-color: #0c66e4;
+  opacity: 0.8;
 }
 .card2 {
   width: 272px; /* Largeur de la carte */
@@ -34,29 +42,33 @@
 
   padding: 1rem;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Ombre pour le relief */
-  font-family: Arial, sans-serif;
+
 }
 .inputListCard {
   background-color: var(--bg-card);
   font-weight: bold;
   font-size: medium;
-  margin-top: 10px;
-  color: white;
+
+  color: #4e5253;
+
 }
 .card-header {
   display: flex;
   justify-content: space-between;
-  background-color: #2A3E52;
+  /*background-color: #2A3E52;*/
+  background-color: #f1f2f4;
+
   cursor: move;
   align-items: center;
   font-weight: bold;
-  color: #ffffff;
+  color: #4e5253;
   border-bottom: none;
 }
 
 .card-header .title {
   font-size: 1rem;
-  text-transform: capitalize; /* Pour mettre les premières lettres en majuscule */
+
+ /* Pour mettre les premières lettres en majuscule */
 }
 
 .card-header .icons {
@@ -65,18 +77,22 @@
   font-size: 1rem;
 }
 
-
-
 .card-footer {
   margin-top: 0.5rem;
+  border-radius: 5px;
   font-size: 0.9rem;
-  color: #b5b5b5; /* Texte plus clair pour le pied de la carte */
+  margin-right: 5px;
+  margin-left: 5px;
+/*  color: #b5b5b5; /* Texte plus clair pour le pied de la carte */
   cursor: pointer;
   display: flex;
   align-items: center;
   border-top: none;
+  background: none;
 }
 
 .card-footer:hover {
-  color: #ffffff;
+  background-color: #d5dcde;
+  margin-left: 5px;
+  margin-right: 7px;
 }

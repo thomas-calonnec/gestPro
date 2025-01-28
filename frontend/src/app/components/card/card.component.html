@@ -1,4 +1,4 @@
-<div class="card-content" (mouseenter)="onMouseEnter(card)"
+    <div class="card-content" (mouseenter)="onMouseEnter(card)"
      (mouseleave)="onMouseLeave(card)">
   @if (card.labels.length > 0) {
 
@@ -22,9 +22,9 @@
     }
   @if(this.card.checkList.length > 0){
     <div class="chip"
-         [style]="completedTasksCount === totalTasksCount ? 'background-color:#19863f; margin-top: 0;' : 'margin-top: 0;' ">
+         [style]="completedTasksCount === totalTasksCount ? 'background-color:#19863f; color: white;margin-top: 0;' : 'margin-top: 0;' ">
 
-      <span class="chip-text" style="color:white"><i class="fa-regular fa-square-check fa-lg"></i>
+      <span class="chip-text" ><i class="fa-regular fa-square-check fa-lg"></i>
         {{ completedTasksCount + '/' + totalTasksCount}}
       </span>
 

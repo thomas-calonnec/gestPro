@@ -109,6 +109,12 @@ main {
   flex: 1; /* Prend tout l'espace restant */
 
   overflow-y: auto; /* Permet le défilement vertical uniquement dans ce composant */
-  background-color: #ecf0f1;
+ /* background-color: #ecf0f1;*/
+
+  background-image: url("http://localhost:4200/background_gestpro.jpg");
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  width: 100vh;
   font-family: Arial, sans-serif;
 }

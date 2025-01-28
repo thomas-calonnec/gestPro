@@ -17,7 +17,6 @@ import java.util.List;
 public class ListCardService {
 
     private final ListCardRepository listCardRepository;
-    private final CardRepository cardRepository;
     private final BoardRepository boardRepository;
 
     /**
@@ -29,7 +28,6 @@ public class ListCardService {
     @Autowired
     public ListCardService(ListCardRepository listCardRepository, CardRepository cardRepository, BoardRepository boardRepository) {
         this.listCardRepository = listCardRepository;
-        this.cardRepository = cardRepository;
         this.boardRepository = boardRepository;
     }
 
@@ -64,7 +62,7 @@ public class ListCardService {
     public void createCard(Long listCardId, Card card) {
         ListCard listCard = findListCardById(listCardId);
         card.setListCard(listCard);
-        cardRepository.save(card);
+        // cardRepository.save(card);
         listCard.getCardList().add(card);
         listCardRepository.save(listCard);
     }

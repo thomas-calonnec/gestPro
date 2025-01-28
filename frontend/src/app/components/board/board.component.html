@@ -1,5 +1,8 @@
-<div class="workspace-header-gradient">
+<!--<div class="workspace-header-gradient">
   <h1 class="workspace-title-gradient">{{this.mainService.getWorkspace()}}</h1>
+</div>-->
+<div class="workspace-header">
+  <h1 class="workspace-title-gradient">{{this.boardName}}</h1>
 </div>
 
 <div style="display: flex; flex-direction: row">
@@ -18,12 +21,12 @@
              (click)="buttonClicked()">  <i class="fa-solid fa-plus"></i> Add an another list</button>
   } @else {
     <div class="buttonAddList2">
-      <form  [formGroup]="myForm" (ngSubmit)="addList()" style="background-color: #2A3E52; border-radius: 12px ;">
+      <form  [formGroup]="myForm" (ngSubmit)="addList()" style="background-color: #f1f2f4; border-radius: 12px ;">
         <div class="myInput">
           <input type="text" class="form-control h-25 opacity-75 inputListCard" formControlName="name" maxlength="512" required="required" aria-label="Small"  placeholder="Enter list name" aria-describedby="inputGroup-sizing-sm">
         </div>
         <button type="submit" class="btn btn-sm" style="margin: 10px; background-color: #579DFF; text-decoration: none;"> Add list </button>
-        <button type="submit"  class="btn btn-light btn-sm" (click)="closeButton()" ><i class="fa-solid fa-times" ></i></button>
+        <button type="submit"  style="background-color: #d5dcde" class="btn btn-light btn-sm" (click)="closeButton()" ><i class="fa-solid fa-times" ></i></button>
       </form>
 
     </div>

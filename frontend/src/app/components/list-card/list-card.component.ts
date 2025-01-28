@@ -16,6 +16,7 @@ import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} fr
 import {provideNativeDateAdapter} from '@angular/material/core';
 import {ListCard} from '@models/list-card';
 import {CdkDragHandle} from '@angular/cdk/drag-drop';
+import {MatButton} from '@angular/material/button';
 
 @Component({
   selector: 'app-list-card',
@@ -26,6 +27,7 @@ import {CdkDragHandle} from '@angular/cdk/drag-drop';
     FormsModule,
     ReactiveFormsModule,
     CdkDragHandle,
+
   ],
   templateUrl:'./list-card.component.html',
   styleUrl: './list-card.component.css'
@@ -89,9 +91,11 @@ export class ListCardComponent implements OnInit {
 
   addCard() {
     this.card.name = this.myForm.value.name;
+
     this.listCardService.createCard(this.listCard.id,this.card).subscribe({
       next: (data: Card ) => {
         this.isClicked = false;
+        this.myForm.reset();
         this.cards.update((currentCard) => [...currentCard, data]);
 
       }
