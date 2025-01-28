@@ -6,15 +6,17 @@
         <input class="form-control h-25 opacity-75 inputListCard" [(ngModel)]="listCard.name"  (keyup.enter)="modifyTitleConfirm()">
       }
 
-      <div class="icons" style="cursor: pointer" (click)="archiveListCard()">
+      <div class="icons" style="cursor: move" (click)="archiveListCard()">
+
+          <i cdkDragHandle class="fa-solid fa-up-down-left-right"></i>
+
         <i class="fa-solid fa-box-archive"></i> <!-- Icône de menu -->
       </div>
     </div>
 
     @for (card of cards(); track card.id) {
 
-      <app-card [card]="card">
-      </app-card>
+      <app-card [card]="card"></app-card>
     }
 
     @if(!isClicked){
