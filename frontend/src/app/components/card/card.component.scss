@@ -1,11 +1,12 @@
 @use '@angular/material' as mat;
 .card-content {
-  background-color: #688fca;
+  background-color: white;
+  border: 1px #d5dcde solid;
   border-radius: 8px;
   margin: 0.5rem;
   font-size: 0.9rem;
   &:hover {
-    border: 2px solid white;
+    border: 2px solid #007bff;
     cursor: pointer;
     &::after {
       width: 100%;
@@ -13,15 +14,18 @@
   }
 
   .task-name {
-    background-color: #688fca;
+    /*background-color: #688fca;*/
+    background-color: white;
+
     display: flex;
-    font-size: 1rem;
+    font-size: 0.9rem;
     justify-content: space-between;
-    padding: 0.5rem;
+    padding : 0.5em;
+
     border-radius: 8px;
-    color: #ffffff;
-    /*&:hover {
-      border: 2px solid white;
+
+   /* &:hover {
+      border: 2px solid #007bff;
       cursor: pointer;
       &::after {
         width: 100%;
@@ -37,7 +41,7 @@
   .status-badges {
     display: flex;
     padding-top: 6px;
-position: relative;
+    position: relative;
     flex-direction: row;
     cursor: pointer;
     width: 100%;
@@ -217,7 +221,7 @@ mat-chip {
   border-radius: 5px;
   padding-left: 10px;
  /* padding: 3px;*/
-  margin: 4px;
+  margin: 7px;
 
   font-size: 14px;
 
@@ -232,7 +236,7 @@ mat-chip {
   .chip-delete {
     background: none;
     border: none;
-    color: #999;
+
     font-size: 14px;
     cursor: pointer;
     transition: color 0.3s ease;

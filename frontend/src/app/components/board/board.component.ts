@@ -34,6 +34,7 @@ export class BoardComponent implements OnInit{
   cpt = 0
   formBuilder : FormBuilder = inject(FormBuilder);
   mainService: MainService = inject(MainService);
+  boardName: string = "";
   private workspaceId: string | null = "";
 
   constructor() {
@@ -70,6 +71,11 @@ export class BoardComponent implements OnInit{
     this.boardId = this.route.snapshot.params['id'];
     this.getListCards(this.boardId);
     this.workspaceId = this.mainService.getWorkspaceId();
+    this.boardService.getBoardById(this.boardId).subscribe({
+      next: board => {
+        this.boardName = board.name
+      }
+    })
 
   }
 

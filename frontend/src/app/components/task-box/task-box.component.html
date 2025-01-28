@@ -1,12 +1,13 @@
 <div class="modal-overlay" (click)="closeModal()">
   <div class="modal-content" (click)="$event.stopPropagation()">
-    <div class="modal-header">
-      <i class="fa-solid fa-table fa-lg"></i>
+
+    <div class="modal-header" style="align-items: center">
+
       @if(!modifyTitle) {<h2 (mouseup)="modifyTitle = true" >{{ title }}</h2>}
       @else {
           <input class="form-control h-25 opacity-75 inputListCard" [(ngModel)]="title" (keyup.enter)="modifyTitleConfirm()">
       }
-      <button class="close-button" (click)="closeModal()">&times;</button>
+      <button class="close-button" (click)="closeModal()"><i class="fa-solid fa-xmark"></i></button>
     </div>
 
     <div class="modal-body">
