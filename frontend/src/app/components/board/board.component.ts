@@ -11,13 +11,13 @@ import {MainService} from '@services/main/main.service';
 @Component({
   selector: 'app-board',
   standalone: true,
-    imports: [
-        ListCardComponent,
-        ReactiveFormsModule,
-        CdkDropList,
-        CdkDrag,
-        MatButton,
-    ],
+  imports: [
+    ListCardComponent,
+    ReactiveFormsModule,
+    CdkDropList,
+    CdkDrag,
+    MatButton,
+  ],
   templateUrl:'./board.component.html' ,
   styleUrl: './board.component.scss'
 })
@@ -34,6 +34,7 @@ export class BoardComponent implements OnInit{
   cpt = 0
   formBuilder : FormBuilder = inject(FormBuilder);
   mainService: MainService = inject(MainService);
+  boardName: string = "";
   private workspaceId: string | null = "";
 
   constructor() {
@@ -48,28 +49,33 @@ export class BoardComponent implements OnInit{
   }
 
   addList() {
-   const listCard: ListCard = {
-     id: 0,
-     name:  this.myForm.value.name.toLowerCase(),
-     orderIndex: -1,
-     isArchived: false
-   }
+    const listCard: ListCard = {
+      id: 0,
+      name:  this.myForm.value.name.toLowerCase(),
+      orderIndex: -1,
+      isArchived: false
+    }
 
-   if(listCard.name !== ""){
-     this.boardService.createListCard(this.boardId,listCard).subscribe({
-       next: (data: ListCard) =>{
-         this.isClicked = false;
-         this.listCard.update((currentList) => [...currentList, data])
+    if(listCard.name !== ""){
+      this.boardService.createListCard(this.boardId,listCard).subscribe({
+        next: (data: ListCard) =>{
+          this.isClicked = false;
+          this.listCard.update((currentList) => [...currentList, data])
 
-       }
-     })
-   }
+        }
+      })
+    }
   }
   ngOnInit() {
 
     this.boardId = this.route.snapshot.params['id'];
     this.getListCards(this.boardId);
     this.workspaceId = this.mainService.getWorkspaceId();
+    this.boardService.getBoardById(this.boardId).subscribe({
+      next: board => {
+        this.boardName = board.name
+      }
+    })
 
   }
 
@@ -82,23 +88,23 @@ export class BoardComponent implements OnInit{
 
   }
   drop(event : CdkDragDrop<ListCard[]>) {
-      moveItemInArray(this.sortedListCard(),event.previousIndex,event.currentIndex);
+    moveItemInArray(this.sortedListCard(),event.previousIndex,event.currentIndex);
 
-      this.sortedListCard().forEach((item, index) => {
-        item.orderIndex = index + 1;
-      });
+    this.sortedListCard().forEach((item, index) => {
+      item.orderIndex = index + 1;
+    });
 
-      // Appelez le backend pour sauvegarder les modifications d'ordre
-      this.boardService.updateListCard(this.boardId, this.sortedListCard()).subscribe({
-        next: (response) => {
-          console.log("Ordre mis à jour avec succès", response);
-        },
-        error: (err) => {
-          console.error("Erreur lors de la mise à jour de l'ordre", err);
-          // Vous pouvez également restaurer l'état précédent si nécessaire en cas d'erreur
-        }
-      });
-    }
+    // Appelez le backend pour sauvegarder les modifications d'ordre
+    this.boardService.updateListCard(this.boardId, this.sortedListCard()).subscribe({
+      next: (response) => {
+        console.log("Ordre mis à jour avec succès", response);
+      },
+      error: (err) => {
+        console.error("Erreur lors de la mise à jour de l'ordre", err);
+        // Vous pouvez également restaurer l'état précédent si nécessaire en cas d'erreur
+      }
+    });
+  }
 
 
   closeButton() {
@@ -107,17 +113,17 @@ export class BoardComponent implements OnInit{
 
   updateListCard(updateListCard: ListCard) {
 
-   this.listCard().map(list => {
+    this.listCard().map(list => {
 
-     if (list.id === updateListCard.id) {
-       // Mettre à jour les champs nécessaires
+      if (list.id === updateListCard.id) {
+        // Mettre à jour les champs nécessaires
 
-       list.isArchived = updateListCard.isArchived
+        list.isArchived = updateListCard.isArchived
 
-       return {...list, ...updateListCard};
-     }
-     return list; // Les autres cartes restent inchangées
-   })
+        return {...list, ...updateListCard};
+      }
+      return list; // Les autres cartes restent inchangées
+    })
 
 
     this.boardService.updateListCard(this.boardId, this.listCard()).subscribe({

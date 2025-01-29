@@ -27,8 +27,8 @@ public class WorkspaceController {
         return ResponseEntity.ok(workspaceService.getAllWorkspaces());
     }
 
-   @GetMapping("/{id}")
-   @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public ResponseEntity<Workspace> getWorkspaceById(@PathVariable Long id) {
         Workspace workspace = workspaceService.getWorkspaceById(id);
         return ResponseEntity.ok(workspace);
@@ -55,7 +55,7 @@ public class WorkspaceController {
 
     @DeleteMapping("{id}/delete")
     public void deleteWorkspaceById(@PathVariable Long id) {
-         workspaceService.deleteWorkspace(id);
+        workspaceService.deleteWorkspace(id);
     }
 
 }

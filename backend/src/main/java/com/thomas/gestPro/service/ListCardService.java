@@ -17,7 +17,6 @@ import java.util.List;
 public class ListCardService {
 
     private final ListCardRepository listCardRepository;
-    private final CardRepository cardRepository;
     private final BoardRepository boardRepository;
 
     /**
@@ -29,7 +28,6 @@ public class ListCardService {
     @Autowired
     public ListCardService(ListCardRepository listCardRepository, CardRepository cardRepository, BoardRepository boardRepository) {
         this.listCardRepository = listCardRepository;
-        this.cardRepository = cardRepository;
         this.boardRepository = boardRepository;
     }
 
@@ -51,7 +49,7 @@ public class ListCardService {
      * @return the list of cards associated with the ListCard
      */
     public List<Card> getCardsByListCardId(Long id) {
-       return findListCardById(id).getCardList();
+        return findListCardById(id).getCardList();
     }
 
     /**
@@ -63,8 +61,8 @@ public class ListCardService {
     @Transactional
     public void createCard(Long listCardId, Card card) {
         ListCard listCard = findListCardById(listCardId);
-         card.setListCard(listCard);
-        cardRepository.save(card);
+        card.setListCard(listCard);
+        // cardRepository.save(card);
         listCard.getCardList().add(card);
         listCardRepository.save(listCard);
     }
@@ -78,7 +76,7 @@ public class ListCardService {
      */
     public ListCard updateListCard(Long listCardId, ListCard updateListCard){
 
-       ListCard existingListCard = findListCardById(listCardId);
+        ListCard existingListCard = findListCardById(listCardId);
 
         existingListCard.setName(updateListCard.getName());
         existingListCard.setOrderIndex(updateListCard.getOrderIndex());

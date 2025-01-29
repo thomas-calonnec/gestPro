@@ -36,14 +36,14 @@ public class BoardController {
 
     @PutMapping("/{id}/listCards")
     public ResponseEntity<ListCard> createListCard(@PathVariable Long id, @RequestBody ListCard listCard) {
-       ListCard newListCard = boardService.createListCard(id,listCard);
+        ListCard newListCard = boardService.createListCard(id,listCard);
         return ResponseEntity.ok(newListCard);
     }
 
     @PutMapping("/{id}/listCards/update")
     public ResponseEntity<List<ListCard>> updateListCard(@PathVariable Long id, @RequestBody List<ListCard> listCard) {
 
-       List<ListCard> newListCard =  boardService.updateListCard(id, listCard);
+        List<ListCard> newListCard =  boardService.updateListCard(id, listCard);
 
         return ResponseEntity.ok(newListCard);
     }

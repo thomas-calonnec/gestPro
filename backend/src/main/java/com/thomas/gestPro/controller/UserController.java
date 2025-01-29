@@ -1,26 +1,42 @@
 package com.thomas.gestPro.controller;
 
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.gson.GsonFactory;
+import com.thomas.gestPro.Security.JwtResponse;
 import com.thomas.gestPro.Security.JwtTokenUtil;
 import com.thomas.gestPro.model.Card;
 import com.thomas.gestPro.model.User;
 import com.thomas.gestPro.model.Workspace;
 import com.thomas.gestPro.service.UserService;
+import io.micrometer.common.lang.Nullable;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.function.Predicate;
 
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/api/user/users")
 public class UserController {
-    
+
     private final UserService userService;
-  private final JwtTokenUtil jwtTokenUtil;
-    
+    private final JwtTokenUtil jwtTokenUtil;
+
+
     @Autowired
     public UserController(UserService userService, JwtTokenUtil jwtTokenUtil) {
         this.userService = userService;
@@ -46,11 +62,36 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authorization header is missing or invalid");
         }
     }*/
-   @GetMapping("/username/{name}")
+    @GetMapping("/current-user")
+    public ResponseEntity<Boolean> getCurrentUser(@Nullable HttpServletRequest request)  {
+        assert request != null;
+        Cookie[] cookies = request.getCookies();
+        String authToken = null;
+
+        if (cookies != null)  {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("accessToken")) {
+                    authToken = cookie.getValue();
+                    break;
+                }
+            }
+
+        }
+
+
+
+        if (authToken != null && (jwtTokenUtil.validateToken(authToken) || jwtTokenUtil.validateGoogleToken(authToken))) {
+            return ResponseEntity.ok(true);
+        } else {
+            return ResponseEntity.ok(false);
+        }
+
+    }
+    @GetMapping("/username/{name}")
     public ResponseEntity<User> getUserByUsername(@PathVariable String name) {
 
-       return ResponseEntity.ok(userService.getUserByUsername(name));
-   }
+        return ResponseEntity.ok(userService.getUserByUsername(name));
+    }
 
 
     @GetMapping("{id}/workspaces")
@@ -77,7 +118,7 @@ public class UserController {
 
     @PostMapping("/{id}/addCard")
     public ResponseEntity<User> addCardToUser(@PathVariable Long id, @RequestBody Card card) {
-       User updatUser = userService.addCardToUser(id,card.getId());
+        User updatUser = userService.addCardToUser(id,card.getId());
         return ResponseEntity.ok(updatUser);
     }
 
@@ -113,5 +154,5 @@ public class UserController {
         userService.removeLabelFromUser(id,label.getLabelId());
         return ResponseEntity.ok("User deleted");
     }*/
-    
+
 }

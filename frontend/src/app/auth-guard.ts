@@ -1,5 +1,5 @@
 import {inject} from '@angular/core';
-import {AuthService} from './auth.service';
+import {AuthService} from '@services/auth/auth.service';
 import {Router} from '@angular/router';
 
 export const AuthGuard  = () => {
@@ -7,7 +7,7 @@ export const AuthGuard  = () => {
   const router = inject(Router);
 
   if(!auth.isAuthenticated()) {
-    auth.removeTokens();
+
     router.navigateByUrl('/login').then(r => r);
     return false;
   }

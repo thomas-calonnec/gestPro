@@ -83,7 +83,7 @@ public class UserService {
 
         user.getRoles().add(userRole);
 
-         userRepository.save(user);
+        userRepository.save(user);
 
     }
 
@@ -95,7 +95,7 @@ public class UserService {
      * @return the updated user
      */
     public User updateUser(Long userId, User updateUser){
-       User existingUser = getById(userId);
+        User existingUser = getById(userId);
 
         existingUser.setUsername(updateUser.getUsername());
         existingUser.setEmail(updateUser.getEmail());
@@ -168,5 +168,25 @@ public class UserService {
         return this.getById(userId).getWorkspaces();
     }
 
+    public User createGoogleUser(String username, String email, String pictureUrl, String googleId) {
+
+        if(userRepository.findByUsername(username) != null)
+            return userRepository.findByUsername(username);
+
+        User googleUser = new User();
+        googleUser.setEmail(email);
+        googleUser.setPictureUrl(pictureUrl);
+        googleUser.setUsername(username);
+        googleUser.setGoogleId(googleId);
+
+        Role userRole = roleRepository.findByName("ROLE_USER");
+        googleUser.getRoles().add(userRole);
+
+        userRepository.save(googleUser);
+
+
+        return googleUser;
+
+    }
 
 }

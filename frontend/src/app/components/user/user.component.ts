@@ -5,9 +5,7 @@ import {ActivatedRoute, RouterLink} from '@angular/router';
 import {MainService} from '@services/main/main.service';
 import {MatButton} from '@angular/material/button';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import {
-  DialogAnimationsExampleDialogComponent
-} from '@components/dialog-animations-example-dialog/dialog-animations-example-dialog.component';
+
 import {WorkspaceService} from '@services/workspaces/workspace.service';
 import {MatDialog} from '@angular/material/dialog';
 
@@ -62,22 +60,33 @@ export class UserComponent implements  OnInit{
 
 
   addWorkspace() {
-   const workspace:Workspace =  {
-     id: 0,
-     name: this.myForm.value.name
-   };
-   this.userService.createWorkspace(Number(this.userId),workspace).subscribe({
-     next: data => {
-       this.workspaceCreated = false;
-      this.workspaces.update(currentValue => [...currentValue,data]);
+    const workspace:Workspace =  {
+      id: 0,
+      name: this.myForm.value.name
+    };
+    this.userService.createWorkspace(Number(this.userId),workspace).subscribe({
+      next: data => {
+        this.workspaceCreated = false;
+        this.workspaces.update(currentValue => [...currentValue,data]);
 
-     }
-   })
+      }
+    })
   }
-  openDialog(enterAnimationDuration: string, exitAnimationDuration: string, workspace : Workspace): void {
+  /*openDialog(enterAnimationDuration: string, exitAnimationDuration: string, workspace : Workspace): void {
     const name = workspace.name;
     const type = "workspace";
     const dialogRef = this.dialog.open(DialogAnimationsExampleDialogComponent, {
+      width: '380px',
+      enterAnimationDuration,
+      exitAnimationDuration,
+      data: {name, type}
+    });
+
+
+  openDialog(enterAnimationDuration: string, exitAnimationDuration: string, workspace : Workspace): void {
+    const name = workspace.name;
+    const type = "workspace";
+    /*const dialogRef = this.dialog.open(DialogAnimationsExampleDialogComponent, {
       width: '380px',
       enterAnimationDuration,
       exitAnimationDuration,
@@ -99,5 +108,5 @@ export class UserComponent implements  OnInit{
         })
       }
     })
-  }
+  }*/
 }

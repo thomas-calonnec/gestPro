@@ -29,7 +29,7 @@ public class CardController {
 
     @PostMapping("/{id}/label/create")
     public ResponseEntity<Card> addLabelColor(@PathVariable Long id, @RequestBody Label label) {
-       Card updateCard = cardService.addCardLabelColor(id,label);
+        Card updateCard = cardService.addCardLabelColor(id,label);
         return ResponseEntity.ok(updateCard);
     }
     @PutMapping("/{id}/label")

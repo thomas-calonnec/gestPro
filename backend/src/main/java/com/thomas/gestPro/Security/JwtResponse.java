@@ -1,12 +1,24 @@
 package com.thomas.gestPro.Security;
 
+import com.thomas.gestPro.model.User;
 import lombok.Getter;
+import lombok.Setter;
 
+@Setter
 @Getter
 public class JwtResponse {
-    private final String accessToken;
-    public JwtResponse(String accessToken) {
-        this.accessToken = accessToken;
 
+    private  User user;
+    private  String message;
+
+    public JwtResponse(String message, User user) {
+        this.user = user;
+        this.message = message;
+    }
+    public JwtResponse(User user) {
+        this.user = user;
+    }
+    public JwtResponse(String message) {
+        this.message = message;
     }
 }
