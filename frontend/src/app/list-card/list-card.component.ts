@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { Card } from '../../dao/card';
-import { ListCardService } from '../../service/list-cards/list-card.service';
+import { ListCardService } from '@services/list-cards/list-card.service';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({

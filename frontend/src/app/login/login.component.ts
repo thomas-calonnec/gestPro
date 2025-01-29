@@ -24,7 +24,6 @@ export class LoginComponent implements OnInit{
   userService: UserService = inject(UserService);
   mainService: MainService = inject(MainService);
   router: Router = inject(Router);
-  client_id = environment.client_id;
   userId: number = 0
   constructor(private fb: FormBuilder) {
     this.myForm = this.fb.group({
