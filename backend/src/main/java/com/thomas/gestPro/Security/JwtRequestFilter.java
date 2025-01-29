@@ -1,17 +1,12 @@
 package com.thomas.gestPro.Security;
 
 
-import io.micrometer.common.lang.NonNullApi;
 import io.micrometer.common.lang.Nullable;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -24,7 +19,7 @@ import java.io.IOException;
 public class JwtRequestFilter extends OncePerRequestFilter {
 
     private final JwtTokenUtil jwtTokenUtil;  // Classe utilitaire pour générer/valider les JWT
-   private final UserDetailsService userDetailsService;
+    private final UserDetailsService userDetailsService;
 
     public JwtRequestFilter(JwtTokenUtil jwtTokenUtil, UserDetailsService userDetailsService) {
         this.jwtTokenUtil = jwtTokenUtil;
@@ -42,39 +37,21 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     protected void doFilterInternal(@Nullable HttpServletRequest request, @Nullable HttpServletResponse response, @Nullable FilterChain chain)
             throws ServletException, IOException {
 
-//        assert request != null;
-//        String token = extractJwtFromRequest(request);
-//
-//        if (token != null && jwtTokenUtil.validateToken(token)) {
-//            String username = jwtTokenUtil.getUsernameFromToken(token);
-//
-//            System.err.println("username : " +username);
-//            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-//
-//            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-//            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-//
-//            SecurityContextHolder.getContext().setAuthentication(authentication);
-//        }
-//        assert chain != null;
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                System.err.println("Cookie: " + cookie.getName());
-                if ("accessToken".equals(cookie.getName())) {
-                    String token = cookie.getValue();
-                    if (jwtTokenUtil.validateToken(token)) {
-                        String username = jwtTokenUtil.getUsernameFromToken(token);
-                        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        assert request != null;
+        String token = extractJwtFromRequest(request);
 
-                        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+        if (token != null && jwtTokenUtil.validateToken(token)) {
+            String username = jwtTokenUtil.getUsernameFromToken(token);
 
-                        SecurityContextHolder.getContext().setAuthentication(authentication);
-                    }
-                }
-            }
+            System.err.println("username : " +username);
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+            SecurityContextHolder.getContext().setAuthentication(authentication);
         }
+        assert chain != null;
         chain.doFilter(request, response);
     }
 

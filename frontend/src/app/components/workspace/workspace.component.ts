@@ -96,7 +96,7 @@ export class WorkspaceComponent implements OnInit{
             localStorage.setItem("workspaceId", this.workspaceId);
           }
           this.boards.set(data)
-          console.log(this.boards())
+          //console.log(this.boards())
           //this.boardService.boards().push(data);
          // console.log(this.mainService.getListBoards())
         },
@@ -144,7 +144,6 @@ export class WorkspaceComponent implements OnInit{
       console.log('The dialog was closed');
       if (result !== undefined) {
         this.datePipe.transform(result.lastUpdated, 'dd/MM/yyyy','fr')
-
         this.workspaceService.createBoard(this.workspaceId, result).subscribe({
           next:boardValue => {
             this.boards.update((currentValue) => [...currentValue,boardValue])

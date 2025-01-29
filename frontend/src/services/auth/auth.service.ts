@@ -26,12 +26,12 @@ export class AuthService {
   constructor() {
     // Effet qui écoute l'accessToken pour le stocker dans localStorage quand il change
     effect(() => {
-      /*  const accessToken = this.accessTokenSignal();
-        if (accessToken) {
-          localStorage.setItem('accessToken', accessToken);
-        } else {
-          localStorage.removeItem('accessToken');
-        }*/
+    /*  const accessToken = this.accessTokenSignal();
+      if (accessToken) {
+        localStorage.setItem('accessToken', accessToken);
+      } else {
+        localStorage.removeItem('accessToken');
+      }*/
     });
 
   }
@@ -68,7 +68,7 @@ export class AuthService {
   }
 
   setAccessToken(token: string): void {
-    // this.accessTokenSignal.set(token);
+   // this.accessTokenSignal.set(token);
 
   }
 
@@ -151,8 +151,8 @@ export class AuthService {
 
     this.getOAuthGoogle(idToken).subscribe({
       next: googleResponse => {
-        console.log(googleResponse.user.id)
-        // this.setAccessToken(googleResponse.accessToken);
+      console.log(googleResponse.user.id)
+       // this.setAccessToken(googleResponse.accessToken);
         this._currentUser.set(googleResponse.user)
         localStorage.setItem("USER_ID",googleResponse.user.id.toString())
         this.router.navigateByUrl(`users/${googleResponse.user.id}/workspaces`);

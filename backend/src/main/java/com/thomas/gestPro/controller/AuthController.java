@@ -188,14 +188,14 @@ public class AuthController {
             } else {
                 // Invalid token
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body(new JwtResponse(false));
+                        .body(new JwtResponse("false"));
             }
         } catch (Exception e) {
             // Log the exception
             e.printStackTrace();
             // Return an error response
             String errorResponse =  "error : " + e.getMessage();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new JwtResponse(false));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new JwtResponse(e.getMessage()));
         }
 
     }

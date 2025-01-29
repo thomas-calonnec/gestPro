@@ -1,4 +1,4 @@
-    <div class="card-content" (mouseenter)="onMouseEnter(card)"
+<div class="card-content" (mouseenter)="onMouseEnter(card)"
      (mouseleave)="onMouseLeave(card)">
   @if (card.labels.length > 0) {
 
@@ -9,22 +9,22 @@
       }
 
     </div>
-    }
-    @if(card.isHovered) {
-      <a  (click)="openModal()" style="text-decoration: none"><div
-                                      class="task-name">{{ card.name }}<i class="fa-regular fa-pen-to-square" style=" text-align: right;"></i></div></a>
-    } @else {
+  }
+  @if(card.isHovered) {
+    <a  (click)="openModal()" style="text-decoration: none"><div
+      class="task-name">{{ card.name }}<i class="fa-regular fa-pen-to-square" style=" text-align: right;"></i></div></a>
+  } @else {
 
-      <div [style]="completedTasksCount !== totalTasksCount ? 'height: 30px' : ''">
+    <div [style]="completedTasksCount !== totalTasksCount ? 'height: 30px' : ''">
       <a ><div  class="task-name">{{ card.name }} </div></a>
-      </div>
+    </div>
 
-    }
+  }
   @if(this.card.checkList.length > 0){
     <div class="chip"
-         [style]="completedTasksCount === totalTasksCount ? 'background-color:#19863f; color: white;margin-top: 0;' : 'margin-top: 0;' ">
+         [style]="completedTasksCount === totalTasksCount ? 'background-color:#19863f; margin-top: 0;' : 'margin-top: 0;' ">
 
-      <span class="chip-text" ><i class="fa-regular fa-square-check fa-lg"></i>
+      <span class="chip-text" style="color:white"><i class="fa-regular fa-square-check fa-lg"></i>
         {{ completedTasksCount + '/' + totalTasksCount}}
       </span>
 
@@ -85,7 +85,7 @@
             @for(label of card.labels; track label.id ){
               <span [class]="'labels ' + 'badge-' + label.color" [matTooltip]="'color:' + label.color" matTooltipPosition="above"></span>
             }
-           <button mat-mini-fab style="border-radius: 5px;box-shadow: none" (click)="this.openLabel = true"> <mat-icon style="border-radius: 2px">add</mat-icon></button>
+            <button mat-mini-fab style="border-radius: 5px;box-shadow: none" (click)="this.openLabel = true"> <mat-icon style="border-radius: 2px">add</mat-icon></button>
           </div>
         </div>
         @if (this.openLabel) {
@@ -93,97 +93,97 @@
           <div style="margin-top: 60px;width: 300px;position: absolute; z-index: 1000;
   transition: opacity 0.3s ease-in-out; background-color: #e0e0e0; border-radius: 10px;
   opacity: 1;">
-           <mat-card>
-             <div class="modal-header">
-               <mat-card-header> Add Label</mat-card-header>
-               <button class="close-button" (click)="this.openLabel = false">x</button>
-             </div>
+            <mat-card>
+              <div class="modal-header">
+                <mat-card-header> Add Label</mat-card-header>
+                <button class="close-button" (click)="this.openLabel = false">x</button>
+              </div>
 
 
-             @for(label of this.labels; track label.id ){
+              @for(label of this.labels; track label.id ){
 
-        @if(testLabel(label.color)) {
-          <span [class]="'labels ' + 'badge-' + label.color" style="display: flex; justify-content: center;width: 100%; opacity: 0.4;align-items: center" [matTooltip]="'color:' + label.color">
+                @if(testLabel(label.color)) {
+                  <span [class]="'labels ' + 'badge-' + label.color" style="display: flex; justify-content: center;width: 100%; opacity: 0.4;align-items: center" [matTooltip]="'color:' + label.color">
             <i class="fa fa-solid fa-circle-check fa-lg" (click)="removeLabel(label)"></i></span>
 
-        } @else {
-          <span [class]="'labels ' + 'badge-' + label.color" (click)="addLabelFromCard(label)" style="width: 100%" [matTooltip]="'color:' + label.color"></span>
-        }
+                } @else {
+                  <span [class]="'labels ' + 'badge-' + label.color" (click)="addLabelFromCard(label)" style="width: 100%" [matTooltip]="'color:' + label.color"></span>
+                }
 
-             }
-           </mat-card>
+              }
+            </mat-card>
 
           </div>
-            }
-<div style="display: flex; flex-direction: column">
-      <b><i class="fa-regular fa-calendar fa-lg"></i> due date</b>
-
-  @if (!card.isDateActivated) {
-  <button mat-raised-button style="border-radius: 5px; width: 150px;" (click)="activateDueDate(card)">Add Due Date</button>
-
-  }@else{
-    <div style="display: flex">
-
-      <mat-checkbox [(ngModel)]="this.dateChecked" (change)="onCheckedChange($event.checked)">
-
-      </mat-checkbox>
-      <div class="dateFormat" (click)="openDateModal()">
-        {{this.datePipe.transform(this.date(), 'dd/MM/yyyy','fr') + " " + this.signalTime()}}
-      </div>
-
-      @if (!dateChecked) {
-        @if (isDueSoon()) {
-          <div class="chip" style="background-color: #e7e409">
-            <span class="chip-text" style="color: black">Due soon</span>
-          </div>
         }
-        @else if(isOverDue()){
-          <div class="chip" style="background-color: #eecfcf">
-            <span class="chip-text" style="color: #f14141"> Overdue</span>
-          </div>
-        }
-      } @else {
+        <div style="display: flex; flex-direction: column">
+          <b><i class="fa-regular fa-calendar fa-lg"></i> due date</b>
 
-        <div class="chip" style="background-color:#19863f">
+          @if (!card.isDateActivated) {
+            <button mat-raised-button style="border-radius: 5px; width: 150px;" (click)="activateDueDate(card)">Add Due Date</button>
+
+          }@else{
+            <div style="display: flex">
+
+              <mat-checkbox [(ngModel)]="this.dateChecked" (change)="onCheckedChange($event.checked)">
+
+              </mat-checkbox>
+              <div class="dateFormat" (click)="openDateModal()">
+                {{this.datePipe.transform(this.date(), 'dd/MM/yyyy','fr') + " " + this.signalTime()}}
+              </div>
+
+              @if (!dateChecked) {
+                @if (isDueSoon()) {
+                  <div class="chip" style="background-color: #e7e409">
+                    <span class="chip-text" style="color: black">Due soon</span>
+                  </div>
+                }
+                @else if(isOverDue()){
+                  <div class="chip" style="background-color: #eecfcf">
+                    <span class="chip-text" style="color: #f14141"> Overdue</span>
+                  </div>
+                }
+              } @else {
+
+                <div class="chip" style="background-color:#19863f">
         <span class="chip-text" style="color:white">
         Completed
         </span>
-        </div>
+                </div>
 
-      }
-
-
-    </div>
-  }
+              }
 
 
-  @if (this.openDate) {
+            </div>
+          }
 
-      <div style="margin-top: 60px;width: 300px;position: absolute; z-index: 1000;
+
+          @if (this.openDate) {
+
+            <div style="margin-top: 60px;width: 300px;position: absolute; z-index: 1000;
   transition: opacity 0.3s ease-in-out; background-color: #e0e0e0; border-radius: 10px;
   opacity: 1;">
-        <mat-card >
-          <mat-calendar [(selected)]="date" ></mat-calendar>
-        </mat-card>
+              <mat-card >
+                <mat-calendar [(selected)]="date" ></mat-calendar>
+              </mat-card>
 
-        <form [formGroup]="formDate">
-          <div style="display: flex">
+              <form [formGroup]="formDate">
+                <div style="display: flex">
 
-            <input matInput formControlName="date" style="font-size: 16px; width:90%"  [value]="this.datePipe.transform(this.date(), 'dd/MM/yyyy','fr')">
+                  <input matInput formControlName="date" style="font-size: 16px; width:90%"  [value]="this.datePipe.transform(this.date(), 'dd/MM/yyyy','fr')">
 
-            <input matInput style="width: 100%" formControlName="time"  (change)="onTimeChange()">
+                  <input matInput style="width: 100%" formControlName="time"  (change)="onTimeChange()">
 
-          </div>
-        </form>
+                </div>
+              </form>
 
-        <button mat-button style="background-color: #688fca; color: white;width: 100%;border-radius: 3px" (click)="updateDateTime()">Save</button>
-      </div>
+              <button mat-button style="background-color: #688fca; color: white;width: 100%;border-radius: 3px" (click)="updateDateTime()">Save</button>
+            </div>
 
-  }
+          }
 
-</div>
+        </div>
 
-      <b> <i class="fa-solid fa-bars fa-lg"></i> Description</b>
+        <b> <i class="fa-solid fa-bars fa-lg"></i> Description</b>
 
         <mat-form-field (mouseup)="isClicked = true" class="example-full-width">
           <mat-label>Describe your idea</mat-label>
@@ -201,7 +201,7 @@
                 {{ !hideCompleted() ? 'hide checked items' : 'show checked items ('+ completedTasksCount+')' }} </button>
             </div>
           </div>
-         <mat-progress-bar
+          <mat-progress-bar
             mode="determinate"
             [style]=" this.progress === 100 ?
             '--mdc-linear-progress-active-indicator-color: green;':
@@ -209,57 +209,57 @@
     "
             [value]="progress">
           </mat-progress-bar>
-            <ul style="list-style-type: none;  padding: 0;  margin: 0;">
+          <ul style="list-style-type: none;  padding: 0;  margin: 0;">
 
-              @for (task of completedTasks(); track task.id; let i = $index){
+            @for (task of completedTasks(); track task.id; let i = $index){
 
-                @if(!this.updateOptions[i] ){
-              <div class="flex-container containerList" style="padding-bottom: 0; padding-top: 2px"
-                   (mouseover)="this.hoverList(i)" (mouseout)="this.hoverListOut(i)">
-                <div class="left-content" >
+              @if(!this.updateOptions[i] ){
+                <div class="flex-container containerList" style="padding-bottom: 0; padding-top: 2px"
+                     (mouseover)="this.hoverList(i)" (mouseout)="this.hoverListOut(i)">
+                  <div class="left-content" >
 
-                <li [hidden]="hideCompleted() && task.completed">
-                  <mat-checkbox [(ngModel)]="task.completed" (change)="updateProgress($event.checked,i)">
+                    <li [hidden]="hideCompleted() && task.completed">
+                      <mat-checkbox [(ngModel)]="task.completed" (change)="updateProgress($event.checked,i)">
 
-                  </mat-checkbox>
-                  <span [style.text-decoration]="task.completed ? 'line-through' : 'none'" (click)="updateList(i)"> {{ task.name }}</span>
+                      </mat-checkbox>
+                      <span [style.text-decoration]="task.completed ? 'line-through' : 'none'" (click)="updateList(i)"> {{ task.name }}</span>
 
-                </li>
+                    </li>
 
 
+                  </div>
+                  <div class="right-content">
+                    @if(this.showOptions()[i]){
+
+                      <button mat-icon-button aria-label="Example icon button with a vertical three dot icon">
+                        <mat-icon>more_vert</mat-icon>
+                      </button>
+                    }
+                  </div>
                 </div>
-                <div class="right-content">
-                  @if(this.showOptions()[i]){
+              } @else {
+                <form [formGroup]="myForm" class="example-form">
+                  <mat-form-field class="example-full-width" style="padding: 0;">
+                    <input matInput formControlName="name" />
+                  </mat-form-field>
 
-                <button mat-icon-button aria-label="Example icon button with a vertical three dot icon">
-                  <mat-icon>more_vert</mat-icon>
-                </button>
-                  }
-                </div>
-              </div>
-                } @else {
-                  <form [formGroup]="myForm" class="example-form">
-                    <mat-form-field class="example-full-width" style="padding: 0;">
-                      <input matInput formControlName="name" />
-                    </mat-form-field>
-
-                    <button (click)="unShowOptions(i)" mat-raised-button style="color: white;background-color: #d31010; border-radius: 2px;
+                  <button (click)="unShowOptions(i)" mat-raised-button style="color: white;background-color: #d31010; border-radius: 2px;
   width: 120px;" >
-                      {{'Cancel' }} </button>
+                    {{'Cancel' }} </button>
 
-                    <button (click)="unShowOptions(i)" mat-raised-button style="background-color: #e0e0e0; border-radius: 2px;
+                  <button (click)="unShowOptions(i)" mat-raised-button style="background-color: #e0e0e0; border-radius: 2px;
   width: 120px;" >
-                      {{'Update' }} </button>
-                  </form>
-                }
-
+                    {{'Update' }} </button>
+                </form>
               }
 
+            }
 
-            </ul>
+
+          </ul>
           @if (this.isClickedList) {
             <form [formGroup]="myForm" class="example-form">
-                <input  class="form-control h-25 opacity-75 inputListCard" placeholder="add an item" formControlName="name" />
+              <input  class="form-control h-25 opacity-75 inputListCard" placeholder="add an item" formControlName="name" />
 
             </form>
             <button (click)="isClickedList = false" mat-raised-button style="color: white;background-color: #d31010; border-radius: 2px;
@@ -271,20 +271,20 @@
               {{'Add' }} </button>
 
           } @else {
-          <button  (click)="addItemList()" mat-raised-button style="background-color: #e0e0e0; padding: 2px;border-radius: 2px;
+            <button  (click)="addItemList()" mat-raised-button style="background-color: #e0e0e0; padding: 2px;border-radius: 2px;
   width: 120px;" >
-            {{'add items' }} </button>
+              {{'add items' }} </button>
 
           }
 
 
-        <!--  <div style="display: flex; flex-direction: column">
-            @for(list of this.checkListSignal(); track list.id ; let i = $index ){
+          <!--  <div style="display: flex; flex-direction: column">
+              @for(list of this.checkListSignal(); track list.id ; let i = $index ){
 
 
-              <mat-checkbox [checked]="list.completed" (change)="update($event.checked,i)">{{ list.name }}</mat-checkbox>
-            }
-          </div>-->
+                <mat-checkbox [checked]="list.completed" (change)="update($event.checked,i)">{{ list.name }}</mat-checkbox>
+              }
+            </div>-->
         </div>
       </div>
     </app-task-box>
