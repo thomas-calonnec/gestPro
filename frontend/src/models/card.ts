@@ -2,7 +2,7 @@ import {Label} from './label';
 import {CheckList} from './check-list';
 
 export interface Card {
-    id: number;
+    id?: number;
     name: string;
     description: string;
     deadline: Date;

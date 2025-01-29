@@ -4,7 +4,6 @@ import com.thomas.gestPro.model.Card;
 import com.thomas.gestPro.model.ListCard;
 import com.thomas.gestPro.service.ListCardService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -16,7 +15,6 @@ import java.util.List;
 public class ListCardController {
 
     private final ListCardService listCardService;
-
 
     @Autowired
     public ListCardController(ListCardService listCardService) {
@@ -38,8 +36,8 @@ public class ListCardController {
 
     @PutMapping("{listCardId}/card")
     public ResponseEntity<Card> createCard(@PathVariable Long listCardId, @RequestBody Card card) {
-        listCardService.createCard(listCardId,card);
-        return ResponseEntity.ok(card);
+       Card newCard = listCardService.createCard(listCardId,card);
+        return ResponseEntity.ok(newCard);
     }
 
     @PutMapping("/{id}")

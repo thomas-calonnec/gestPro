@@ -1,12 +1,11 @@
 import {computed, effect, inject, Injectable, signal} from '@angular/core';
-import {catchError, map, Observable, of, tap, throwError} from 'rxjs';
+import {Observable, tap} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {Router} from '@angular/router';
 import {jwtDecode} from 'jwt-decode';
 import {environment} from '@environments/environment.development';
 import { CookieService } from 'ngx-cookie-service';
 import {User} from '@models/user';
-import {UserService} from '@services/users/user.service';
 
 @Injectable({
   providedIn: 'root',
@@ -14,7 +13,6 @@ import {UserService} from '@services/users/user.service';
 export class AuthService {
 
   private apiServerUrl= environment.apiUrl + '/auth'
-  private accessTokenSignal = signal<string | null>(localStorage.getItem('accessToken'));
   private cookieService = inject(CookieService);
 
   private router : Router = inject(Router);
@@ -63,20 +61,7 @@ export class AuthService {
   setCurrentUser(user: User){
     this._currentUser.set(user);
   }
-  getCurrentUser() {
-    return this._currentUser();
-  }
 
-  setAccessToken(token: string): void {
-   // this.accessTokenSignal.set(token);
-
-  }
-
-
-  removeTokens(): void {
-    this.cookieService.delete('accessToken');
-
-  }
   public isAuthenticated(): Observable<boolean> {
     return this.http.get<boolean>(`http://localhost:8080/api/user/users/current-user`, { withCredentials: true });
   }
@@ -101,27 +86,9 @@ export class AuthService {
     return !!token && !this.isTokenExpired(token);
   }
 
-
-  refreshAccessToken(): Observable<any> {
-
-    return this.http.post<any>(`${this.apiServerUrl}/refresh`, {})
-      .pipe(
-        tap((response: any) => {
-//          this.setAccessToken(response.accessToken);
-
-        }),
-        catchError(error => {
-          console.error('Token refresh failed:', error);
-          return throwError(() => error);
-        })
-      );
-  }
-
-
   login(username: string, password: string): Observable<any> {
 
     return this.http.post<User>(`${this.apiServerUrl}/login`, { username, password }, {withCredentials: true})
-
   }
 
   logout() {
@@ -166,7 +133,7 @@ export class AuthService {
   revokeToken() {
     return this.http.post<any>(`${this.apiServerUrl}/revoke-token`, {}, { withCredentials: true })
       .pipe(
-        tap(response => {
+        tap(() => {
           // Les nouveaux tokens sont automatiquement stockés dans des cookies HTTP-only
           console.log('Tokens refreshed successfully');
         })

@@ -71,7 +71,7 @@ export class CardComponent implements OnInit {
   value: Date = new Date();
 
   @Input() card: Card = {
-    id: 0,
+
     name: "",
     description: "",
     deadline: new Date(),
@@ -432,26 +432,32 @@ export class CardComponent implements OnInit {
 
   addLabelFromCard(label: Label) {
     this.card.labels.push(label);
-    this.cardService.addLabelToCard(this.card.id,label).subscribe({
-      next: () => {
-        console.log("test réussi !")
-      },
-      error: (err) => {
-        console.error("error : " + err)
-      }
-    });
+    if(this.card.id != null){
+      this.cardService.addLabelToCard(this.card.id,label).subscribe({
+        next: () => {
+          console.log("test réussi !")
+        },
+        error: (err) => {
+          console.error("error : " + err)
+        }
+      });
+    }
+
   }
 
   removeLabel(label : Label) {
     this.card.labels = this.card.labels.filter((l) => l.color !== label.color)
-    this.cardService.removeLabelToCard(this.card.id,label).subscribe({
-      next: () => {
-        console.log("test réussi !")
-      },
-      error: (err) => {
-        console.error("error : " + err)
-      }
-    })
+    if(this.card.id !== undefined){
+      this.cardService.removeLabelToCard(this.card.id,label).subscribe({
+        next: () => {
+          console.log("test réussi !")
+        },
+        error: (err) => {
+          console.error("error : " + err)
+        }
+      })
+    }
+
   }
 
   confirmTitle(title: string,card: Card) {

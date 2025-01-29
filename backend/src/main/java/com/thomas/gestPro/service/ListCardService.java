@@ -8,7 +8,6 @@ import com.thomas.gestPro.model.ListCard;
 import com.thomas.gestPro.repository.BoardRepository;
 import com.thomas.gestPro.repository.CardRepository;
 import com.thomas.gestPro.repository.ListCardRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -18,6 +17,7 @@ public class ListCardService {
 
     private final ListCardRepository listCardRepository;
     private final BoardRepository boardRepository;
+    private final CardRepository cardRepository;
 
     /**
      * Constructor with dependency injection for ListCardRepository and CardRepository.
@@ -29,6 +29,7 @@ public class ListCardService {
     public ListCardService(ListCardRepository listCardRepository, CardRepository cardRepository, BoardRepository boardRepository) {
         this.listCardRepository = listCardRepository;
         this.boardRepository = boardRepository;
+        this.cardRepository = cardRepository;
     }
 
     /**
@@ -58,13 +59,14 @@ public class ListCardService {
      * @param listCardId the ID of the ListCard to which the card will be added
      * @param card the card to create and add
      */
-    @Transactional
-    public void createCard(Long listCardId, Card card) {
+
+    public Card createCard(Long listCardId, Card card) {
         ListCard listCard = findListCardById(listCardId);
         card.setListCard(listCard);
         // cardRepository.save(card);
         listCard.getCardList().add(card);
-        listCardRepository.save(listCard);
+
+        return cardRepository.save(card);
     }
 
     /**

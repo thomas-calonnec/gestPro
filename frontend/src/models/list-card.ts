@@ -1,5 +1,5 @@
 export interface ListCard{
-    id: number;
+    id?: number;
     name: string;
     orderIndex: number;
     isArchived: boolean;

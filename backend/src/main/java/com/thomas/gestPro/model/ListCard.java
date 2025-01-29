@@ -25,7 +25,7 @@ public class ListCard {
     private int orderIndex;
     private Boolean isArchived;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne
     @JoinColumn(name = "board_id", nullable = false)
     private Board board;
 

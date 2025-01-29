@@ -1,5 +1,5 @@
 export interface Board {
-    id: number;
+    id?: number;
     name: string;
     color: string;
     description: string;

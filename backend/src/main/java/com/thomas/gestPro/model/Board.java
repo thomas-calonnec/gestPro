@@ -28,7 +28,7 @@ public class Board {
     private Date lastUpdated;
     private Integer cardCount;
 
-    @OneToMany(mappedBy = "board")
+    @OneToMany(mappedBy = "board",cascade = CascadeType.PERSIST)
     @JsonIgnore
     private List<ListCard> listCards = new ArrayList<>();
 

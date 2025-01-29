@@ -38,7 +38,7 @@ public class Card {
             inverseJoinColumns = @JoinColumn(name = "label_id"))
     private List<Label> labels = new ArrayList<>();
 
-    @OneToMany(mappedBy = "card",cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "card",cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<CheckList> checkList = new ArrayList<>();
 
     @ManyToMany(mappedBy = "cards")

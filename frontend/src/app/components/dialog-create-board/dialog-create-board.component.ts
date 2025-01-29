@@ -31,8 +31,8 @@ import {Board} from '@models/board';
 })
 export class DialogCreateBoardComponent {
   readonly dialogRef = inject(MatDialogRef<DialogCreateBoardComponent>);
-   readonly board:Board = {
-    id: 0,
+   board:Board = {
+   
     name: '',
     color: '',
     description: '',

@@ -5,13 +5,15 @@ import {Router} from '@angular/router';
 export const AuthGuard  = () => {
   const auth = inject(AuthService);
   const router = inject(Router);
+console.log("auth : " + auth.isAuthenticated())
 
-  if(!auth.isAuthenticated()) {
-
-    router.navigateByUrl('/login').then(r => r);
-    return false;
-  }
-  return true;
+  return auth.isAuthenticated().subscribe({
+    next: response => {
+      if(!response){
+        router.navigateByUrl('login').then(r => console.log(r))
+      }
+    }
+  })
 
 
 }

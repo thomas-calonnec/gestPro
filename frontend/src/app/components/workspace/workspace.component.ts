@@ -119,7 +119,7 @@ export class WorkspaceComponent implements OnInit{
 
    dialogRef.afterClosed().subscribe(result => {
 
-     if(result) {
+     if(result && board.id !== undefined) {
        this.boardService.deleteBoardById(board.id).subscribe({
          next: () => {
            //this.router.href = "http://localhost:4200/workspaces/"+this.workspaceId+"/boards";

@@ -43,6 +43,7 @@ export class BoardComponent implements OnInit{
 
     });
 
+
   }
   buttonClicked() {
     this.isClicked = true;
@@ -50,7 +51,7 @@ export class BoardComponent implements OnInit{
 
   addList() {
     const listCard: ListCard = {
-      id: 0,
+
       name:  this.myForm.value.name.toLowerCase(),
       orderIndex: -1,
       isArchived: false

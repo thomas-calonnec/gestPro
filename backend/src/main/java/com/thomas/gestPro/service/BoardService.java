@@ -94,16 +94,16 @@ public class BoardService {
     @Transactional
     public ListCard createListCard(Long boardId, ListCard listCard) {
         Board existingboard = getBoardById(boardId);
-
+        if(existingboard == null){
+            return null;
+        }
         listCard.setOrderIndex(existingboard.getListCards().size() + 1);
         listCard.setBoard(existingboard);
         existingboard.setCardCount(existingboard.getListCards().size()+1);
-        ListCard newListCard = listCardRepository.save(listCard);
+
        // existingboard.getListCards().add(listCard);
-        boardRepository.save(existingboard);
-
-        return newListCard;
-
+        //boardRepository.save(existingboard);
+        return listCardRepository.save(listCard);
     }
     @Transactional
     public List<ListCard> updateListCard(Long boardId, List<ListCard> listCard) {

@@ -111,6 +111,7 @@ public class WorkspaceService {
             boardRepository.save(board);
         } catch (ObjectOptimisticLockingFailureException e) {
             // Recharger l'entité et réessayer
+            System.err.println("err" + e.getMessage());
             Board reloadedBoard = boardRepository.findById(board.getId()).orElseThrow(() -> new RuntimeException("Board not found"));
             // Appliquer les modifications à l'entité récupérée
             boardRepository.save(reloadedBoard);

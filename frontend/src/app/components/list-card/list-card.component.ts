@@ -16,7 +16,6 @@ import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} fr
 import {provideNativeDateAdapter} from '@angular/material/core';
 import {ListCard} from '@models/list-card';
 import {CdkDragHandle} from '@angular/cdk/drag-drop';
-import {MatButton} from '@angular/material/button';
 
 @Component({
   selector: 'app-list-card',
@@ -37,7 +36,7 @@ export class ListCardComponent implements OnInit {
   @Output() listCardEmit  = new EventEmitter<ListCard>()
   myForm : FormGroup;
   protected card : Card = {
-    id:0,
+
     name: "",
     description: "",
     deadline: new Date(),
@@ -77,8 +76,8 @@ export class ListCardComponent implements OnInit {
     });
   }
   ngOnInit(): void {
-    console.log(this.listCard.id)
-    this.getListCard(this.listCard.id);
+    if(this.listCard.id !== undefined)
+      this.getListCard(this.listCard.id);
   }
 
   public getListCard(listCardId : number) : void{
@@ -91,15 +90,19 @@ export class ListCardComponent implements OnInit {
 
   addCard() {
     this.card.name = this.myForm.value.name;
+    console.log(this.card.id)
+    if(this.listCard.id !== undefined){
 
-    this.listCardService.createCard(this.listCard.id,this.card).subscribe({
-      next: (data: Card ) => {
-        this.isClicked = false;
-        this.myForm.reset();
-        this.cards.update((currentCard) => [...currentCard, data]);
+      this.listCardService.createCard(this.listCard.id,this.card).subscribe({
+        next: (data: Card ) => {
+          this.isClicked = false;
+          this.myForm.reset();
+          this.cards.update((currentCard) => [...currentCard, data]);
 
-      }
-    })
+        }
+      })
+    }
+
   }
 
 

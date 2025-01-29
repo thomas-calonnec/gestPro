@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -53,7 +52,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(registry -> {
                             registry.requestMatchers(HttpMethod.OPTIONS,"/**").permitAll();
                             registry.requestMatchers("/api/auth/**").permitAll();
-                            registry.requestMatchers("/api/user/**").hasRole("USER");
+                            registry.requestMatchers("/api/user/**").permitAll();
                             registry.requestMatchers("/admin/**").permitAll();
                             registry.anyRequest().authenticated();
 

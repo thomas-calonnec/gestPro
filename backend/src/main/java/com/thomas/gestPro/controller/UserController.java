@@ -1,11 +1,5 @@
 package com.thomas.gestPro.controller;
 
-import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
-import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
-import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
-import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.gson.GsonFactory;
-import com.thomas.gestPro.Security.JwtResponse;
 import com.thomas.gestPro.Security.JwtTokenUtil;
 import com.thomas.gestPro.model.Card;
 import com.thomas.gestPro.model.User;
@@ -15,18 +9,12 @@ import io.micrometer.common.lang.Nullable;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.function.Predicate;
 
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
@@ -77,8 +65,6 @@ public class UserController {
             }
 
         }
-
-
 
         if (authToken != null && (jwtTokenUtil.validateToken(authToken) || jwtTokenUtil.validateGoogleToken(authToken))) {
             return ResponseEntity.ok(true);
