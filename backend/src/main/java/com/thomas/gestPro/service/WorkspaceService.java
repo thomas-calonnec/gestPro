@@ -9,6 +9,7 @@ import com.thomas.gestPro.repository.WorkspaceRepository;
 import jakarta.transaction.Transactional;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -106,6 +107,14 @@ public class WorkspaceService {
         board.setCardCount(0);
         workspace.getBoards().add(board);
         workspaceRepository.save(workspace);
+        try {
+            boardRepository.save(board);
+        } catch (ObjectOptimisticLockingFailureException e) {
+            // Recharger l'entité et réessayer
+            Board reloadedBoard = boardRepository.findById(board.getId()).orElseThrow(() -> new RuntimeException("Board not found"));
+            // Appliquer les modifications à l'entité récupérée
+            boardRepository.save(reloadedBoard);
+        }
 
         return board;
 
