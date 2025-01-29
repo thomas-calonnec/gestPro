@@ -23,7 +23,7 @@ public class TemporaryUserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         // Fetch user from the database by username
-        User user = userRepository.findByUsername(username);
+        User user = userRepository.getUserByUsername(username);
 
 
         // Convert `User` entity to `CustomUserDetails`

@@ -160,7 +160,7 @@ public class UserService {
     }
 
     public User getUserByUsername(String username) {
-        return userRepository.findByUsername(username);
+        return userRepository.getUserByUsername(username);
 
     }
 
@@ -170,8 +170,8 @@ public class UserService {
 
     public User createGoogleUser(String username, String email, String pictureUrl, String googleId) {
 
-        if(userRepository.findByUsername(username) != null)
-            return userRepository.findByUsername(username);
+        if(userRepository.getUserByUsername(username) != null)
+            return userRepository.getUserByUsername(username);
 
         User googleUser = new User();
         googleUser.setEmail(email);

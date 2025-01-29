@@ -8,6 +8,9 @@ import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/
 
 import {WorkspaceService} from '@services/workspaces/workspace.service';
 import {MatDialog} from '@angular/material/dialog';
+import {
+  DialogAnimationsExampleDialogComponent
+} from '@components/dialog-animations-example-dialog/dialog-animations-example-dialog.component';
 
 @Component({
   selector: 'app-user',
@@ -72,7 +75,7 @@ export class UserComponent implements  OnInit{
       }
     })
   }
-  /*openDialog(enterAnimationDuration: string, exitAnimationDuration: string, workspace : Workspace): void {
+  openDialog(enterAnimationDuration: string, exitAnimationDuration: string, workspace : Workspace): void {
     const name = workspace.name;
     const type = "workspace";
     const dialogRef = this.dialog.open(DialogAnimationsExampleDialogComponent, {
@@ -83,15 +86,7 @@ export class UserComponent implements  OnInit{
     });
 
 
-  openDialog(enterAnimationDuration: string, exitAnimationDuration: string, workspace : Workspace): void {
-    const name = workspace.name;
-    const type = "workspace";
-    /*const dialogRef = this.dialog.open(DialogAnimationsExampleDialogComponent, {
-      width: '380px',
-      enterAnimationDuration,
-      exitAnimationDuration,
-      data: {name, type}
-    });
+
 
     dialogRef.afterClosed().subscribe((result: any) => {
 
@@ -108,5 +103,5 @@ export class UserComponent implements  OnInit{
         })
       }
     })
-  }*/
+  }
 }
