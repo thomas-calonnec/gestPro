@@ -10,6 +10,7 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import { CookieService } from 'ngx-cookie-service';
+import {environment} from '@environments/environment.development';
 
 @Component({
   selector: 'app-login',
@@ -108,5 +109,6 @@ export class LoginComponent implements OnInit{
     }*/
   }
 
+  protected readonly environment = environment;
 }
 

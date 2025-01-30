@@ -12,8 +12,7 @@ import com.thomas.gestPro.model.User;
 import com.thomas.gestPro.service.LoginService;
 import com.thomas.gestPro.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
@@ -38,8 +37,9 @@ public class AuthController {
 
     private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
 
-    @Value("${spring.security.oauth2.client.registration.google.client-id}")
-    private String clientId;
+    @Autowired
+    private Environment env;
+
 
     @Autowired
     public AuthController(UserService userService, LoginService loginService, AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil) {
@@ -125,6 +125,7 @@ public class AuthController {
     @PostMapping("/oauth2")
     public ResponseEntity<JwtResponse> authenticateOAuth(@RequestBody TokenRequest tokenRequest) {
         try {
+            String clientId = env.getProperty("GOOGLE_CLIENT_ID");
             // Initialize the verifier
             GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(
                     GoogleNetHttpTransport.newTrustedTransport(), JSON_FACTORY)

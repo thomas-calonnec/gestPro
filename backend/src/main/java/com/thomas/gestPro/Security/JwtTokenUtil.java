@@ -10,7 +10,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
@@ -26,15 +26,13 @@ public class JwtTokenUtil {
     private final Key secretKey = Keys.hmacShaKeyFor(SECRET_KEY.getBytes()); // Clé correcte avec taille appropriée
     private static final long ACCESS_TOKEN_VALIDITY = 1000 * 60 * 60; // 1 hours
     private static final long REFRESH_TOKEN_VALIDITY = 1000 * 60 * 60 * 24 * 7; // 7 jours
-    private final UserDetailsService userDetailsService;
     private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
 
-    @Value("${spring.security.oauth2.client.registration.google.client-id}")
-    private String clientId;
+    @Autowired
+    private Environment environment;
 
     @Autowired
     public JwtTokenUtil(UserDetailsService userDetailsService) {
-        this.userDetailsService = userDetailsService;
     }
 
 
@@ -85,11 +83,6 @@ public class JwtTokenUtil {
         return extractClaim(token, Claims::getSubject);
     }
 
-    // Extract expiration date from JWT token
-    public Date extractExpiration(String token) {
-        return extractClaim(token, Claims::getExpiration);
-    }
-
     // Extract claims from token
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
@@ -100,13 +93,10 @@ public class JwtTokenUtil {
         return Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody();
     }
 
-    public Boolean isTokenExpired(String token) {
-        return extractExpiration(token).before(new Date());
-    }
-
 
     public boolean validateGoogleToken(String authToken) {
         try {
+            String clientId = environment.getProperty("GOOGLE_OAUTH_CLIENT_ID");
             // Initialize the verifier
             GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(
                     GoogleNetHttpTransport.newTrustedTransport(), JSON_FACTORY)
