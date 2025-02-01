@@ -76,7 +76,6 @@
   width: 240px;
   height: 100vh;
   background-color: #031a4f;
-  border-right: 1px solid #e5e5e5;
   display: flex;
   flex-direction: column;
   padding-top: 15px;

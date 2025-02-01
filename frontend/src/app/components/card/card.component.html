@@ -22,9 +22,9 @@
   }
   @if(this.card.checkList.length > 0){
     <div class="chip"
-         [style]="completedTasksCount === totalTasksCount ? 'background-color:#19863f; margin-top: 0;' : 'margin-top: 0;' ">
+         [style]="completedTasksCount === totalTasksCount ? 'background-color:#19863f; margin-top: 0;' : 'margin-top: 0' ">
 
-      <span class="chip-text" style="color:white"><i class="fa-regular fa-square-check fa-lg"></i>
+      <span class="chip-text" [style]="completedTasksCount !== totalTasksCount ? 'color:black' : 'color: white'"><i class="fa-regular fa-square-check fa-lg"></i>
         {{ completedTasksCount + '/' + totalTasksCount}}
       </span>
 
@@ -96,7 +96,7 @@
             <mat-card>
               <div class="modal-header">
                 <mat-card-header> Add Label</mat-card-header>
-                <button class="close-button" (click)="this.openLabel = false">x</button>
+                <button class="close-button" (click)="this.openLabel = false"><i class="fa-solid fa-xmark"></i></button>
               </div>
 
 
