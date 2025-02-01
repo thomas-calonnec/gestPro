@@ -8,6 +8,7 @@
   &:hover {
     border: 2px solid #007bff;
     cursor: pointer;
+    color: black;
     &::after {
       width: 100%;
     }
@@ -130,24 +131,12 @@ mat-chip {
     opacity: 0.3;
   }
 }
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid #e0e0e0;
-  padding-bottom: 10px;
-}
 
-.modal-header h2 {
-  margin: 0;
-  font-size: 1.5em;
-  font-weight: bold;
-  color: #333;
-}
 
 /* Bouton de fermeture */
 .close-button {
   font-size: 1.5rem;
+  margin-right: 10px;
   background: transparent;
   border: none;
   cursor: pointer;

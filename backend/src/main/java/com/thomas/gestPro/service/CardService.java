@@ -63,6 +63,7 @@ public class CardService {
     public Card updateCard(Long cardId, Card updateCard) {
         // Récupérer l'entité existante
         Card existingCard = getCardById(cardId);
+        System.err.println("update : " + existingCard.getCheckList());
 
         // Mettre à jour les champs simples
         existingCard.setName(updateCard.getName());
@@ -77,21 +78,20 @@ public class CardService {
         List<CheckList> updatedCheckLists = updateCard.getCheckList();
         List<CheckList> existingCheckLists = existingCard.getCheckList();
 
-
-        // Supprimer les CheckLists qui ne sont plus présentes
+        // Step 1: Remove CheckLists that are no longer in updateCard
         existingCheckLists.removeIf(existing ->
                 updatedCheckLists.stream().noneMatch(updated ->
                         updated.getId() != null && updated.getId().equals(existing.getId()))
         );
 
-        // Ajouter ou mettre à jour les CheckLists existants
+        // Step 2: Add or update CheckLists
         for (CheckList updatedCheckList : updatedCheckLists) {
             if (updatedCheckList.getId() == null) {
-                // Nouveau CheckList : l'ajouter
-                updatedCheckList.setCard(existingCard); // Maintenir la relation bidirectionnelle
+                // New CheckList: ensure the relationship is set
+                updatedCheckList.setCard(existingCard);
                 existingCheckLists.add(updatedCheckList);
             } else {
-                // Mettre à jour les CheckLists existants
+                // Update existing CheckList
                 existingCheckLists.stream()
                         .filter(existing -> existing.getId().equals(updatedCheckList.getId()))
                         .findFirst()
@@ -102,7 +102,10 @@ public class CardService {
             }
         }
 
-        // Sauvegarder automatiquement via la cascade
+        // Ensure CheckLists are properly saved
+        checkListRepository.saveAll(existingCheckLists);
+
+        // Save the updated Card (cascade should handle CheckLists)
         return cardRepository.save(existingCard);
     }
 
