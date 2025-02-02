@@ -52,8 +52,9 @@
   font-weight: 600;
   position: relative;
   background-color: #0000003d;
+  backdrop-filter: blur(4px);
   padding-left: 20px;
-
+  width: 100vw;
   height: 65px;
 
 }

@@ -81,7 +81,9 @@ export class CardComponent implements OnInit {
     checkList: [],
     isCompleted: false,
     isHovered: false,
-    isDateActivated: false
+    isDateActivated: false,
+    isLabelActivated: false,
+    isChecklistActivated: false
 
   };
   errorMessage = signal('');
@@ -110,6 +112,9 @@ export class CardComponent implements OnInit {
   dateChecked: boolean = false;
   openLabel: boolean = false;
   protected signalTime = signal("");
+  dueDate: boolean = false;
+  activateLabel: boolean = false;
+  activateCheckList: boolean = false;
 
 
   constructor() {
@@ -471,10 +476,8 @@ export class CardComponent implements OnInit {
       },
     });
   }
-
-  activateDueDate(card: Card) {
-    this.card.isDateActivated = true;
-    this.cardService.updateCard(this.card.id, card).subscribe({
+  updateCard(cardId: number,card: Card){
+    this.cardService.updateCard(cardId, card).subscribe({
       next: () => {
 
       },
@@ -483,4 +486,12 @@ export class CardComponent implements OnInit {
       },
     });
   }
+
+  activateDueDate(card: Card) {
+    this.card.isDateActivated = true;
+    this.dueDate = true
+    if(this.card.id !== undefined)
+      this.updateCard(this.card.id,card)
+  }
+
 }

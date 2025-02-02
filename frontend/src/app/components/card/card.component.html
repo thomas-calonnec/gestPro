@@ -12,7 +12,7 @@
   }
   @if(card.isHovered) {
     <a  (click)="openModal()" style="text-decoration: none"><div
-      class="task-name">{{ card.name }}<i class="fa-regular fa-pen-to-square" style=" text-align: right;"></i></div></a>
+      class="task-name">{{ card.name }}<i class="fa-regular fa-pen-to-square" style=" text-align: right;color:#007bff;"></i></div></a>
   } @else {
 
     <div [style]="completedTasksCount !== totalTasksCount ? 'height: 30px' : ''">
@@ -54,19 +54,15 @@
            [style]="dateChecked ? 'background-color:#19863f;margin-top: 0;': isDueSoon() ? 'background-color:#e7e409':'' ">
 
         @if (this.date()) {
-          <span class="chip-text" [style]="isDueSoon() && !dateChecked ? 'color: black': 'color:white'" (click)="updateCompleteDate(card) ">
+          <span class="chip-text" [style]="isDueSoon() && !dateChecked || !dateChecked? 'color: black': 'color:white'" (click)="updateCompleteDate(card) ">
       <i [class]="! isHoverDate ? 'fa-regular fa-clock fa-lg' : !isHoverDate && !dateChecked ? 'fa-regular fa-square' : 'fa-regular fa-square-check'"></i>
             {{ formatDate(this.date())}}
     </span>
         }
       </div>
-
-
     }
 
-
   }
-
 
   @if(this.isModalOpen){
 
@@ -77,17 +73,20 @@
       (cancel)="handleCancel()"
       (confirmTitle)="confirmTitle($event,card)"
     >
-
-      <div class="container">
-        <div style="display: flex; flex-direction: column; margin-bottom: 30px">
-          <b>Labels</b>
-          <div class="status-labels">
-            @for(label of card.labels; track label.id ){
-              <span [class]="'labels ' + 'badge-' + label.color" [matTooltip]="'color:' + label.color" matTooltipPosition="above"></span>
-            }
-            <button mat-mini-fab style="border-radius: 5px;box-shadow: none" (click)="this.openLabel = true"> <mat-icon style="border-radius: 2px">add</mat-icon></button>
+    <div class="flex-container2">
+      <div class="flex-column1">
+        @if (this.activateLabel) {
+          <div style="display: flex; flex-direction: column; margin-bottom: 30px">
+            <b>Labels</b>
+            <div class="status-labels">
+              @for(label of card.labels; track label.id ){
+                <span [class]="'labels ' + 'badge-' + label.color" [matTooltip]="'color:' + label.color" matTooltipPosition="above"></span>
+              }
+              <button mat-mini-fab style="border-radius: 5px;box-shadow: none" (click)="this.openLabel = true"> <mat-icon style="border-radius: 2px">add</mat-icon></button>
+            </div>
           </div>
-        </div>
+        }
+
         @if (this.openLabel) {
 
           <div style="margin-top: 60px;width: 300px;position: absolute; z-index: 1000;
@@ -115,13 +114,13 @@
 
           </div>
         }
-        <div style="display: flex; flex-direction: column">
-          <b><i class="fa-regular fa-calendar fa-lg"></i> due date</b>
+        @if (card.isDateActivated) {
 
-          @if (!card.isDateActivated) {
-            <button mat-raised-button style="border-radius: 5px; width: 150px;" (click)="activateDueDate(card)">Add Due Date</button>
+        <div class="dueDate">
+          <h3><i class="fa-regular fa-calendar fa-lg"></i> due date</h3>
 
-          }@else{
+
+
             <div style="display: flex">
 
               <mat-checkbox [(ngModel)]="this.dateChecked" (change)="onCheckedChange($event.checked)">
@@ -154,7 +153,7 @@
 
 
             </div>
-          }
+
 
 
           @if (this.openDate) {
@@ -178,18 +177,20 @@
 
               <button mat-button style="background-color: #688fca; color: white;width: 100%;border-radius: 3px" (click)="updateDateTime()">Save</button>
             </div>
-
-          }
+}
 
         </div>
+        }
+          <div style="display: flex; flex-direction: column; margin-top: 20px">
+          <b> <i class="fa-solid fa-bars fa-lg"></i> Description</b>
 
-        <b> <i class="fa-solid fa-bars fa-lg"></i> Description</b>
+          <mat-form-field (mouseup)="isClicked = true" appearance="outline" >
+            <mat-label>Describe your idea</mat-label>
+            <textarea  matInput placeholder="Ex. describe your project..." [value]="card.description"></textarea>
 
-        <mat-form-field (mouseup)="isClicked = true" class="example-full-width">
-          <mat-label>Describe your idea</mat-label>
-          <textarea  matInput placeholder="Ex. describe your project..." [value]="card.description"></textarea>
+          </mat-form-field>
+        </div>
 
-        </mat-form-field>
 
         <div>
           <div class="flex-container">
@@ -197,7 +198,7 @@
               <b><i class="fa fa-regular fa-circle-check fa-lg"></i> CheckList ({{this.progress}}%)</b>
             </div>
             <div class="right-content">
-              <button (click)="setHideSelected()"  mat-raised-button style="background-color: #e0e0e0" class="buttonHide">
+              <button (click)="setHideSelected()" mat-flat-button   style="margin: 10px;text-decoration: none;" class="buttonAddList buttonHide">
                 {{ !hideCompleted() ? 'hide checked items' : 'show checked items ('+ completedTasksCount+')' }} </button>
             </div>
           </div>
@@ -287,6 +288,20 @@
             </div>-->
         </div>
       </div>
+
+      <div class="flex-column2" >
+        <div class="card-footer" >
+          <span (click)="this.activateLabel = true"><i class="fa-solid fa-tag"></i> Labels</span>
+        </div>
+      <div class="card-footer">
+        <span (click)="activateDueDate(card)"><i class="fa-regular fa-calendar fa-lg" style="margin-right: 3px"> </i> Due date</span>
+      </div>
+        <div class="card-footer" >
+        <span (click)="this.activateCheckList = true"><i class="fa-regular  fa-circle-check"></i> Checklist</span>
+        </div>
+      </div>
+    </div>
+
     </app-task-box>
   }
 
