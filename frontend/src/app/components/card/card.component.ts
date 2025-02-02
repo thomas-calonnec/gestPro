@@ -494,4 +494,10 @@ export class CardComponent implements OnInit {
       this.updateCard(this.card.id,card)
   }
 
+  activateLabelFn(card: Card) {
+    this.activateLabel = true;
+    this.card.isLabelActivated = true;
+    if(this.card.id !== undefined)
+      this.updateCard(this.card.id,card)
+  }
 }

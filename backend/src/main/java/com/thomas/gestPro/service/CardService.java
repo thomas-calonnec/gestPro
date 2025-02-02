@@ -72,6 +72,8 @@ public class CardService {
         existingCard.setIsCompleted(updateCard.getIsCompleted());
         existingCard.setDeadline(updateCard.getDeadline());
         existingCard.setIsDateActivated(updateCard.getIsDateActivated());
+        existingCard.setIsLabelActivated(updateCard.getIsLabelActivated());
+        existingCard.setIsChecklistActivated(updateCard.getIsChecklistActivated());
         existingCard.setDescription(updateCard.getDescription());
 
         // Gestion de la liste CheckList

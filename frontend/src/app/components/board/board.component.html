@@ -23,9 +23,11 @@
   <div class="buttonAddList2">
     <form  [formGroup]="myForm" (ngSubmit)="addList()" style="background-color: #f1f2f4; border-radius: 12px ;">
       <div class="myInput">
-        <input type="text" class="form-control h-25 opacity-75 inputListCard" formControlName="name" maxlength="512" required="required" aria-label="Small"  placeholder="Enter list name" aria-describedby="inputGroup-sizing-sm">
+      <!--  <input type="text" class="form-control h-25 opacity-75 inputListCard" formControlName="name" maxlength="512" required="required" aria-label="Small"  placeholder="Enter list name" aria-describedby="inputGroup-sizing-sm">-->
+        <textarea class="myTextArea" (keydown.enter)="addList()"  #myTextarea (input)="autoResize(myTextarea)" placeholder="Enter list name" formControlName="name" ></textarea>
+
       </div>
-      <button type="submit" class="btn btn-sm" style="margin: 10px; background-color: #579DFF; text-decoration: none;"> Add list </button>
+      <button type="submit" class="btn btn-sm" style="margin: 10px; background-color: #005cbb;color:white;text-decoration: none;"> Add list </button>
       <button type="submit"  style="background-color: #d5dcde" class="btn btn-light btn-sm" (click)="closeButton()" ><i class="fa-solid fa-times" ></i></button>
     </form>
 

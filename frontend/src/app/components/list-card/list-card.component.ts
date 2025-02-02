@@ -16,6 +16,7 @@ import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} fr
 import {provideNativeDateAdapter} from '@angular/material/core';
 import {ListCard} from '@models/list-card';
 import {CdkDragHandle} from '@angular/cdk/drag-drop';
+import {MatInput} from '@angular/material/input';
 
 @Component({
   selector: 'app-list-card',
@@ -26,6 +27,7 @@ import {CdkDragHandle} from '@angular/cdk/drag-drop';
     FormsModule,
     ReactiveFormsModule,
     CdkDragHandle,
+
 
   ],
   templateUrl:'./list-card.component.html',
@@ -45,7 +47,9 @@ export class ListCardComponent implements OnInit {
     labels: [],
     checkList: [],
     isCompleted: false,
-    isDateActivated: false
+    isDateActivated: false,
+    isLabelActivated: false,
+    isChecklistActivated: false
   }
   @Input() listCard : ListCard = {
     id: 0,
@@ -90,8 +94,8 @@ export class ListCardComponent implements OnInit {
 
   addCard() {
     this.card.name = this.myForm.value.name;
-    console.log(this.card.id)
-    if(this.listCard.id !== undefined){
+
+    if(this.listCard.id !== undefined && this.card.name !== ""){
 
       this.listCardService.createCard(this.listCard.id,this.card).subscribe({
         next: (data: Card ) => {
@@ -116,4 +120,11 @@ export class ListCardComponent implements OnInit {
     this.listCard.isArchived = true;
     this.listCardEmit.emit(this.listCard);
   }
+
+  autoResize(textarea: HTMLTextAreaElement): void {
+    textarea.style.height = 'auto';
+    textarea.style.height = textarea.scrollHeight + 'px';
+  }
+
+
 }

@@ -27,6 +27,8 @@ public class Card {
     private Integer minutes;
     private Boolean isCompleted;
     private Boolean isDateActivated;
+    private Boolean isLabelActivated;
+    private Boolean isChecklistActivated;
 
     @ManyToOne
     @JoinColumn(name = "list_card_id", nullable = false)
