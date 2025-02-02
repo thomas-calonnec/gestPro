@@ -66,6 +66,14 @@ mat-chip {
   padding: 0 !important;
 
 }
+.myInput {
+  margin-left: 50px;
+  outline: none;
+  border-color: #007bff;
+  height: 30px;
+  width: 93%;
+}
+
 .dateFormat {
   display: flex;
   padding: 6px;
@@ -73,6 +81,11 @@ mat-chip {
   background-color: #e0e0e0;
   width: 200px;
   border-radius: 4px;
+  &:hover {
+  cursor: pointer;
+
+  }
+
 }
 .example-full-width {
   width: 100%;
@@ -81,7 +94,7 @@ mat-chip {
   display: flex;
   justify-content: space-between; /* Espace entre les deux contenus */
   align-items: center; /* Aligne verticalement si nécessaire */
-  padding: 10px; /* Facultatif : un peu d'espace autour */
+  padding: 8px; /* Facultatif : un peu d'espace autour */
 }
 .containerList {
   display: flex;
@@ -144,6 +157,7 @@ mat-chip {
 .dueDate {
   display: flex;
   flex-direction: column;
+  gap: 10px;
 }
 .dueDate h3{
   font-size: 16px;
@@ -286,6 +300,10 @@ mat-chip {
   background-color: #d5dcde;
   display: flex;
   border-top: none;
+
+  &:hover {
+    background-color: #a4abac;
+  }
 }
 
 //.card-footer:hover {

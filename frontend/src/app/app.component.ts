@@ -9,7 +9,7 @@ import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, FormsModule, FontAwesomeModule],
+  imports: [RouterOutlet, FormsModule, FontAwesomeModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
   providers: [
@@ -19,6 +19,9 @@ import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 export class AppComponent  {
 
   title = "test"
-
+  autoResize(textarea: HTMLTextAreaElement): void {
+    textarea.style.height = 'auto';
+    textarea.style.height = textarea.scrollHeight + 'px';
+  }
 
 }

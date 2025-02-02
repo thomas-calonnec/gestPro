@@ -79,7 +79,10 @@ export class BoardComponent implements OnInit{
     })
 
   }
-
+  autoResize(textarea: HTMLTextAreaElement): void {
+    textarea.style.height = 'auto';
+    textarea.style.height = textarea.scrollHeight + 'px';
+  }
   getListCards(boardId: number): void {
     this.boardService.getListCards(boardId).subscribe({
       next: (data: ListCard[]) => {

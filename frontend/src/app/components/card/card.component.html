@@ -1,5 +1,5 @@
 <div class="card-content" (mouseenter)="onMouseEnter(card)"
-     (mouseleave)="onMouseLeave(card)">
+     (mouseleave)="onMouseLeave(card)" xmlns="http://www.w3.org/1999/html">
   @if (card.labels.length > 0) {
 
     <div class="status-badges" >
@@ -75,7 +75,7 @@
     >
     <div class="flex-container2">
       <div class="flex-column1">
-        @if (this.activateLabel) {
+        @if (this.card.isLabelActivated) {
           <div style="display: flex; flex-direction: column; margin-bottom: 30px">
             <b>Labels</b>
             <div class="status-labels">
@@ -93,7 +93,7 @@
   transition: opacity 0.3s ease-in-out; background-color: #e0e0e0; border-radius: 10px;
   opacity: 1;">
             <mat-card>
-              <div class="modal-header">
+              <div class="modal-header2">
                 <mat-card-header> Add Label</mat-card-header>
                 <button class="close-button" (click)="this.openLabel = false"><i class="fa-solid fa-xmark"></i></button>
               </div>
@@ -117,9 +117,7 @@
         @if (card.isDateActivated) {
 
         <div class="dueDate">
-          <h3><i class="fa-regular fa-calendar fa-lg"></i> due date</h3>
-
-
+          <b><i class="fa-regular fa-calendar fa-lg"></i> Due date</b>
 
             <div style="display: flex">
 
@@ -181,14 +179,10 @@
 
         </div>
         }
-          <div style="display: flex; flex-direction: column; margin-top: 20px">
+          <div style="display: flex; flex-direction: column; margin-top: 20px;gap: 10px;">
           <b> <i class="fa-solid fa-bars fa-lg"></i> Description</b>
+            <textarea class="myTextArea" placeholder="Ex. describe your project..." [value]="card.description"></textarea>
 
-          <mat-form-field (mouseup)="isClicked = true" appearance="outline" >
-            <mat-label>Describe your idea</mat-label>
-            <textarea  matInput placeholder="Ex. describe your project..." [value]="card.description"></textarea>
-
-          </mat-form-field>
         </div>
 
 
@@ -244,11 +238,11 @@
                     <input matInput formControlName="name" />
                   </mat-form-field>
 
-                  <button (click)="unShowOptions(i)" mat-raised-button style="color: white;background-color: #d31010; border-radius: 2px;
+                  <button (click)="unShowOptions(i)" class="btn btn-sm" style="color: white;background-color: #d31010; border-radius: 2px;
   width: 120px;" >
                     {{'Cancel' }} </button>
 
-                  <button (click)="unShowOptions(i)" mat-raised-button style="background-color: #e0e0e0; border-radius: 2px;
+                  <button (click)="unShowOptions(i)" class="btn btn-sm" style="background-color: #e0e0e0; border-radius: 2px;
   width: 120px;" >
                     {{'Update' }} </button>
                 </form>
@@ -260,21 +254,14 @@
           </ul>
           @if (this.isClickedList) {
             <form [formGroup]="myForm" class="example-form">
-              <input  class="form-control h-25 opacity-75 inputListCard" placeholder="add an item" formControlName="name" />
-
+              <textarea class="myInput" (keydown.enter)="addItemListConfirm()"  placeholder="add an item" formControlName="name" ></textarea>
             </form>
-            <button (click)="isClickedList = false" mat-raised-button style="color: white;background-color: #d31010; border-radius: 2px;
-  width: 120px;" >
-              {{'Cancel' }} </button>
-
-            <button (click)="addItemListConfirm()" mat-raised-button style="background-color: #e0e0e0; border-radius: 2px;
-  width: 120px;" >
-              {{'Add' }} </button>
+            <button type="submit" (click)="isClickedList = false" class="btn btn-sm" style="margin: 10px 0 0 50px; background-color: #e0e0e0; text-decoration: none;">Cancel</button>
+            <button type="submit" (click)="addItemListConfirm()" class="btn btn-sm"  style="margin:  10px 0 0 10px; background-color: #005cbb; text-decoration: none; color: white">Add item</button>
 
           } @else {
-            <button  (click)="addItemList()" mat-raised-button style="background-color: #e0e0e0; padding: 2px;border-radius: 2px;
-  width: 120px;" >
-              {{'add items' }} </button>
+            <button  (click)="addItemList()" class="btn btn-sm" style="margin: 10px 0 0 50px; color:#4e5253;background-color: #e0e0e0; text-decoration: none;font-weight: 600">
+              add an item </button>
 
           }
 
@@ -290,11 +277,11 @@
       </div>
 
       <div class="flex-column2" >
-        <div class="card-footer" >
-          <span (click)="this.activateLabel = true"><i class="fa-solid fa-tag"></i> Labels</span>
+        <div class="card-footer" (click)="activateLabelFn(card)">
+          <span ><i class="fa-solid fa-tag"></i> Labels</span>
         </div>
-      <div class="card-footer">
-        <span (click)="activateDueDate(card)"><i class="fa-regular fa-calendar fa-lg" style="margin-right: 3px"> </i> Due date</span>
+      <div class="card-footer" (click)="activateDueDate(card)">
+        <span ><i class="fa-regular fa-calendar fa-lg" style="margin-right: 3px"> </i> Due date</span>
       </div>
         <div class="card-footer" >
         <span (click)="this.activateCheckList = true"><i class="fa-regular  fa-circle-check"></i> Checklist</span>
