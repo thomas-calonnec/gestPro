@@ -114,7 +114,6 @@ mat-chip {
 
 .buttonHide {
 
-  border-radius: 2px;
   width: 190px;
   padding: 0
 }
@@ -142,15 +141,42 @@ mat-chip {
   cursor: pointer;
   color: #888;
 }
-
+.dueDate {
+  display: flex;
+  flex-direction: column;
+}
+.dueDate h3{
+  font-size: 16px;
+  line-height: 20px;
+}
 .close-button:hover {
   color: #555;
 }
+.flex-container2 {
+  display: flex;
+  padding: 16px;
+  gap: 20px; /* Espacement entre les colonnes */
+}
+
+.flex-column1 {
+  width:70%; /* Chaque colonne prend 50% */
+
+}
+.flex-column2 {
+
+  width:30%;
+  display: flex;
+ flex-direction: column;
+
+}
+
+
 .container {
   display: flex;
+  width: 70%;
   flex-direction: column;
   gap: 20px; /* Ajoute un espacement uniforme entre les sections */
-  margin-bottom: 20px;
+  margin: 0;
 }
 .datePicker {
   display: flex;
@@ -236,3 +262,34 @@ mat-chip {
   }
 
 }
+
+.buttonAddList {
+  height: 40px;
+  margin-top: 10px;
+  border-radius: 0;
+  border-color: #0c66e4;
+  opacity: 0.8;
+}
+.card-footer {
+  margin-top: 0.5rem;
+  border-radius: 5px;
+  height: 35px;
+  width:100%;
+  padding: 6px 16px;
+
+  font-weight: 600;
+  color: #4e5253;
+  margin-right: 3px;
+  margin-left: 3px;
+  /*  color: #b5b5b5; /* Texte plus clair pour le pied de la carte */
+  cursor: pointer;
+  background-color: #d5dcde;
+  display: flex;
+  border-top: none;
+}
+
+//.card-footer:hover {
+//  background-color: #d5dcde;
+//  margin-left: 5px;
+//  margin-right: 7px;
+//}

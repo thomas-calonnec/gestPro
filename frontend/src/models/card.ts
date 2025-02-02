@@ -13,4 +13,6 @@ export interface Card {
     isCompleted: boolean;
     isHovered?: boolean;
     isDateActivated: boolean;
+    isLabelActivated: boolean;
+    isChecklistActivated: boolean;
 }
