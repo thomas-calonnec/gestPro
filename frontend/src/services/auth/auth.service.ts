@@ -1,5 +1,5 @@
 import {computed, effect, inject, Injectable, signal} from '@angular/core';
-import {catchError, Observable, of, tap} from 'rxjs';
+import {Observable, tap} from 'rxjs';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Router} from '@angular/router';
 import {jwtDecode} from 'jwt-decode';

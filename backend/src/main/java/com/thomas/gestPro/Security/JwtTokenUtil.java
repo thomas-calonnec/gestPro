@@ -7,15 +7,12 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.security.SignatureException; // ✅ Import correct
+// ✅ Import correct
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
@@ -35,8 +32,8 @@ public class JwtTokenUtil {
     @Autowired
     private Environment environment;
 
-    @Autowired
-    public JwtTokenUtil(UserDetailsService userDetailsService) {
+
+    public JwtTokenUtil() {
     }
 
 
