@@ -500,4 +500,12 @@ export class CardComponent implements OnInit {
     if(this.card.id !== undefined)
       this.updateCard(this.card.id,card)
   }
+
+  activateCheckListFn(card: Card) {
+      this.activateCheckList = true;
+      this.card.isChecklistActivated = true;
+    if(this.card.id !== undefined)
+      this.updateCard(this.card.id,card)
+
+  }
 }

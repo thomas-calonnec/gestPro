@@ -15,7 +15,8 @@
       class="task-name">{{ card.name }}<i class="fa-regular fa-pen-to-square" style=" text-align: right;color:#007bff;"></i></div></a>
   } @else {
 
-    <div [style]="completedTasksCount !== totalTasksCount ? 'height: 30px' : ''">
+
+    <div>
       <a ><div  class="task-name">{{ card.name }} </div></a>
     </div>
 
@@ -76,13 +77,13 @@
     <div class="flex-container2">
       <div class="flex-column1">
         @if (this.card.isLabelActivated) {
-          <div style="display: flex; flex-direction: column; margin-bottom: 30px">
-            <b>Labels</b>
+          <div style="display: flex; flex-direction: column; margin-bottom: 30px;">
+            <span style="font-size: 13pt; font-weight: 600"><i class="fa-solid fa-tag" style="margin-right: 16px"></i> Labels</span>
             <div class="status-labels">
               @for(label of card.labels; track label.id ){
                 <span [class]="'labels ' + 'badge-' + label.color" [matTooltip]="'color:' + label.color" matTooltipPosition="above"></span>
               }
-              <button mat-mini-fab style="border-radius: 5px;box-shadow: none" (click)="this.openLabel = true"> <mat-icon style="border-radius: 2px">add</mat-icon></button>
+              <button mat-mini-fab style="margin-top: 15px; border-radius: 5px;box-shadow: none" (click)="this.openLabel = true"> <mat-icon style="border-radius: 2px">add</mat-icon></button>
             </div>
           </div>
         }
@@ -180,100 +181,102 @@
         </div>
         }
           <div style="display: flex; flex-direction: column; margin-top: 20px;gap: 10px;">
-          <b> <i class="fa-solid fa-bars fa-lg"></i> Description</b>
-            <textarea class="myTextArea" placeholder="Ex. describe your project..." [value]="card.description"></textarea>
+         <span style="font-size: 13pt; font-weight: 600"><i class="fa-solid fa-bars " style="margin-right: 14px"></i> Description</span>
+            <textarea class="myTextArea" style=" margin-left: 30px; width: 93%;" placeholder="Ex. describe your project..." [value]="card.description"></textarea>
 
         </div>
 
-
-        <div>
-          <div class="flex-container">
-            <div class="left-content">
-              <b><i class="fa fa-regular fa-circle-check fa-lg"></i> CheckList ({{this.progress}}%)</b>
+        @if (this.card.isChecklistActivated) {
+          <div>
+            <div class="flex-container">
+              <div class="left-content">
+                <b><i class="fa fa-regular fa-circle-check fa-lg"></i> CheckList ({{this.progress}}%)</b>
+              </div>
+              <div class="right-content">
+                <button (click)="setHideSelected()" mat-flat-button   style="margin: 10px;text-decoration: none;" class="buttonAddList buttonHide">
+                  {{ !hideCompleted() ? 'hide checked items' : 'show checked items ('+ completedTasksCount+')' }} </button>
+              </div>
             </div>
-            <div class="right-content">
-              <button (click)="setHideSelected()" mat-flat-button   style="margin: 10px;text-decoration: none;" class="buttonAddList buttonHide">
-                {{ !hideCompleted() ? 'hide checked items' : 'show checked items ('+ completedTasksCount+')' }} </button>
-            </div>
-          </div>
-          <mat-progress-bar
-            mode="determinate"
-            [style]=" this.progress === 100 ?
-            '--mdc-linear-progress-active-indicator-color: green;':
-            '--mdc-linear-progress-active-indicator-color: blue;'
+            <mat-progress-bar
+              mode="determinate"
+              [style]=" this.progress === 100 ?
+            '--mdc-linear-progress-active-indicator-color: green; margin-left: 25px':
+            '--mdc-linear-progress-active-indicator-color: blue; margin-left: 25px;'
     "
-            [value]="progress">
-          </mat-progress-bar>
-          <ul style="list-style-type: none;  padding: 0;  margin: 0;">
+              [value]="progress">
+            </mat-progress-bar>
+            <ul style="list-style-type: none;  padding: 0; margin-left: 20px; margin-top: 10px;">
 
-            @for (task of completedTasks(); track task.id; let i = $index){
+              @for (task of completedTasks(); track task.id; let i = $index){
 
-              @if(!this.updateOptions[i] ){
-                <div class="flex-container containerList" style="padding-bottom: 0; padding-top: 2px"
-                     (mouseover)="this.hoverList(i)" (mouseout)="this.hoverListOut(i)">
-                  <div class="left-content" >
+                @if(!this.updateOptions[i] ){
+                  <div class="flex-container containerList" style="padding-bottom: 0; padding-top: 2px"
+                       (mouseover)="this.hoverList(i)" (mouseout)="this.hoverListOut(i)">
+                    <div class="left-content" >
 
-                    <li [hidden]="hideCompleted() && task.completed">
-                      <mat-checkbox [(ngModel)]="task.completed" (change)="updateProgress($event.checked,i)">
+                      <li [hidden]="hideCompleted() && task.completed">
+                        <mat-checkbox [(ngModel)]="task.completed" (change)="updateProgress($event.checked,i)">
 
-                      </mat-checkbox>
-                      <span [style.text-decoration]="task.completed ? 'line-through' : 'none'" (click)="updateList(i)"> {{ task.name }}</span>
+                        </mat-checkbox>
+                        <span [style.text-decoration]="task.completed ? 'line-through' : 'none'" (click)="updateList(i)"> {{ task.name }}</span>
 
-                    </li>
+                      </li>
 
 
+                    </div>
+                    <div class="right-content">
+                      @if(this.showOptions()[i]){
+
+                        <button mat-icon-button aria-label="Example icon button with a vertical three dot icon">
+                          <mat-icon>more_vert</mat-icon>
+                        </button>
+                      }
+                    </div>
                   </div>
-                  <div class="right-content">
-                    @if(this.showOptions()[i]){
+                } @else {
+                  <form [formGroup]="myForm" class="example-form">
+                    <mat-form-field class="example-full-width" style="padding: 0;">
+                      <input matInput formControlName="name" />
+                    </mat-form-field>
 
-                      <button mat-icon-button aria-label="Example icon button with a vertical three dot icon">
-                        <mat-icon>more_vert</mat-icon>
-                      </button>
-                    }
-                  </div>
-                </div>
-              } @else {
-                <form [formGroup]="myForm" class="example-form">
-                  <mat-form-field class="example-full-width" style="padding: 0;">
-                    <input matInput formControlName="name" />
-                  </mat-form-field>
-
-                  <button (click)="unShowOptions(i)" class="btn btn-sm" style="color: white;background-color: #d31010; border-radius: 2px;
+                    <button (click)="unShowOptions(i)" class="btn btn-sm" style="color: white;background-color: #d31010; border-radius: 2px;
   width: 120px;" >
-                    {{'Cancel' }} </button>
+                      {{'Cancel' }} </button>
 
-                  <button (click)="unShowOptions(i)" class="btn btn-sm" style="background-color: #e0e0e0; border-radius: 2px;
+                    <button (click)="unShowOptions(i)" class="btn btn-sm" style="background-color: #e0e0e0; border-radius: 2px;
   width: 120px;" >
-                    {{'Update' }} </button>
-                </form>
+                      {{'Update' }} </button>
+                  </form>
+                }
+
               }
+
+
+            </ul>
+            @if (this.isClickedList) {
+              <form [formGroup]="myForm" class="example-form">
+                <textarea class="myInput" (keydown.enter)="addItemListConfirm()"  placeholder="add an item" formControlName="name" ></textarea>
+              </form>
+              <button type="submit" (click)="isClickedList = false" class="btn btn-sm" style="margin: 10px 0 0 50px; background-color: #e0e0e0; text-decoration: none;">Cancel</button>
+              <button type="submit" (click)="addItemListConfirm()" class="btn btn-sm"  style="margin:  10px 0 0 10px; background-color: #005cbb; text-decoration: none; color: white">Add item</button>
+
+            } @else {
+              <button  (click)="addItemList()" class="btn btn-sm" style="margin: 10px 0 0 50px; color:#4e5253;background-color: #e0e0e0; text-decoration: none;font-weight: 600">
+                add an item </button>
 
             }
 
 
-          </ul>
-          @if (this.isClickedList) {
-            <form [formGroup]="myForm" class="example-form">
-              <textarea class="myInput" (keydown.enter)="addItemListConfirm()"  placeholder="add an item" formControlName="name" ></textarea>
-            </form>
-            <button type="submit" (click)="isClickedList = false" class="btn btn-sm" style="margin: 10px 0 0 50px; background-color: #e0e0e0; text-decoration: none;">Cancel</button>
-            <button type="submit" (click)="addItemListConfirm()" class="btn btn-sm"  style="margin:  10px 0 0 10px; background-color: #005cbb; text-decoration: none; color: white">Add item</button>
-
-          } @else {
-            <button  (click)="addItemList()" class="btn btn-sm" style="margin: 10px 0 0 50px; color:#4e5253;background-color: #e0e0e0; text-decoration: none;font-weight: 600">
-              add an item </button>
-
-          }
+            <!--  <div style="display: flex; flex-direction: column">
+                @for(list of this.checkListSignal(); track list.id ; let i = $index ){
 
 
-          <!--  <div style="display: flex; flex-direction: column">
-              @for(list of this.checkListSignal(); track list.id ; let i = $index ){
+                  <mat-checkbox [checked]="list.completed" (change)="update($event.checked,i)">{{ list.name }}</mat-checkbox>
+                }
+              </div>-->
+          </div>
+        }
 
-
-                <mat-checkbox [checked]="list.completed" (change)="update($event.checked,i)">{{ list.name }}</mat-checkbox>
-              }
-            </div>-->
-        </div>
       </div>
 
       <div class="flex-column2" >
@@ -283,7 +286,7 @@
       <div class="card-footer" (click)="activateDueDate(card)">
         <span ><i class="fa-regular fa-calendar fa-lg" style="margin-right: 3px"> </i> Due date</span>
       </div>
-        <div class="card-footer" >
+        <div class="card-footer" (click)="activateCheckListFn(card)">
         <span (click)="this.activateCheckList = true"><i class="fa-regular  fa-circle-check"></i> Checklist</span>
         </div>
       </div>

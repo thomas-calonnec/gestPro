@@ -5,13 +5,14 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.Claims;
+// ✅ Import correct
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
@@ -31,8 +32,8 @@ public class JwtTokenUtil {
     @Autowired
     private Environment environment;
 
-    @Autowired
-    public JwtTokenUtil(UserDetailsService userDetailsService) {
+
+    public JwtTokenUtil() {
     }
 
 
@@ -59,15 +60,16 @@ public class JwtTokenUtil {
                 .compact();
     }
 
-    // Valider un token
-    public boolean validateToken(String token) {
-        try {
-            Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
+    public boolean isTokenExpired(String token) {
+        return extractAllClaims(token).getExpiration().before(new Date());
     }
+    // Valider un token
+    public boolean validateToken(String token, UserDetails userDetails) {
+        final String username = extractUsername(token);
+        return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
+        }
+
+
 
     // Extraire le nom d'utilisateur d'un token
     public String getUsernameFromToken(String token) {
