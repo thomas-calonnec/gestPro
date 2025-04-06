@@ -10,6 +10,7 @@ import com.thomas.gestPro.Security.JwtTokenUtil;
 import com.thomas.gestPro.Security.TokenRequest;
 import com.thomas.gestPro.model.User;
 import com.thomas.gestPro.service.LoginService;
+import com.thomas.gestPro.service.TemporaryUserService;
 import com.thomas.gestPro.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -20,6 +21,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
@@ -31,9 +33,10 @@ import java.util.Collections;
 public class AuthController {
 
     private final UserService userService;
-   private final LoginService loginService;
+    private final LoginService loginService;
     private final AuthenticationManager authenticationManager;
    private final JwtTokenUtil jwtTokenUtil;
+    private final TemporaryUserService temporaryUserService;
 
     private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
 
@@ -42,11 +45,12 @@ public class AuthController {
 
 
     @Autowired
-    public AuthController(UserService userService, LoginService loginService, AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil) {
+    public AuthController(UserService userService, LoginService loginService, AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, TemporaryUserService temporaryUserService) {
         this.userService = userService;
         this.loginService = loginService;
         this.authenticationManager = authenticationManager;
         this.jwtTokenUtil = jwtTokenUtil;
+        this.temporaryUserService = temporaryUserService;
     }
 
     @PostMapping("/login")
@@ -112,10 +116,20 @@ public class AuthController {
 
     @PostMapping("/revoke-token")
     public ResponseEntity<?> refreshAccessToken(@CookieValue(value="revokeToken", required=false) String refreshToken) {
-        if (refreshToken == null || !jwtTokenUtil.validateToken(refreshToken)) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        System.err.println("Token reçu : " + refreshToken);
+        if (refreshToken == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token manquant");
         }
+
         String username = jwtTokenUtil.getUsernameFromToken(refreshToken);
+        UserDetails userDetails = temporaryUserService.loadUserByUsername(username);
+        boolean isValid = jwtTokenUtil.validateToken(refreshToken,userDetails);
+        System.err.println("Token valide ? " + isValid);
+        if (!isValid) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
+        }
+
+        System.err.println("Utilisateur extrait : " + username);
         User currentUser = this.userService.getUserByUsername(username);
         return ResponseEntity.ok()
                 .body(new JwtResponse(currentUser));
@@ -125,8 +139,9 @@ public class AuthController {
     @PostMapping("/oauth2")
     public ResponseEntity<JwtResponse> authenticateOAuth(@RequestBody TokenRequest tokenRequest) {
         try {
-            String clientId = env.getProperty("GOOGLE_CLIENT_ID");
+            String clientId = "392803604648-dk6fp063ihhicrvpaqd3m95l4hbe26p2.apps.googleusercontent.com";
             // Initialize the verifier
+            System.err.println(clientId);
             GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(
                     GoogleNetHttpTransport.newTrustedTransport(), JSON_FACTORY)
                     .setAudience(Collections.singletonList(clientId)) // Replace with your actual client ID
@@ -137,8 +152,7 @@ public class AuthController {
             GoogleIdToken idToken = verifier.verify(tokenRequest.getToken() ); // Use getToken instead of getTokenServerUrl
             if (idToken != null) {
                 GoogleIdToken.Payload payload = idToken.getPayload();
-
-                // Extract user information
+            // Extract user information
                 String userId = payload.getSubject();
                 String email = payload.getEmail();
                 String name = (String) payload.get("name");
@@ -150,7 +164,7 @@ public class AuthController {
                User googleUser = this.userService.createGoogleUser(name,email,pictureUrl,userId);
 
                 ResponseCookie refreshTokenCookie = ResponseCookie.from("accessToken",tokenRequest.getToken())
-                .httpOnly(true)
+               .httpOnly(true)
                         .secure(true)
                         .sameSite("Strict")
                         .path("/")

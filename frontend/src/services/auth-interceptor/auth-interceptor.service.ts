@@ -16,6 +16,9 @@ export class AuthInterceptor implements HttpInterceptor {
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const authService = inject(AuthService);
 
+    if (req.url.includes('/revoke-token')) {
+      return next.handle(req);
+    }
     return next.handle(req).pipe(
       catchError((error: HttpErrorResponse) => {
         if (error.status === 401) {

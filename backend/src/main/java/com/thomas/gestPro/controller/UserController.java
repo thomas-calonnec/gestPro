@@ -4,6 +4,7 @@ import com.thomas.gestPro.Security.JwtTokenUtil;
 import com.thomas.gestPro.model.Card;
 import com.thomas.gestPro.model.User;
 import com.thomas.gestPro.model.Workspace;
+import com.thomas.gestPro.service.TemporaryUserService;
 import com.thomas.gestPro.service.UserService;
 import io.micrometer.common.lang.Nullable;
 import jakarta.servlet.http.Cookie;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,13 +25,15 @@ public class UserController {
 
     private final UserService userService;
     private final JwtTokenUtil jwtTokenUtil;
+    private final TemporaryUserService temporaryUserService;
 
 
     @Autowired
-    public UserController(UserService userService, JwtTokenUtil jwtTokenUtil) {
+    public UserController(UserService userService, JwtTokenUtil jwtTokenUtil, TemporaryUserService temporaryUserService) {
         this.userService = userService;
 
         this.jwtTokenUtil = jwtTokenUtil;
+        this.temporaryUserService = temporaryUserService;
     }
 
     @GetMapping("/{id}")
@@ -66,7 +70,10 @@ public class UserController {
 
         }
 
-        if (authToken != null && (jwtTokenUtil.validateToken(authToken) || jwtTokenUtil.validateGoogleToken(authToken))) {
+
+        String username = jwtTokenUtil.getUsernameFromToken(authToken);
+        UserDetails userDetails = temporaryUserService.loadUserByUsername(username);
+        if (authToken != null && (jwtTokenUtil.validateToken(authToken,userDetails) || jwtTokenUtil.validateGoogleToken(authToken))) {
             return ResponseEntity.ok(true);
         } else {
             return ResponseEntity.ok(false);

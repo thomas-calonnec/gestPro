@@ -1,7 +1,6 @@
 package com.thomas.gestPro.Security;
 
 
-import io.micrometer.common.lang.Nullable;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,48 +12,57 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+
 import java.io.IOException;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
 
     private final JwtTokenUtil jwtTokenUtil;  // Classe utilitaire pour générer/valider les JWT
-    private final UserDetailsService userDetailsService;
 
-    public JwtRequestFilter(JwtTokenUtil jwtTokenUtil, UserDetailsService userDetailsService) {
+    private UserDetailsService userDetailsService;
+
+    public JwtRequestFilter(JwtTokenUtil jwtTokenUtil) {
         this.jwtTokenUtil = jwtTokenUtil;
-        this.userDetailsService = userDetailsService;
-    }
-
-    private String extractJwtFromRequest(HttpServletRequest request) {
-        String bearToken = request.getHeader("Authorization");
-        if (bearToken != null && bearToken.startsWith("Bearer ")) {
-            return bearToken.substring(7); // Extracts the token part after "Bearer "
-        }
-        return null;
     }
     @Override
-    protected void doFilterInternal(@Nullable HttpServletRequest request, @Nullable HttpServletResponse response, @Nullable FilterChain chain)
-            throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain) throws ServletException, IOException {
 
-        assert request != null;
-        String token = extractJwtFromRequest(request);
+        final String authHeader = request.getHeader("Authorization");
+        final String jwt;
+        final String username;
 
-        if (token != null && jwtTokenUtil.validateToken(token)) {
-            String username = jwtTokenUtil.getUsernameFromToken(token);
+        if(authHeader == null||!authHeader.startsWith("Bearer "))
 
-            System.err.println("username : " +username);
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-
-            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-        }
-        assert chain != null;
-        chain.doFilter(request, response);
+             {
+        filterChain.doFilter(request, response); // Pas de JWT, on laisse passer
+        return;
     }
 
+    jwt = authHeader.substring(7);
+    username = jwtTokenUtil.extractUsername(jwt); // <- extrais le username depuis le token
+
+        if(username !=null&&SecurityContextHolder.getContext().getAuthentication() ==null)
+        {
+        UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+
+        if (jwtTokenUtil.validateToken(jwt, userDetails)) {
+            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                    userDetails,
+                    null,
+                    userDetails.getAuthorities()
+            );
+            authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(authToken); // On authentifie
+        }
+    }
+
+        filterChain.doFilter(request,response);
+     }
+}
+    // Récupérer le refresh token depuis les cookies ou les en-têtes de la requête
 
     // Récupérer le token d'accès depuis l'en-tête Authorization
 //
@@ -103,4 +111,3 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 //        assert chain != null;
 //        chain.doFilter(request, response); // Continuer avec le filtre suivant
 //}
-}

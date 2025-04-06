@@ -38,9 +38,7 @@ export class LoginComponent implements OnInit{
 
   ngOnInit() {
     (window as any).handleCredentialResponse = (response: any) => {
-
       this.authService.verifyTokenWithBackend(response.credential);
-
     }
   }
 

@@ -1,6 +1,6 @@
 import {computed, effect, inject, Injectable, signal} from '@angular/core';
-import {Observable, tap} from 'rxjs';
-import {HttpClient} from '@angular/common/http';
+import {catchError, Observable, of, tap} from 'rxjs';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Router} from '@angular/router';
 import {jwtDecode} from 'jwt-decode';
 import {environment} from '@environments/environment.development';
@@ -88,7 +88,12 @@ export class AuthService {
 
   login(username: string, password: string): Observable<any> {
 
-    return this.http.post<User>(`${this.apiServerUrl}/login`, { username, password }, {withCredentials: true})
+    const headers = new HttpHeaders().set('Content-Type', 'application/json');
+    return this.http.post<User>(`${this.apiServerUrl}/login`,
+      { username, password },
+      {
+        headers: headers,
+        withCredentials: true})
   }
 
   logout() {
@@ -109,13 +114,12 @@ export class AuthService {
   getOAuthGoogle(idToken: string):Observable<any> {
 
     return this.http.post<any>(`${this.apiServerUrl}/oauth2`, { token: idToken }, // Payload
-      { headers: { 'Content-Type': 'application/json' },
-        withCredentials: true
-      })
+      { withCredentials: true}
+      )
   }
   verifyTokenWithBackend(idToken: string) {
 
-
+    console.log("test")
     this.getOAuthGoogle(idToken).subscribe({
       next: googleResponse => {
       console.log(googleResponse.user.id)
@@ -133,9 +137,12 @@ export class AuthService {
   revokeToken() {
     return this.http.post<any>(`${this.apiServerUrl}/revoke-token`, {}, { withCredentials: true })
       .pipe(
-        tap(() => {
-          // Les nouveaux tokens sont automatiquement stockés dans des cookies HTTP-only
-          console.log('Tokens refreshed successfully');
+        tap(response => {
+          if (response.success) {
+            console.log('Token revoked successfully');
+          } else {
+            console.warn('Token revocation may have failed:', response.message);
+          }
         })
       );
   }
