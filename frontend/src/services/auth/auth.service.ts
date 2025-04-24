@@ -14,14 +14,7 @@ export class AuthService {
 
   private apiServerUrl= environment.apiUrl + '/auth'
   private cookieService = inject(CookieService);
-  private authConfig: AuthConfig = {
-    issuer: 'https://github.com/login/oauth',
-    redirectUri: window.location.origin + '/callback',
-    clientId: 'YOUR_GITHUB_CLIENT_ID', // Remplacez par votre ID de client GitHub
-    responseType: 'token',
-    scope: 'user',  // Demande l'accès à l'API utilisateur GitHub
-    showDebugInformation: true,  // Affiche des informations de débogage dans la console
-  };
+
   private router : Router = inject(Router);
   private http: HttpClient = inject(HttpClient);
   private _currentUser = signal<User | null>(null);
