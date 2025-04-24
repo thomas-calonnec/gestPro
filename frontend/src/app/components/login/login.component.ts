@@ -11,11 +11,12 @@ import {MatInputModule} from '@angular/material/input';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import { CookieService } from 'ngx-cookie-service';
 import {environment} from '@environments/environment.development';
+import {MatButton} from '@angular/material/button';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule],
+  imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButton],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
@@ -45,13 +46,25 @@ export class LoginComponent implements OnInit{
   private _snackBar = inject(MatSnackBar);
 
   openSnackBar() {
-    this._snackBar.open('Login accepted!', '', {
-      duration: 2000, // Durée d'affichage en millisecondes (ici 3 secondes)
-      horizontalPosition: 'center', // Position horizontale : 'start' | 'center' | 'end' | 'left' | 'right'
-      verticalPosition: 'bottom', // Position verticale : 'top' | 'bottom'
-    });
-  }
+    if (this.authService.isConnected()) {
+      this._snackBar.open('Login accepted!', '', {
+        duration: 2000, // Durée d'affichage en millisecondes (ici 3 secondes)
+        horizontalPosition: 'center', // Position horizontale : 'start' | 'center' | 'end' | 'left' | 'right'
+        verticalPosition: 'bottom', // Position verticale : 'top' | 'bottom'
+      });
+    }
 
+  }
+  loginWithGithub() {
+  /*  const popup = window.open(
+      'http://localhost:8080/oauth2/authorization/github',
+      'GitHub Login',
+      'width=500,height=600'
+    );*/
+    window.opener
+
+    //window.location.href = 'https://github.com/login/oauth/authorize?client_id=Ov23liGBc9wuOQ9SDN8a&scope=user';
+  }
   onLogin() {
 
     const username = this.myForm.get('username')?.value;

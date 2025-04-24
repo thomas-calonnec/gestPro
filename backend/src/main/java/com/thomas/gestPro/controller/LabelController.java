@@ -26,11 +26,11 @@ public class LabelController {
     public ResponseEntity<List<Label>> getAllLabel(){
         return ResponseEntity.ok(labelService.findAllLabel());
     }
+
     @GetMapping("/{id}")
     public ResponseEntity<Label> getLabelById(@PathVariable Long id) {
         return ResponseEntity.ok(labelService.findLabelById(id));
     }
-
 
     @PutMapping("/create")
     public ResponseEntity<String> createLabel(@RequestBody Label label) {

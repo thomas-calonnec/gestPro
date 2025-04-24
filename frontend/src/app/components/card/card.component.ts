@@ -132,6 +132,7 @@ export class CardComponent implements OnInit {
 
   onMouseEnter(task: Card): void {
     task.isHovered = true;
+    
   }
 
   onMouseLeave(task: Card): void {

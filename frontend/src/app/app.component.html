@@ -1,5 +1,8 @@
-
-        <router-outlet />
+@if (loading()) {
+  <app-loading />
+} @else {
+  <router-outlet />
+}
 
 
 

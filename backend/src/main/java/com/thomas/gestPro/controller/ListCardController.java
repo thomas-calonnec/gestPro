@@ -28,7 +28,6 @@ public class ListCardController {
         return listCard != null ? ResponseEntity.ok(listCard) : ResponseEntity.notFound().build();
     }
 
-
     @GetMapping("{id}/cards")
     public ResponseEntity<List<Card>> getCardsByListCardId(@PathVariable Long id) {
         return ResponseEntity.ok(listCardService.getCardsByListCardId(id));

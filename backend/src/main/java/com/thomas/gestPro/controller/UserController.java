@@ -1,15 +1,18 @@
 package com.thomas.gestPro.controller;
 
+import com.thomas.gestPro.Security.JwtResponse;
 import com.thomas.gestPro.Security.JwtTokenUtil;
 import com.thomas.gestPro.model.Card;
 import com.thomas.gestPro.model.User;
 import com.thomas.gestPro.model.Workspace;
+import com.thomas.gestPro.service.AuthService;
 import com.thomas.gestPro.service.TemporaryUserService;
 import com.thomas.gestPro.service.UserService;
 import io.micrometer.common.lang.Nullable;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,16 +27,12 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
-    private final JwtTokenUtil jwtTokenUtil;
-    private final TemporaryUserService temporaryUserService;
-
+    private final AuthService authService;
 
     @Autowired
-    public UserController(UserService userService, JwtTokenUtil jwtTokenUtil, TemporaryUserService temporaryUserService) {
+    public UserController(UserService userService, AuthService authService) {
         this.userService = userService;
-
-        this.jwtTokenUtil = jwtTokenUtil;
-        this.temporaryUserService = temporaryUserService;
+        this.authService = authService;
     }
 
     @GetMapping("/{id}")
@@ -41,43 +40,16 @@ public class UserController {
         return ResponseEntity.ok(userService.getById(id));
     }
 
-    /*@GetMapping("/protected-endpoint")
-    public ResponseEntity<?> getProtectedData(HttpServletRequest request) {
-        // Récupérer l'en-tête Authorization
-        final String authorizationHeader = request.getHeader("Authorization");
-
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            String token = authorizationHeader.substring(7); // Extraire le token après "Bearer "
-            // Vous pouvez maintenant utiliser et valider le token JWT
-            return ResponseEntity.ok(new JwtResponse(token));
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authorization header is missing or invalid");
-        }
-    }*/
     @GetMapping("/current-user")
-    public ResponseEntity<Boolean> getCurrentUser(@Nullable HttpServletRequest request)  {
-        assert request != null;
-        Cookie[] cookies = request.getCookies();
-        String authToken = null;
+    public ResponseEntity<JwtResponse> getCurrentUser()  {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof User user) {
+            return ResponseEntity.ok(new JwtResponse(user));
 
-        if (cookies != null)  {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("accessToken")) {
-                    authToken = cookie.getValue();
-                    break;
-                }
-            }
-
-        }
-
-
-        String username = jwtTokenUtil.getUsernameFromToken(authToken);
-        UserDetails userDetails = temporaryUserService.loadUserByUsername(username);
-        if (authToken != null && (jwtTokenUtil.validateToken(authToken,userDetails) || jwtTokenUtil.validateGoogleToken(authToken))) {
-            return ResponseEntity.ok(true);
         } else {
-            return ResponseEntity.ok(false);
+            return ResponseEntity.notFound().build();
         }
+
 
     }
     @GetMapping("/username/{name}")

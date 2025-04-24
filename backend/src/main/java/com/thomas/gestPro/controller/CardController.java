@@ -26,12 +26,12 @@ public class CardController {
         return ResponseEntity.ok(cardService.getCardById(id));
     }
 
-
     @PostMapping("/{id}/label/create")
     public ResponseEntity<Card> addLabelColor(@PathVariable Long id, @RequestBody Label label) {
         Card updateCard = cardService.addCardLabelColor(id,label);
         return ResponseEntity.ok(updateCard);
     }
+
     @PutMapping("/{id}/label")
     public ResponseEntity<Card> updateLabel(@PathVariable Long id, @RequestBody Label label) {
         Card updateCard = cardService.addCardLabelColor(id,label);
@@ -40,18 +40,13 @@ public class CardController {
 
     @PutMapping("/{id}/check-list/update")
     public ResponseEntity<Card> updateCheckList(@PathVariable Long id, @RequestBody CheckList checkList) {
-
         Card updateCard = cardService.updateCheckList(id,checkList);
-
         return ResponseEntity.ok(updateCard);
-
     }
 
     @PutMapping("/{id}/update")
     public ResponseEntity<Card> updateCardById(@PathVariable Long id, @RequestBody Card card) {
-
         Card updateCard = cardService.updateCard(id,card);
-
         return new ResponseEntity<>(updateCard,HttpStatus.OK);
     }
 
@@ -63,14 +58,8 @@ public class CardController {
 
     @PostMapping("/{id}/label/remove")
     public ResponseEntity<Card> removeLabelFromCard(@PathVariable Long id, @RequestBody Label label) {
-
         cardService.removeLabelFromCard(id,label.getColor());
         return ResponseEntity.noContent().build();
     }
 
-   /* @PostMapping("/clearLabel/{cardId}")
-    public ResponseEntity<String> deleteCardAndLabels(@PathVariable Long cardId) {
-        cardService.deleteCardAndLabels(cardId);
-        return ResponseEntity.ok("Card deleted and labels successfully deleted");
-    }*/
 }
