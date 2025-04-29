@@ -17,8 +17,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
 
 
 @EnableWebSecurity
@@ -60,8 +60,23 @@ public class SecurityConfig {
                         }
                 )
 
-                //.oauth2Login(Customizer.withDefaults())
+//                .oauth2Login(oauth -> oauth
+//                        .defaultSuccessUrl("/oauth-success", true) // ✅ redirection après succès
+//                )
+//                .oauth2Login(oauth -> oauth
+//                        .loginPage("/login") // page custom si tu veux
+//                        .successHandler(oAuth2SuccessHandler()) // ton handler personnalisé
+//                )
                 .oauth2Client(Customizer.withDefaults())
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("http://localhost:4200/login")
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID","accessToken","refreshToken","gh_token")
+                )
+//               .oauth2Login(oauth2 -> oauth2
+//                        .defaultSuccessUrl("/dashboard", true)  // redirige après login
+//                )
                 //.oauth2ResourceServer(oauth2 -> oauth2.opaqueToken(Customizer.withDefaults()))
 
                 .sessionManagement(session ->  session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -72,6 +87,11 @@ public class SecurityConfig {
                 .build();
     }
     @Bean
+    public AuthenticationSuccessHandler oAuth2SuccessHandler() {
+        return new OAuth2AuthenticationSuccessHandler();
+    }
+
+    @Bean
     public JwtDecoder jwtDecoder() {
         return NimbusJwtDecoder.withJwkSetUri("https://www.googleapis.com/oauth2/v3/certs").build();
     }
@@ -80,6 +100,7 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
 
 
 }

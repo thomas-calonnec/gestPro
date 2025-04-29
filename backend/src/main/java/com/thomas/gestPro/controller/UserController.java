@@ -1,22 +1,18 @@
 package com.thomas.gestPro.controller;
 
-import com.thomas.gestPro.Security.JwtTokenUtil;
 import com.thomas.gestPro.model.Card;
 import com.thomas.gestPro.model.User;
 import com.thomas.gestPro.model.Workspace;
-import com.thomas.gestPro.service.TemporaryUserService;
 import com.thomas.gestPro.service.UserService;
-import io.micrometer.common.lang.Nullable;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
@@ -24,62 +20,26 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
-    private final JwtTokenUtil jwtTokenUtil;
-    private final TemporaryUserService temporaryUserService;
-
 
     @Autowired
-    public UserController(UserService userService, JwtTokenUtil jwtTokenUtil, TemporaryUserService temporaryUserService) {
+    public UserController(UserService userService) {
         this.userService = userService;
-
-        this.jwtTokenUtil = jwtTokenUtil;
-        this.temporaryUserService = temporaryUserService;
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
+    @GetMapping("/id/{id}")
+    public ResponseEntity<Optional<User>> getUserById(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getById(id));
     }
 
-    /*@GetMapping("/protected-endpoint")
-    public ResponseEntity<?> getProtectedData(HttpServletRequest request) {
-        // Récupérer l'en-tête Authorization
-        final String authorizationHeader = request.getHeader("Authorization");
+//    @GetMapping("/current-user")
+//    public ResponseEntity<?> getCurrentUser(Authentication authentication) {
+//        if (authentication == null || !authentication.isAuthenticated()) {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+//        }
+//        User user = (User) authentication.getPrincipal(); // ou adapter selon ton UserDetails
+//        return ResponseEntity.ok(user);
+//    }
 
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            String token = authorizationHeader.substring(7); // Extraire le token après "Bearer "
-            // Vous pouvez maintenant utiliser et valider le token JWT
-            return ResponseEntity.ok(new JwtResponse(token));
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authorization header is missing or invalid");
-        }
-    }*/
-    @GetMapping("/current-user")
-    public ResponseEntity<Boolean> getCurrentUser(@Nullable HttpServletRequest request)  {
-        assert request != null;
-        Cookie[] cookies = request.getCookies();
-        String authToken = null;
-
-        if (cookies != null)  {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("accessToken")) {
-                    authToken = cookie.getValue();
-                    break;
-                }
-            }
-
-        }
-
-
-        String username = jwtTokenUtil.getUsernameFromToken(authToken);
-        UserDetails userDetails = temporaryUserService.loadUserByUsername(username);
-        if (authToken != null && (jwtTokenUtil.validateToken(authToken,userDetails) || jwtTokenUtil.validateGoogleToken(authToken))) {
-            return ResponseEntity.ok(true);
-        } else {
-            return ResponseEntity.ok(false);
-        }
-
-    }
     @GetMapping("/username/{name}")
     public ResponseEntity<User> getUserByUsername(@PathVariable String name) {
 
@@ -133,6 +93,11 @@ public class UserController {
         return ResponseEntity.ok(newWorkspace);
     }
 
+    @PutMapping("/create")
+    public ResponseEntity<User> createUser(@RequestBody User user) {
+        userService.createUserGithub(user);
+        return new ResponseEntity<>(user, HttpStatus.CREATED);
+    }
 
 
     /*@PostMapping("/login")

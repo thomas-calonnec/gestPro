@@ -1,19 +1,18 @@
 import {inject} from '@angular/core';
 import {AuthService} from '@services/auth/auth.service';
 import {Router} from '@angular/router';
+import {Observable, tap} from 'rxjs';
 
-export const AuthGuard  = () => {
-  const auth = inject(AuthService);
+export const AuthGuard = (): Observable<boolean> => {
+  const authService = inject(AuthService);
   const router = inject(Router);
-console.log("auth : " + auth.isAuthenticated())
 
-  return auth.isAuthenticated().subscribe({
-    next: response => {
-      if(!response){
-        router.navigateByUrl('login').then(r => console.log(r))
+  return authService.checkAuth().pipe(
+    tap((isLoggedIn) => {
+      console.log(isLoggedIn)
+      if(!isLoggedIn) {
+        router.navigate(['/login'])
       }
-    }
-  })
-
-
-}
+    })
+  )
+};

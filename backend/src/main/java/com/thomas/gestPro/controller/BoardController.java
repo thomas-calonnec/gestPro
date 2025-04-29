@@ -15,12 +15,10 @@ import java.util.List;
 public class BoardController {
 
     private final BoardService boardService;
-    private final ListCardService listCardService;
 
     @Autowired
-    public BoardController(BoardService boardService, ListCardService listCardService) {
+    public BoardController(BoardService boardService) {
         this.boardService = boardService;
-        this.listCardService = listCardService;
     }
 
     @GetMapping("/{id}")
@@ -42,16 +40,13 @@ public class BoardController {
 
     @PutMapping("/{id}/listCards/update")
     public ResponseEntity<List<ListCard>> updateListCard(@PathVariable Long id, @RequestBody List<ListCard> listCard) {
-
         List<ListCard> newListCard =  boardService.updateListCard(id, listCard);
-
         return ResponseEntity.ok(newListCard);
     }
 
     @PutMapping("/{id}/update")
     public ResponseEntity<Board> updateBoardById(@PathVariable Long id, @RequestBody Board board) {
         Board updateBoard = boardService.updateBoard(id,board);
-
         return ResponseEntity.ok(updateBoard);
     }
 

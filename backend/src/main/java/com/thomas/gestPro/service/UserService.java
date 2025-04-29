@@ -12,10 +12,11 @@ import com.thomas.gestPro.repository.UserRepository;
 import com.thomas.gestPro.repository.WorkspaceRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Service class for managing user-related operations.
@@ -28,7 +29,6 @@ public class UserService {
     private final UserRepository userRepository;
     private final CardRepository cardRepository;
     private final WorkspaceRepository workspaceRepository;
-    private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
 
     /**
@@ -39,11 +39,10 @@ public class UserService {
      * @param workspaceRepository repository for managing workspaces
      */
     @Autowired
-    public UserService(UserRepository userRepository, CardRepository cardRepository, WorkspaceRepository workspaceRepository, PasswordEncoder passwordEncoder, RoleRepository roleRepository) {
+    public UserService(UserRepository userRepository, CardRepository cardRepository, WorkspaceRepository workspaceRepository, RoleRepository roleRepository) {
         this.userRepository = userRepository;
         this.cardRepository = cardRepository;
         this.workspaceRepository = workspaceRepository;
-        this.passwordEncoder = passwordEncoder;
         this.roleRepository = roleRepository;
     }
 
@@ -54,8 +53,8 @@ public class UserService {
      * @return the found user
      * @throws ResourceNotFoundException if the user is not found
      */
-    public User getById(Long userId) {
-        return userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+    public Optional<User> getById(Long userId) {
+        return userRepository.findById(userId) ;
     }
 
    /* public User getByUsername(String username) {
@@ -74,16 +73,30 @@ public class UserService {
     /**
      * Creates a new user if the username does not already exist.
      *
-     * @param user the user to create
+     *
      * @throws InvalidInputException if a user with the same username already exists
      */
-    public void createUser(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+    @Transactional
+    public void  createUserGithub(User incomingUser) {
+        Optional<User> optionalUser = userRepository.findByProviderIdAndProviderName(
+                incomingUser.getProviderId(),
+                "Github"
+                );
+
         Role userRole = roleRepository.findByName("ROLE_USER");
 
-        user.getRoles().add(userRole);
+        if (optionalUser.isEmpty()) {
+            // Création
+            User user = new User();
+            user.setProviderId(incomingUser.getProviderId());
+            user.setProviderName("Github");
+            user.setEmail(incomingUser.getEmail());
+            user.setUsername(incomingUser.getUsername());
 
-        userRepository.save(user);
+            user.setPassword(null); // ou une valeur par défaut
+            user.setRoles(new ArrayList<>(List.of(userRole)));
+            userRepository.save(user);
+        }
 
     }
 
@@ -95,14 +108,17 @@ public class UserService {
      * @return the updated user
      */
     public User updateUser(Long userId, User updateUser){
-        User existingUser = getById(userId);
+        Optional<User> existingUser = getById(userId);
+        if (existingUser.isPresent()) {
+            User user = existingUser.get();
+            user.setUsername(updateUser.getUsername());
+            user.setEmail(updateUser.getEmail());
+            user.setPassword(updateUser.getPassword());
+            user.setRoles(updateUser.getRoles());
+            return userRepository.save(user);
+        }
 
-        existingUser.setUsername(updateUser.getUsername());
-        existingUser.setEmail(updateUser.getEmail());
-        existingUser.setPassword(updateUser.getPassword());
-        existingUser.setRoles(updateUser.getRoles());
-
-        return userRepository.save(existingUser);
+        return null;
 
     }
 
@@ -124,16 +140,21 @@ public class UserService {
      * @throws ResourceNotFoundException if the card is not found
      */
     public User addCardToUser(Long userId, Long cardId) {
-        User user = getById(userId);
+        Optional<User> existedUser = getById(userId);
         Card card = cardRepository.findById(cardId).orElseThrow(() -> new ResourceNotFoundException("Card not found"));
 
-        user.getCards().add(card);
-        userRepository.save(user);
+        if(existedUser.isPresent()){
+            User user = existedUser.get();
+            user.getCards().add(card);
+            userRepository.save(user);
 
-        card.getUsers().add(user);
-        cardRepository.save(card);
+            card.getUsers().add(user);
+            cardRepository.save(card);
 
-        return user;
+            return user;
+        }
+
+        return null;
     }
 
     /**
@@ -145,48 +166,65 @@ public class UserService {
      */
     @Transactional
     public Workspace createWorkspace(Long userId, Workspace workspace) {
-        User existingUser = getById(userId);
+        Optional<User> existingUser = getById(userId);
 
-        Workspace newWorkspace = new Workspace();
-        newWorkspace.setName(workspace.getName());
-        newWorkspace.getUsers().add(existingUser);
+        if (existingUser.isPresent()) {
+            User user = existingUser.get();
 
-        workspaceRepository.save(newWorkspace);
+            Workspace newWorkspace = new Workspace();
+            newWorkspace.setName(workspace.getName());
+            newWorkspace.getUsers().add(user);
 
-        existingUser.getWorkspaces().add(newWorkspace);
+            workspaceRepository.save(newWorkspace);
 
-        userRepository.save(existingUser);
-        return newWorkspace;
+            user.getWorkspaces().add(newWorkspace);
+
+            userRepository.save(user);
+            return newWorkspace;
+        }
+        return null;
     }
 
     public User getUserByUsername(String username) {
-        return userRepository.getUserByUsername(username);
+        return userRepository.getUserByUsername (username);
 
     }
 
+    public Optional<User> getUserByProviderId(String providerId) {
+        return userRepository.findByProviderId(providerId);
+    }
+
     public List<Workspace> getWorkspacesByUserId(Long userId) {
-        return this.getById(userId).getWorkspaces();
+        Optional<User> existingUser = getById(userId);
+        if (existingUser.isPresent()) {
+            User user = existingUser.get();
+            return user.getWorkspaces();
+        }
+        return null;
+
     }
 
     public User createGoogleUser(String username, String email, String pictureUrl, String googleId) {
 
-        if(userRepository.getUserByUsername(username) != null)
-            return userRepository.getUserByUsername(username);
+        if(userRepository.findByProviderId(googleId).isPresent()){
+            Optional<User> optionalUser =  userRepository.findByProviderId(googleId);
+            return optionalUser.orElse(null);
+
+        }
+
 
         User googleUser = new User();
         googleUser.setEmail(email);
         googleUser.setPictureUrl(pictureUrl);
         googleUser.setUsername(username);
-        googleUser.setGoogleId(googleId);
+        googleUser.setProviderId(googleId);
+        googleUser.setProviderName("google");
 
         Role userRole = roleRepository.findByName("ROLE_USER");
         googleUser.getRoles().add(userRole);
 
         userRepository.save(googleUser);
 
-
         return googleUser;
-
     }
-
 }

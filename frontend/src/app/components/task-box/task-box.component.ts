@@ -4,15 +4,14 @@ import {MatInputModule} from '@angular/material/input';
 import {FormsModule} from '@angular/forms';
 
 @Component({
-  selector: 'app-task-box',
-  standalone: true,
-  imports: [
-    MatButton,
-    MatInputModule,
-    FormsModule
-  ],
-  templateUrl: './task-box.component.html',
-  styleUrl: './task-box.component.css'
+    selector: 'app-task-box',
+    imports: [
+        MatButton,
+        MatInputModule,
+        FormsModule
+    ],
+    templateUrl: './task-box.component.html',
+    styleUrl: './task-box.component.css'
 })
 export class TaskBoxComponent {
   @Input() title: string = 'Modal Title';

@@ -16,22 +16,18 @@ import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} fr
 import {provideNativeDateAdapter} from '@angular/material/core';
 import {ListCard} from '@models/list-card';
 import {CdkDragHandle} from '@angular/cdk/drag-drop';
-import {MatInput} from '@angular/material/input';
 
 @Component({
-  selector: 'app-list-card',
-  standalone: true,
-  providers: [provideNativeDateAdapter()],
-  imports: [
-    CardComponent,
-    FormsModule,
-    ReactiveFormsModule,
-    CdkDragHandle,
-
-
-  ],
-  templateUrl:'./list-card.component.html',
-  styleUrl: './list-card.component.css'
+    selector: 'app-list-card',
+    providers: [provideNativeDateAdapter()],
+    imports: [
+        CardComponent,
+        FormsModule,
+        ReactiveFormsModule,
+        CdkDragHandle,
+    ],
+    templateUrl: './list-card.component.html',
+    styleUrl: './list-card.component.css'
 })
 export class ListCardComponent implements OnInit {
 

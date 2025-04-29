@@ -14,20 +14,19 @@ import {MatButton} from '@angular/material/button';
 import {Board} from '@models/board';
 
 @Component({
-  selector: 'app-dialog-create-board',
-  standalone: true,
-  imports: [
-    MatDialogContent,
-    MatDialogTitle,
-    MatFormFieldModule,
-    MatDialogActions,
-    MatDialogClose,
-    FormsModule,
-    MatInput,
-    MatButton
-  ],
-  templateUrl: './dialog-create-board.component.html',
-  styleUrl: './dialog-create-board.component.css'
+    selector: 'app-dialog-create-board',
+    imports: [
+        MatDialogContent,
+        MatDialogTitle,
+        MatFormFieldModule,
+        MatDialogActions,
+        MatDialogClose,
+        FormsModule,
+        MatInput,
+        MatButton
+    ],
+    templateUrl: './dialog-create-board.component.html',
+    styleUrl: './dialog-create-board.component.css'
 })
 export class DialogCreateBoardComponent {
   readonly dialogRef = inject(MatDialogRef<DialogCreateBoardComponent>);

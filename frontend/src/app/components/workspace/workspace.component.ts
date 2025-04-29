@@ -19,18 +19,17 @@ import localeFr from '@angular/common/locales/fr';
 registerLocaleData(localeFr);
 
 @Component({
-  selector: 'app-workspace',
-  standalone: true,
-  templateUrl: 'workspace.component.html',
-  providers: [provideNativeDateAdapter(),DatePipe, {provide: LOCALE_ID, useValue: 'fr-FR'},
-  ],
-  imports: [
-    RouterLink,
-    ReactiveFormsModule,
-    MatButtonModule,
-    DatePipe,
-  ],
-  styleUrl: './workspace.component.css'
+    selector: 'app-workspace',
+    templateUrl: 'workspace.component.html',
+    providers: [provideNativeDateAdapter(), DatePipe, { provide: LOCALE_ID, useValue: 'fr-FR' },
+    ],
+    imports: [
+        RouterLink,
+        ReactiveFormsModule,
+        MatButtonModule,
+        DatePipe,
+    ],
+    styleUrl: './workspace.component.css'
 })
 export class WorkspaceComponent implements OnInit{
 

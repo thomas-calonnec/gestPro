@@ -1,11 +1,12 @@
-import {computed, effect, inject, Injectable, signal} from '@angular/core';
-import {Observable, tap} from 'rxjs';
+import { inject, Injectable} from '@angular/core';
+import {catchError, map, Observable, of, tap} from 'rxjs';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Router} from '@angular/router';
 import {jwtDecode} from 'jwt-decode';
 import {environment} from '@environments/environment.development';
-import { CookieService } from 'ngx-cookie-service';
 import {User} from '@models/user';
+import {authConfig} from '@app/authConfig';
+import {OAuthService} from 'angular-oauth2-oidc';
 
 @Injectable({
   providedIn: 'root',
@@ -13,58 +14,48 @@ import {User} from '@models/user';
 export class AuthService {
 
   private apiServerUrl= environment.apiUrl + '/auth'
-  private cookieService = inject(CookieService);
-
   private router : Router = inject(Router);
   private http: HttpClient = inject(HttpClient);
-  private _currentUser = signal<User | null>(null);
-  currentUser = this._currentUser.asReadonly();
-  isConnected = computed(() => this.currentUser() !== null)
-
-  constructor() {
-    // Effet qui écoute l'accessToken pour le stocker dans localStorage quand il change
-    effect(() => {
-    /*  const accessToken = this.accessTokenSignal();
-      if (accessToken) {
-        localStorage.setItem('accessToken', accessToken);
-      } else {
-        localStorage.removeItem('accessToken');
-      }*/
-    });
-
-  }
-
-  getAccessToken(): string | null {
-    //return this.accessTokenSignal();
-    return this.cookieService.get('accessToken');
-  }
-
-  // Méthode pour vérifier si le token a été émis il y a moins d'une heure
-  isTokenIssuedWithinLastHour(): boolean {
-    const token = this.getAccessToken();
-
-    if (!token) return false;
-
-    // Décoder le token pour obtenir la date d'émission (iat)
-    const decoded: any = jwtDecode(token);
-    if (!decoded.iat) return false; // Assurez-vous que le champ `iat` est présent
-
-    const issuedAt = new Date(decoded.iat * 1000); // Convertir `iat` en millisecondes
-    const now = new Date();
-    // Calculer la différence en millisecondes et la convertir en heures
-    const diffInHours = (now.getTime() - issuedAt.getTime()) / (1000 * 60 * 60);
-
-    return diffInHours < 1; // Retourne true si le token a moins d'une heure
+  private currentUser: User | null = null;
+  private loggedIn: boolean = false;
+  constructor(private oauthService: OAuthService) {
+    this.oauthService.configure(authConfig);
   }
 
 
-  setCurrentUser(user: User){
-    this._currentUser.set(user);
+  loginGithub() {
+    //this.oauthService.initLoginFlow(); // redirige vers GitHub
+    const clientId = 'Ov23liGBc9wuOQ9SDN8a';
+    const redirectUri = encodeURIComponent('http://localhost:4200/callback');
+    const state = crypto.randomUUID(); // facultatif mais recommandé
+
+    const githubAuthUrl =
+      `https://github.com/login/oauth/authorize?` +
+      `client_id=${clientId}&redirect_uri=${redirectUri}&scope=read:user user:email&state=${state}`;
+
+    // Stocker le state localement pour vérification plus tard
+    sessionStorage.setItem('oauth_state', state);
+
+    window.location.href = githubAuthUrl;
   }
 
-  public isAuthenticated(): Observable<boolean> {
-    return this.http.get<boolean>(`http://localhost:8080/api/user/users/current-user`, { withCredentials: true });
+
+  setCurrentUser(user: User) {
+    this.currentUser = user;
   }
+
+  getCurrentUser(): User | null {
+    return this.currentUser;
+  }
+
+  // checkAuth(): Observable<User | null> {
+  //   return this.http.get<User | null>(`${this.apiServerUrl}/current-user`, {
+  //     withCredentials: true
+  //   });
+  // }
+  // public isAuthenticated(): Observable<boolean> {
+  //   return this.http.get<boolean>(`http://localhost:8080/api/user/users/current-user`, { withCredentials: true });
+  // }
   // Method to check if token is expired based on `exp` field
   isTokenExpired(token: string): boolean {
     const decoded: any = jwtDecode(token);
@@ -74,17 +65,6 @@ export class AuthService {
     return new Date() > expiryDate;
   }
 
-  hasAccessToken(): boolean {
-    return this.cookieService.check('accessToken');
-  }
-
-  deleteAccessToken(): void {
-    this.cookieService.delete('accessToken');
-  }
-  hasValidAccessToken(): boolean {
-    const token = this.getAccessToken();
-    return !!token && !this.isTokenExpired(token);
-  }
 
   login(username: string, password: string): Observable<any> {
 
@@ -93,38 +73,22 @@ export class AuthService {
       { username, password },
       {
         headers: headers,
-        withCredentials: true})
+        withCredentials: true
+      })
   }
 
-  logout() {
-
-    localStorage.removeItem('workspaceId');
-
-    this.cookieService.delete('accessToken');
-    this.cookieService.delete('refreshToken');
-    this.http.post<any>(`${this.apiServerUrl}/logout`,{},{withCredentials: true}).subscribe({
-      next : ()=> {
-        this._currentUser.set(null);
-        this.router.navigate(['/login']);
-      }
-    })
-
-  }
 
   getOAuthGoogle(idToken: string):Observable<any> {
 
     return this.http.post<any>(`${this.apiServerUrl}/oauth2`, { token: idToken }, // Payload
-      { withCredentials: true}
       )
   }
   verifyTokenWithBackend(idToken: string) {
 
-    console.log("test")
     this.getOAuthGoogle(idToken).subscribe({
       next: googleResponse => {
-      console.log(googleResponse.user.id)
        // this.setAccessToken(googleResponse.accessToken);
-        this._currentUser.set(googleResponse.user)
+        this.currentUser = googleResponse.user
         localStorage.setItem("USER_ID",googleResponse.user.id.toString())
         this.router.navigateByUrl(`users/${googleResponse.user.id}/workspaces`);
 
@@ -145,6 +109,17 @@ export class AuthService {
           }
         })
       );
+  }
+  checkAuth(): Observable<boolean> {
+    return this.http.get('http://localhost:8080/api/auth/current-user', { withCredentials: true }).pipe(
+      tap(() => this.loggedIn = true),
+      map(() => true),
+      catchError(() => of(false))
+    );
+  }
+
+  isLoggedIn(): boolean {
+    return this.loggedIn;
   }
 }
 
