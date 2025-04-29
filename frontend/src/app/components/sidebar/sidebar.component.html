@@ -80,7 +80,7 @@
       <ul >
         @for (board of this.mainService.getListBoards()[0]  ; track board.id) {
 
-          <li [class]="''+this.board.color+'-square'">
+          <li [class]="''+board.color+'-square'">
             <a style=" margin-top: 2px; padding: 3px; background: none"
                [href]="'http://localhost:4200/boards/'+board.id" >
               {{board.name}}
@@ -90,7 +90,7 @@
       </ul>
     </div>
 
-    <li><a href="#" (click)="logout()"><span class="icon"><i class="fas fa-door-open"></i></span> Logout</a></li>
+    <li><a href="http://localhost:8080/logout" ><span class="icon"><i class="fas fa-door-open"></i></span> Logout</a></li>
 
 
     <!--    <li><a href="#"><span class="icon"><i class="fas fa-tasks"></i></span> Kanban <span class="badge">Pro</span></a></li>-->

@@ -18,9 +18,10 @@ export const routes: Routes = [
       { path: 'users/:userId/workspaces', component: UserComponent, data: { userId: 'string' } },
       { path: 'boards/:id/listCards', component: ListCardComponent, data: { id: 'string' } },
       { path: 'listCard', component: ListCardComponent },
-      { path: 'callback/:idToken', component: CallbackComponent, data: { idToken : 'string'} }
+
     ]
   },
-  { path: 'login', component: LoginComponent }
+  { path: 'login', component: LoginComponent },
+  { path: 'callback', component: CallbackComponent }
 
 ];

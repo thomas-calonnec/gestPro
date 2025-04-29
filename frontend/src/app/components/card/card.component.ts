@@ -34,38 +34,35 @@ import {LabelService} from '@services/labels/label.service';
 import {Label} from '@models/label';
 
 @Component({
-  selector: 'app-card',
-  standalone: true,
-  providers: [provideNativeDateAdapter(),DatePipe, {provide: MAT_DATE_LOCALE, useValue: 'fr'},
-  ],
-  imports: [
-    TaskBoxComponent,
-    MatFormFieldModule,
-    MatDatepickerModule,
-    ReactiveFormsModule,
-    MatInputModule,
-    FormsModule,
-    MatButton,
-    MatIconModule,
-    AngularEditorModule,
-    MatMiniFabButton,
-    MatTooltip,
-    MatCheckbox,
-    MatProgressBar,
-    MatFormFieldModule,
-    MatInputModule,
-    MatTimepickerModule,
-    MatDatepickerModule,
-    FormsModule,
-    MatIconButton,
-    MatCard,
-    MatCardHeader,
-
-
-  ],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl:'./card.component.html',
-  styleUrl: './card.component.scss'
+    selector: 'app-card',
+    providers: [provideNativeDateAdapter(), DatePipe, { provide: MAT_DATE_LOCALE, useValue: 'fr' },
+    ],
+    imports: [
+        TaskBoxComponent,
+        MatFormFieldModule,
+        MatDatepickerModule,
+        ReactiveFormsModule,
+        MatInputModule,
+        FormsModule,
+        MatButton,
+        MatIconModule,
+        AngularEditorModule,
+        MatMiniFabButton,
+        MatTooltip,
+        MatCheckbox,
+        MatProgressBar,
+        MatFormFieldModule,
+        MatInputModule,
+        MatTimepickerModule,
+        MatDatepickerModule,
+        FormsModule,
+        MatIconButton,
+        MatCard,
+        MatCardHeader,
+    ],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    templateUrl: './card.component.html',
+    styleUrl: './card.component.scss'
 })
 export class CardComponent implements OnInit {
   value: Date = new Date();

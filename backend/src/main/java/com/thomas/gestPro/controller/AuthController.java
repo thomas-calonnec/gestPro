@@ -4,10 +4,9 @@ import com.thomas.gestPro.Security.JwtResponse;
 import com.thomas.gestPro.Security.TokenRequest;
 import com.thomas.gestPro.model.User;
 import com.thomas.gestPro.service.AuthService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -29,6 +28,11 @@ public class AuthController {
        return this.authService.authenticate(user);
     }
 
+    @GetMapping("/current-user")
+    public ResponseEntity<JwtResponse> getCurrentUser(HttpServletRequest request) {
+
+        return this.authService.getCurrentUser(request);
+    }
     @PostMapping("/logout")
     public ResponseEntity<JwtResponse> logout() {
         return this.authService.logout();
@@ -40,15 +44,12 @@ public class AuthController {
     }
 
     @PostMapping("/oauth2")
-    public ResponseEntity<JwtResponse> authenticateOAuth(@RequestBody TokenRequest tokenRequest) {
+    public ResponseEntity<JwtResponse> authenticateGoogle(@RequestBody TokenRequest tokenRequest) {
         return this.authService.authenticateOAuth(tokenRequest);
     }
-    @GetMapping("/dashboard")
-    public String dashboard(OAuth2AuthenticationToken authentication) {
-        OAuth2User user = authentication.getPrincipal();
-        String login = user.getAttribute("login"); // le username GitHub
-        return "Bienvenue " + login;
-    }
+
+
+
 }
 
 

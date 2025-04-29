@@ -14,19 +14,30 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name="t_users")
+@Table(
+        name="t_users",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"providerName","providerId"})
+)
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long   id;
+
+    @Column(nullable = false)
     private String username;
+
     private String password;
+
     private String email;
-    private String googleId;
+
+    @Column(nullable = false)
+    private String providerId;
+
+    @Column(nullable = false)
+    private String providerName;
+
     private String pictureUrl;
-
-
 
     @ManyToMany(mappedBy = "users")
     @JsonIgnore

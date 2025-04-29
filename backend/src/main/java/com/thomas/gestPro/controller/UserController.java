@@ -1,25 +1,18 @@
 package com.thomas.gestPro.controller;
 
-import com.thomas.gestPro.Security.JwtResponse;
-import com.thomas.gestPro.Security.JwtTokenUtil;
 import com.thomas.gestPro.model.Card;
 import com.thomas.gestPro.model.User;
 import com.thomas.gestPro.model.Workspace;
-import com.thomas.gestPro.service.AuthService;
-import com.thomas.gestPro.service.TemporaryUserService;
 import com.thomas.gestPro.service.UserService;
-import io.micrometer.common.lang.Nullable;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
@@ -27,31 +20,26 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
-    private final AuthService authService;
 
     @Autowired
-    public UserController(UserService userService, AuthService authService) {
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.authService = authService;
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
+    @GetMapping("/id/{id}")
+    public ResponseEntity<Optional<User>> getUserById(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getById(id));
     }
 
-    @GetMapping("/current-user")
-    public ResponseEntity<JwtResponse> getCurrentUser()  {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.getPrincipal() instanceof User user) {
-            return ResponseEntity.ok(new JwtResponse(user));
+//    @GetMapping("/current-user")
+//    public ResponseEntity<?> getCurrentUser(Authentication authentication) {
+//        if (authentication == null || !authentication.isAuthenticated()) {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+//        }
+//        User user = (User) authentication.getPrincipal(); // ou adapter selon ton UserDetails
+//        return ResponseEntity.ok(user);
+//    }
 
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-
-
-    }
     @GetMapping("/username/{name}")
     public ResponseEntity<User> getUserByUsername(@PathVariable String name) {
 
@@ -105,6 +93,11 @@ public class UserController {
         return ResponseEntity.ok(newWorkspace);
     }
 
+    @PutMapping("/create")
+    public ResponseEntity<User> createUser(@RequestBody User user) {
+        userService.createUserGithub(user);
+        return new ResponseEntity<>(user, HttpStatus.CREATED);
+    }
 
 
     /*@PostMapping("/login")

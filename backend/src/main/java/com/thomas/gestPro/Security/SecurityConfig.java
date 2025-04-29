@@ -1,8 +1,6 @@
 package com.thomas.gestPro.Security;
 
 import com.thomas.gestPro.service.TemporaryUserService;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,8 +19,6 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-import java.util.Date;
 
 
 @EnableWebSecurity
@@ -56,8 +52,8 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(registry -> {
                             registry.requestMatchers(HttpMethod.OPTIONS,"/**").permitAll();
-                            registry.requestMatchers("/api/auth/**","/login/**").permitAll();
-                            registry.requestMatchers("/api/user/**").hasRole("USER");
+                            registry.requestMatchers("/api/auth/**").permitAll();
+                            registry.requestMatchers("/api/user/**").permitAll();
                             registry.requestMatchers("/admin/**").permitAll();
                             registry.anyRequest().authenticated();
 
@@ -72,7 +68,12 @@ public class SecurityConfig {
 //                        .successHandler(oAuth2SuccessHandler()) // ton handler personnalisé
 //                )
                 .oauth2Client(Customizer.withDefaults())
-
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("http://localhost:4200/login")
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID","accessToken","refreshToken","gh_token")
+                )
 //               .oauth2Login(oauth2 -> oauth2
 //                        .defaultSuccessUrl("/dashboard", true)  // redirige après login
 //                )
@@ -89,8 +90,6 @@ public class SecurityConfig {
     public AuthenticationSuccessHandler oAuth2SuccessHandler() {
         return new OAuth2AuthenticationSuccessHandler();
     }
-
-
 
     @Bean
     public JwtDecoder jwtDecoder() {

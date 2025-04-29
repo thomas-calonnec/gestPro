@@ -9,17 +9,16 @@ import {MatButton} from "@angular/material/button";
 import {MainService} from '@services/main/main.service';
 
 @Component({
-  selector: 'app-board',
-  standalone: true,
-  imports: [
-    ListCardComponent,
-    ReactiveFormsModule,
-    CdkDropList,
-    CdkDrag,
-    MatButton,
-  ],
-  templateUrl:'./board.component.html' ,
-  styleUrl: './board.component.scss'
+    selector: 'app-board',
+    imports: [
+        ListCardComponent,
+        ReactiveFormsModule,
+        CdkDropList,
+        CdkDrag,
+        MatButton,
+    ],
+    templateUrl: './board.component.html',
+    styleUrl: './board.component.scss'
 })
 export class BoardComponent implements OnInit{
   myForm : FormGroup;

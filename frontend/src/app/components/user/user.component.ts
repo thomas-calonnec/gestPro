@@ -13,16 +13,14 @@ import {
 } from '@components/dialog-animations-example-dialog/dialog-animations-example-dialog.component';
 
 @Component({
-  selector: 'app-user',
-  standalone: true,
-
-  templateUrl:'user.component.html',
-  imports: [
-    RouterLink,
-    MatButton,
-    ReactiveFormsModule
-  ],
-  styleUrl: './user.component.css'
+    selector: 'app-user',
+    templateUrl: 'user.component.html',
+    imports: [
+        RouterLink,
+        MatButton,
+        ReactiveFormsModule
+    ],
+    styleUrl: './user.component.css'
 })
 export class UserComponent implements  OnInit{
   workspaces : WritableSignal<Workspace[]> = signal([]);

@@ -1,25 +1,25 @@
 import {Component, inject, OnInit, signal, WritableSignal} from '@angular/core';
-import {RouterLink} from '@angular/router';
+import { Router, RouterLink} from '@angular/router';
 import {MainService} from '@services/main/main.service';
 import {WorkspaceService} from '@services/workspaces/workspace.service';
 import {Board} from '@models/board';
 import {AuthService} from '@services/auth/auth.service';
 
 @Component({
-  selector: 'app-sidebar',
-  standalone: true,
-  imports: [
-    RouterLink
-  ],
-  templateUrl: './sidebar.component.html',
-  styleUrl: './sidebar.component.css'
+    selector: 'app-sidebar',
+    imports: [
+        RouterLink
+    ],
+    templateUrl: './sidebar.component.html',
+    styleUrl: './sidebar.component.css'
 })
 export class SidebarComponent implements OnInit{
   workspaceService: WorkspaceService = inject(WorkspaceService);
   mainService : MainService = inject(MainService);
   workspaceId: string | null = "";
   workspaceName: WritableSignal<string> = signal("");
-  authService: AuthService = inject(AuthService)
+  authService: AuthService = inject(AuthService);
+  router: Router = inject(Router);
 
   ngOnInit() {
     this.workspaceId = localStorage.getItem('workspaceId');
@@ -36,7 +36,7 @@ export class SidebarComponent implements OnInit{
     })
   }
   logout() {
-    this.authService.logout();
+    window.location.href = 'http://localhost:8080/logout';
   }
   getBoards() {
 
