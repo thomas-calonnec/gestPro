@@ -1,5 +1,6 @@
 package com.thomas.gestPro.service;
 
+import com.google.api.client.googleapis.GoogleUtils;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,6 +24,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.CookieValue;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -60,9 +63,8 @@ public class AuthService {
                 Duration.ofDays(7).getSeconds();
 
         return ResponseCookie.from(tokenName,tokenValue)
-                .httpOnly(false)
+                .httpOnly(true)
                 .secure(false)
-                .sameSite("None")
                 .path("/")
                 .maxAge(maxAgeSeconds)
                 .build();
@@ -85,7 +87,7 @@ public class AuthService {
             String name = (String) payload.get("name");
             String pictureUrl = (String) payload.get("picture");
 
-
+            ResponseCookie accessTokenCookie = this.createJwtCookie("accessTokenId",clientId);
             User googleUser = this.userService.createGoogleUser(name, email, pictureUrl, userId);
             return this.generateTokenAndCreateCookie(name,googleUser);
         }else {
@@ -99,7 +101,7 @@ public class AuthService {
 
         ResponseCookie accessTokenCookie = this.createJwtCookie("accessToken",accessToken);
         ResponseCookie revokeTokenCookie = this.createJwtCookie("refreshToken",refreshToken);
-
+        System.err.println("accessToken: " + accessTokenCookie);
         return ResponseEntity.ok()
                 .header("Set-Cookie",accessTokenCookie.toString())
                 .header("Set-Cookie",revokeTokenCookie.toString())
@@ -109,11 +111,13 @@ public class AuthService {
     public ResponseEntity<JwtResponse> authenticate(User user) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
+
+        System.err.println("Authorities : " + authentication.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        Optional<User> currentUser = this.userService.getUserByProviderId(user.getUsername());
+        User currentUser = this.userService.getUserByUsername(user.getUsername());
 
-        return currentUser.map(value -> this.generateTokenAndCreateCookie(user.getUsername(), value)).orElse(null);
+        return this.generateTokenAndCreateCookie(user.getUsername(),currentUser);
 
     }
 
@@ -125,15 +129,17 @@ public class AuthService {
 //        return authentication.isAuthenticated() ? ResponseEntity.ok(user) : ResponseEntity.notFound().build();
 //    }
     public ResponseEntity<JwtResponse> logout() {
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        authentication.setAuthenticated(false);
+         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+          authentication.setAuthenticated(false);
 //       // Supprimer immédiatement le cookie
-//        ResponseCookie revokeTokenCookie = this.deleteJwtCookie("refreshToken");
-//        ResponseCookie accessTokenCookie = this.deleteJwtCookie("accessToken");
-//
-     return ResponseEntity.ok()
-//                .header("Set-Cookie", accessTokenCookie.toString())
-//                .header("Set-Cookie",revokeTokenCookie.toString())
+         ResponseCookie revokeTokenCookie = this.jwtUtil.deleteJwtCookie("refreshToken");
+         ResponseCookie accessTokenCookie = this.jwtUtil.deleteJwtCookie("accessToken");
+         ResponseCookie githubTokenCookie = this.jwtUtil.deleteJwtCookie("gh_token");
+
+        return ResponseEntity.ok()
+                 .header("Set-Cookie", accessTokenCookie.toString())
+                 .header("Set-Cookie",revokeTokenCookie.toString())
+                .header("Set-Cookie",githubTokenCookie.toString())
                 .body(null);
 
     }
@@ -165,20 +171,27 @@ public class AuthService {
         }
     }
 
-    public ResponseEntity<JwtResponse> getCurrentUser(HttpServletRequest request) {
+    public ResponseEntity<JwtResponse> getCurrentUser( String token, HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
-
-                if (cookie.getName().equals("gh_token") || cookie.getName().equals("g_state")) {
+                //System.err.println(cookie.getName());
+                if (cookie.getName().equals("gh_token")) {
                     return ResponseEntity.ok(new JwtResponse(cookie.getValue()));
                 }
             }
         }
+        if (this.jwtUtil.validateGoogleToken(token)) {
+            return ResponseEntity.ok(new JwtResponse(this.jwtUtil.getUsernameFromToken(token)));
+        }
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        System.err.println("authentication  : " + authentication);
+        if (authentication != null &&
+                authentication.isAuthenticated() &&
+                !(authentication instanceof AnonymousAuthenticationToken)) {
 
-        if( authentication != null ) {
-            return ResponseEntity.ok(new JwtResponse("ok"));
+            User user = userService.getUserByUsername(authentication.getName());
+            return ResponseEntity.ok(new JwtResponse(user));
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }

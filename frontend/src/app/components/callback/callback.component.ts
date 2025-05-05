@@ -46,9 +46,13 @@ export class CallbackComponent implements OnInit {
 
                   }
                   this.userService.createUser(newUser).subscribe({
-                    next : () => {
-                      this.authService.setCurrentUser(newUser);
-                      this.router.navigateByUrl(`users/${newUser.providerId}/workspaces`);
+                    next : (user) => {
+                      this.authService.setCurrentUser(user);
+                      console.log(user)
+                      if(user.id )
+                          localStorage.setItem("USER_ID",user.id.toLocaleString())
+                      this.router.navigateByUrl(`users/${user.id}/workspaces`);
+
                     }
                   })
                 }

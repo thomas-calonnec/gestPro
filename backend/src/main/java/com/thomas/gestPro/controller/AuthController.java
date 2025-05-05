@@ -29,9 +29,9 @@ public class AuthController {
     }
 
     @GetMapping("/current-user")
-    public ResponseEntity<JwtResponse> getCurrentUser(HttpServletRequest request) {
+    public ResponseEntity<JwtResponse> getCurrentUser(@CookieValue(value="accessToken", required=false) String token, HttpServletRequest request) {
 
-        return this.authService.getCurrentUser(request);
+        return this.authService.getCurrentUser(token,request);
     }
     @PostMapping("/logout")
     public ResponseEntity<JwtResponse> logout() {

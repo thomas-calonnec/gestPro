@@ -77,7 +77,7 @@ public class UserService {
      * @throws InvalidInputException if a user with the same username already exists
      */
     @Transactional
-    public void  createUserGithub(User incomingUser) {
+    public User  createUserGithub(User incomingUser) {
         Optional<User> optionalUser = userRepository.findByProviderIdAndProviderName(
                 incomingUser.getProviderId(),
                 "Github"
@@ -87,17 +87,18 @@ public class UserService {
 
         if (optionalUser.isEmpty()) {
             // Création
-            User user = new User();
-            user.setProviderId(incomingUser.getProviderId());
-            user.setProviderName("Github");
-            user.setEmail(incomingUser.getEmail());
-            user.setUsername(incomingUser.getUsername());
+            User newUser = new User();
+            newUser.setProviderId(incomingUser.getProviderId());
+            newUser.setProviderName("Github");
+            newUser.setEmail(incomingUser.getEmail());
+            newUser.setUsername(incomingUser.getUsername());
 
-            user.setPassword(null); // ou une valeur par défaut
-            user.setRoles(new ArrayList<>(List.of(userRole)));
-            userRepository.save(user);
+            newUser.setPassword(null); // ou une valeur par défaut
+            newUser.setRoles(new ArrayList<>(List.of(userRole)));
+            userRepository.save(newUser);
+            return newUser;
         }
-
+    return optionalUser.get();
     }
 
     /**
@@ -186,7 +187,8 @@ public class UserService {
     }
 
     public User getUserByUsername(String username) {
-        return userRepository.getUserByUsername (username);
+        Optional<User> optionalUser = userRepository.getUserByUsername(username);
+        return optionalUser.orElse(null);
 
     }
 

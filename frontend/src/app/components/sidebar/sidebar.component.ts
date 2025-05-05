@@ -27,17 +27,8 @@ export class SidebarComponent implements OnInit{
     this.mainService.removeListBoard();
     //this.getWorkspace();
   }
-  getWorkspace() {
-    this.workspaceService.getWorkspaceById(this.workspaceId).subscribe({
-      next: (workspace) => {
-        this.mainService.setWorkspace(workspace.name)
 
-      }
-    })
-  }
-  logout() {
-    window.location.href = 'http://localhost:8080/logout';
-  }
+
   getBoards() {
 
     if(this.workspaceId !== null) {
