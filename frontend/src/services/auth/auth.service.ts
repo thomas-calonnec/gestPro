@@ -48,14 +48,6 @@ export class AuthService {
     return this.currentUser;
   }
 
-  // checkAuth(): Observable<User | null> {
-  //   return this.http.get<User | null>(`${this.apiServerUrl}/current-user`, {
-  //     withCredentials: true
-  //   });
-  // }
-  // public isAuthenticated(): Observable<boolean> {
-  //   return this.http.get<boolean>(`http://localhost:8080/api/user/users/current-user`, { withCredentials: true });
-  // }
   // Method to check if token is expired based on `exp` field
   isTokenExpired(token: string): boolean {
     const decoded: any = jwtDecode(token);
@@ -76,7 +68,13 @@ export class AuthService {
         withCredentials: true
       })
   }
-
+  logout () {
+    this.http.post<void>(`${this.apiServerUrl}/logout`,{},{withCredentials: true}).subscribe({
+      next : () => {
+          this.router.navigate(['/login']);
+      }
+    })
+  }
 
   getOAuthGoogle(idToken: string):Observable<any> {
 
@@ -116,10 +114,6 @@ export class AuthService {
       map(() => true),
       catchError(() => of(false))
     );
-  }
-
-  isLoggedIn(): boolean {
-    return this.loggedIn;
   }
 }
 

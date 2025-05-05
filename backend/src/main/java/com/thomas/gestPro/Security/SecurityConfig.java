@@ -80,7 +80,7 @@ public class SecurityConfig {
                 //.oauth2ResourceServer(oauth2 -> oauth2.opaqueToken(Customizer.withDefaults()))
 
                 .sessionManagement(session ->  session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-
+                .userDetailsService(userDetailsService)
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
                 //.formLogin(form -> form.loginPage("/loginForm").permitAll())
 

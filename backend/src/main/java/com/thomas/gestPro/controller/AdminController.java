@@ -27,10 +27,6 @@ public class AdminController {
         return ResponseEntity.ok(userService.getAllUser());
     }
 
-    @PutMapping("/create")
-    public ResponseEntity<User> createUser(@RequestBody User user) {
-        userService.createUser(user);
-        return new ResponseEntity<>(user, HttpStatus.CREATED);
-    }
+
 
 }

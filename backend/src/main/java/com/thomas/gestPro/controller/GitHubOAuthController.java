@@ -81,18 +81,5 @@ public class GitHubOAuthController {
         return ResponseEntity.ok(user);
     }
 
-    @PostMapping("/logout")
-    public ResponseEntity<?> logout(HttpServletResponse response) {
-        // Écrase le cookie avec un maxAge de zero
-        ResponseCookie cookie = ResponseCookie.from("gh_token", "")
-                .httpOnly(true)
-                .secure(false) // true en prod
-                .path("/")
-                .maxAge(0) // Efface le cookie
-                .build();
 
-        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-
-        return ResponseEntity.ok(Map.of("message", "Déconnecté"));
-    }
 }

@@ -31,15 +31,6 @@ public class UserController {
         return ResponseEntity.ok(userService.getById(id));
     }
 
-//    @GetMapping("/current-user")
-//    public ResponseEntity<?> getCurrentUser(Authentication authentication) {
-//        if (authentication == null || !authentication.isAuthenticated()) {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-//        }
-//        User user = (User) authentication.getPrincipal(); // ou adapter selon ton UserDetails
-//        return ResponseEntity.ok(user);
-//    }
-
     @GetMapping("/username/{name}")
     public ResponseEntity<User> getUserByUsername(@PathVariable String name) {
 
@@ -95,8 +86,8 @@ public class UserController {
 
     @PutMapping("/create")
     public ResponseEntity<User> createUser(@RequestBody User user) {
-        userService.createUserGithub(user);
-        return new ResponseEntity<>(user, HttpStatus.CREATED);
+        User newUser = userService.createUserGithub(user);
+        return new ResponseEntity<>(newUser, HttpStatus.CREATED);
     }
 
 

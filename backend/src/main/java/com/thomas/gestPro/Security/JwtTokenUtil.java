@@ -13,6 +13,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -117,5 +118,15 @@ public class JwtTokenUtil {
             return false;
         }
         return false;
+    }
+
+    public ResponseCookie deleteJwtCookie(String token) {
+
+        return ResponseCookie.from(token,"")
+                .maxAge(0)
+                .path("/")
+                .httpOnly(true)
+                .build();
+
     }
 }

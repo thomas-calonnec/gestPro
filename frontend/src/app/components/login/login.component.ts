@@ -27,7 +27,7 @@ export class LoginComponent implements OnInit{
   cookieService : CookieService = inject(CookieService);
   router: Router = inject(Router);
 
-  userId: number = 0
+  userId: number | null  = 0
   constructor(private fb: FormBuilder) {
     this.myForm = this.fb.group({
       username: ['', Validators.required],
@@ -81,8 +81,9 @@ export class LoginComponent implements OnInit{
     ).subscribe({
       next: (user) => {
         if (user) {
-          //this.userId = user.id;
-          localStorage.setItem("USER_ID",this.userId.toLocaleString())
+          this.userId = user.id;
+          if(this.userId)
+              localStorage.setItem("USER_ID",this.userId.toLocaleString())
 
           this.authService.setCurrentUser(user);
           setTimeout(() => {
