@@ -78,7 +78,7 @@ export class AuthService {
 
   getOAuthGoogle(idToken: string):Observable<any> {
 
-    return this.http.post<any>(`${this.apiServerUrl}/oauth2`, { token: idToken }, // Payload
+    return this.http.post<any>(`${this.apiServerUrl}/oauth2`, { token: idToken }, {withCredentials: true} // Payload
       )
   }
   verifyTokenWithBackend(idToken: string) {
@@ -87,6 +87,7 @@ export class AuthService {
       next: googleResponse => {
        // this.setAccessToken(googleResponse.accessToken);
         this.currentUser = googleResponse.user
+        console.log(googleResponse.user)
         localStorage.setItem("USER_ID",googleResponse.user.id.toString())
         this.router.navigateByUrl(`users/${googleResponse.user.id}/workspaces`);
 

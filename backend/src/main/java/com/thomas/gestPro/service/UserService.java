@@ -78,18 +78,13 @@ public class UserService {
      */
     @Transactional
     public User  createUserGithub(User incomingUser) {
-        Optional<User> optionalUser = userRepository.findByProviderIdAndProviderName(
-                incomingUser.getProviderId(),
-                "Github"
-                );
+        Optional<User> optionalUser = userRepository.findByEmail(incomingUser.getEmail());
 
         Role userRole = roleRepository.findByName("ROLE_USER");
 
         if (optionalUser.isEmpty()) {
             // Création
             User newUser = new User();
-            newUser.setProviderId(incomingUser.getProviderId());
-            newUser.setProviderName("Github");
             newUser.setEmail(incomingUser.getEmail());
             newUser.setUsername(incomingUser.getUsername());
 
@@ -192,10 +187,6 @@ public class UserService {
 
     }
 
-    public Optional<User> getUserByProviderId(String providerId) {
-        return userRepository.findByProviderId(providerId);
-    }
-
     public List<Workspace> getWorkspacesByUserId(Long userId) {
         Optional<User> existingUser = getById(userId);
         if (existingUser.isPresent()) {
@@ -208,10 +199,9 @@ public class UserService {
 
     public User createGoogleUser(String username, String email, String pictureUrl, String googleId) {
 
-        if(userRepository.findByProviderId(googleId).isPresent()){
-            Optional<User> optionalUser =  userRepository.findByProviderId(googleId);
-            return optionalUser.orElse(null);
-
+        Optional<User> user = userRepository.findByEmail(email);
+        if(user.isPresent()){
+           return user.get();
         }
 
 
@@ -219,8 +209,6 @@ public class UserService {
         googleUser.setEmail(email);
         googleUser.setPictureUrl(pictureUrl);
         googleUser.setUsername(username);
-        googleUser.setProviderId(googleId);
-        googleUser.setProviderName("google");
 
         Role userRole = roleRepository.findByName("ROLE_USER");
         googleUser.getRoles().add(userRole);

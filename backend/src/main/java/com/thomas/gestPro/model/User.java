@@ -31,14 +31,11 @@ public class User {
 
     private String email;
 
-    @Column(nullable = false)
-    private String providerId;
-
-    @Column(nullable = false)
-    private String providerName;
-
     private String pictureUrl;
 
+    public User(String email){
+        this.email = email;
+    }
     @ManyToMany(mappedBy = "users")
     @JsonIgnore
     private List<Workspace> workspaces = new ArrayList<>();

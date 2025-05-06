@@ -12,14 +12,15 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 import { CookieService } from 'ngx-cookie-service';
 import {environment} from '@environments/environment.development';
 import {MatButton} from '@angular/material/button';
+import {GoogleLoginComponent} from '@components/google-login/google-login.component';
 
 @Component({
     selector: 'app-login',
-    imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButton],
+  imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButton, GoogleLoginComponent],
     templateUrl: './login.component.html',
     styleUrl: './login.component.css'
 })
-export class LoginComponent implements OnInit{
+export class LoginComponent {
   myForm: FormGroup;
   authService: AuthService = inject(AuthService);
   userService: UserService = inject(UserService);
@@ -36,12 +37,6 @@ export class LoginComponent implements OnInit{
     });
   }
 
-  ngOnInit() {
-    (window as any).handleCredentialResponse = (response: any) => {
-      this.authService.verifyTokenWithBackend(response.credential);
-    }
-  }
-
   private _snackBar = inject(MatSnackBar);
 
   openSnackBar() {
@@ -55,13 +50,7 @@ export class LoginComponent implements OnInit{
 
   }
   loginWithGithub() {
-  /*  const popup = window.open(
-      'http://localhost:8080/oauth2/authorization/github',
-      'GitHub Login',
-      'width=500,height=600'
-    );*/
       this.authService.loginGithub()
-    //window.location.href = 'https://github.com/login/oauth/authorize?client_id=Ov23liGBc9wuOQ9SDN8a&scope=user';
   }
   onLogin() {
 
