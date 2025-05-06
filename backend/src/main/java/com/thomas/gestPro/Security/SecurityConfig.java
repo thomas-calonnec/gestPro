@@ -17,7 +17,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 
@@ -32,7 +31,6 @@ public class SecurityConfig {
     public SecurityConfig(TemporaryUserService userDetailsService, JwtRequestFilter jwtRequestFilter) {
         this.userDetailsService = userDetailsService;
         this.jwtRequestFilter = jwtRequestFilter;
-
     }
 
 
@@ -59,14 +57,6 @@ public class SecurityConfig {
 
                         }
                 )
-
-//                .oauth2Login(oauth -> oauth
-//                        .defaultSuccessUrl("/oauth-success", true) // ✅ redirection après succès
-//                )
-//                .oauth2Login(oauth -> oauth
-//                        .loginPage("/login") // page custom si tu veux
-//                        .successHandler(oAuth2SuccessHandler()) // ton handler personnalisé
-//                )
                 .oauth2Client(Customizer.withDefaults())
                 .logout(logout -> logout
                         .logoutUrl("/logout")
@@ -74,22 +64,12 @@ public class SecurityConfig {
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID","accessToken","refreshToken","gh_token")
                 )
-//               .oauth2Login(oauth2 -> oauth2
-//                        .defaultSuccessUrl("/dashboard", true)  // redirige après login
-//                )
-                //.oauth2ResourceServer(oauth2 -> oauth2.opaqueToken(Customizer.withDefaults()))
-
                 .sessionManagement(session ->  session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .userDetailsService(userDetailsService)
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
-                //.formLogin(form -> form.loginPage("/loginForm").permitAll())
-
                 .build();
     }
-    @Bean
-    public AuthenticationSuccessHandler oAuth2SuccessHandler() {
-        return new OAuth2AuthenticationSuccessHandler();
-    }
+
 
     @Bean
     public JwtDecoder jwtDecoder() {
@@ -100,7 +80,5 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
-
 
 }

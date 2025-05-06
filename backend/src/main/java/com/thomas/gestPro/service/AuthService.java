@@ -13,6 +13,7 @@ import com.thomas.gestPro.model.User;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
@@ -87,7 +88,7 @@ public class AuthService {
             String name = (String) payload.get("name");
             String pictureUrl = (String) payload.get("picture");
 
-            ResponseCookie accessTokenCookie = this.createJwtCookie("accessTokenId",clientId);
+//            ResponseCookie accessTokenCookie = this.createJwtCookie("accessTokenId",clientId);
             User googleUser = this.userService.createGoogleUser(name, email, pictureUrl, userId);
             return this.generateTokenAndCreateCookie(name,googleUser);
         }else {
@@ -95,16 +96,16 @@ public class AuthService {
                     .body(new JwtResponse("false"));
         }
     }
-    private ResponseEntity<JwtResponse> generateTokenAndCreateCookie(String username,User user) {
+    public ResponseEntity<JwtResponse> generateTokenAndCreateCookie(String username,User user) {
         String accessToken = this.generateAccessToken(username);
         String refreshToken = this.generateRefreshToken(username);
 
         ResponseCookie accessTokenCookie = this.createJwtCookie("accessToken",accessToken);
         ResponseCookie revokeTokenCookie = this.createJwtCookie("refreshToken",refreshToken);
-        System.err.println("accessToken: " + accessTokenCookie);
+
+
         return ResponseEntity.ok()
-                .header("Set-Cookie",accessTokenCookie.toString())
-                .header("Set-Cookie",revokeTokenCookie.toString())
+                .header(HttpHeaders.SET_COOKIE, accessTokenCookie.toString(), revokeTokenCookie.toString())
                 .body(new JwtResponse(user));
     }
 
@@ -112,7 +113,6 @@ public class AuthService {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
 
-        System.err.println("Authorities : " + authentication.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         User currentUser = this.userService.getUserByUsername(user.getUsername());

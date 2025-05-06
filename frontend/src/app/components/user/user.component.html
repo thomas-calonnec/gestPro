@@ -5,6 +5,8 @@
 
 <div>
 
+
+
   @if (workspaceCreated) {
     <button  mat-flat-button  disabled style="text-decoration: none; border-radius: 5px"  (click)="workspaceCreated = false">
       <i class="fa fa-plus"></i> add a workspace</button>
@@ -17,6 +19,7 @@
 
 </div>
 <div class="containerWorkspace">
+
   @for (workspace of this.workspaces(); track workspace.id) {
     <div class="hover-card" >
       <div class="deleteWorkspace">
@@ -24,8 +27,10 @@
       </div>
       <h3 class="card-title" routerLink="/workspaces/{{workspace.id}}/boards">{{ workspace.name }}</h3>
     </div>
+    
 
   }
+
   @if (workspaceCreated) {
     <div >
 
