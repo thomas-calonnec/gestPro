@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -26,6 +27,9 @@ public class Workspace {
 
     private String description;
 
+    private Date updateAt;
+
+    private Boolean isFavorite;
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name="workspace_id")
     private List<Board> boards = new ArrayList<>();

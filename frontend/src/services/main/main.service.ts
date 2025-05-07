@@ -5,8 +5,8 @@ import {Board} from '@models/board';
   providedIn: 'root'
 })
 export class MainService {
- public  getWorkspaceId(): string | null {
-    return localStorage.getItem("workspaceId");
+ public  getWorkspaceId(): number  {
+    return Number(localStorage.getItem("workspaceId"));
   }
 
   public setWorkspaceId(value: number) {

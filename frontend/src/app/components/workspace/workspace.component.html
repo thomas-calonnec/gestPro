@@ -2,39 +2,92 @@
 <div class="workspace-header-gradient">
   <h1 class="workspace-title-gradient">{{this.mainService.getWorkspace()}}</h1>
 </div>
-<h4>Your boards</h4>
+<h4 style="margin-left: 10px">Your boards</h4>
+
 
 <div>
 
-  <button mat-flat-button style="text-decoration: none; border-radius: 5px" (click)="createBoardDialog()">
+  <button mat-flat-button style="text-decoration: none; border-radius: 5px; margin-left: 10px" (click)="createBoardDialog()">
     <i class="fa fa-plus"></i> add board
   </button>
 
 </div>
 
 
+
 <div class="containerBoard">
 
-
+  <div class="cards-container">
   @for (board of this.boards(); track board.id) {
-    <div class="card" >
-      <div [class]="'card-header ' + board.color + '-square'" >
-        <h3>{{ board.name }}</h3>
-      </div>
-      <div class="card-content">
-        <p>{{ board.description }}</p>
-      </div>
-      <p class="board-meta" style="padding-left: 15px">
-        last updated:  {{ board.lastUpdated | date: 'short' :'fr'}}
-      </p>
-      <div class="card-footer">
-        <p class="board-meta">
-          <img src="./cartes.png" width="20" alt="test">  {{ board.cardCount }}
-        </p>
 
-        <a [routerLink]="'/boards/' + board.id" class="read-more">open</a>
+      <div class="card">
+        <div class="card-header">
+          <h3>{{ board.name }}</h3>
+          <span class="status-badge">🟡 En cours</span>
+        </div>
+
+        <div class="card-body">
+          @if (board.weeksSinceUpdate > 0) {
+            <p class="board-meta" style="padding-left: 15px">Updated {{board.weeksSinceUpdate}} {{board.daysSinceUpdate > 1 ? "weeks": "week"}} ago</p>
+          }
+          @else if (board.daysSinceUpdate > 0){
+            <p class="board-meta" style="padding-left: 15px">Updated {{board.daysSinceUpdate}} {{board.daysSinceUpdate > 1 ? "days": "day"}} ago</p>
+          } @else if (board.hoursSinceUpdate > 0) {
+            <p class="board-meta" style="padding-left: 15px">Updated {{board.hoursSinceUpdate}} {{board.hoursSinceUpdate > 1 ? "hours": "hour"}} ago</p>
+          } @else if(board.minutesSinceUpdate > 0){
+            <p class="board-meta" style="padding-left: 15px">Updated {{board.minutesSinceUpdate}} {{board.minutesSinceUpdate > 1 ? "minutes": "minute"}} ago</p>
+          } @else {
+            <p class="board-meta" style="padding-left: 15px">Updated {{board.secondsSinceUpdate}} {{board.minutesSinceUpdate > 1 ? "seconds": "second"}} ago</p>
+          }
+          <div class="tags">
+            <span class="tag">Mobile</span>
+            <span class="tag">Client</span>
+            <span class="tag">Priorité haute</span>
+          </div>
+        </div>
+
+        <div class="card-footer">
+          <div class="members">
+            👥 4 membres
+          </div>
+          <a [routerLink]="'/boards/' + board.id" class="btn-open">Open</a>
+        </div>
       </div>
-    </div><!--
+
+      <!-- Tu peux dupliquer ce bloc <div class="card"> pour créer d'autres cartes -->
+
+
+
+<!--    <div class="card" >-->
+<!--      <div [class]="'card-header ' + board.color + '-square'" >-->
+<!--        <h3>{{ board.name }}</h3>-->
+<!--      </div>-->
+<!--      <div class="card-content">-->
+<!--        <p>{{ board.description }}</p>-->
+<!--      </div>-->
+<!--      @if (board.weeksSinceUpdate > 0) {-->
+<!--        <p class="board-meta" style="padding-left: 15px">Updated {{board.weeksSinceUpdate}} {{board.daysSinceUpdate > 1 ? "weeks": "week"}} ago</p>-->
+<!--      }-->
+<!--      @else if (board.daysSinceUpdate > 0){-->
+<!--        <p class="board-meta" style="padding-left: 15px">Updated {{board.daysSinceUpdate}} {{board.daysSinceUpdate > 1 ? "days": "day"}} ago</p>-->
+<!--      } @else if (board.hoursSinceUpdate > 0) {-->
+<!--        <p class="board-meta" style="padding-left: 15px">Updated {{board.hoursSinceUpdate}} {{board.hoursSinceUpdate > 1 ? "hours": "hour"}} ago</p>-->
+<!--      } @else if(board.minutesSinceUpdate > 0){-->
+<!--        <p class="board-meta" style="padding-left: 15px">Updated {{board.minutesSinceUpdate}} {{board.minutesSinceUpdate > 1 ? "minutes": "minute"}} ago</p>-->
+<!--      } @else {-->
+<!--        <p class="board-meta" style="padding-left: 15px">Updated {{board.secondsSinceUpdate}} {{board.minutesSinceUpdate > 1 ? "seconds": "second"}} ago</p>-->
+<!--      }-->
+<!--&lt;!&ndash;      <p class="board-meta" style="padding-left: 15px">&ndash;&gt;-->
+<!--&lt;!&ndash;        last updated:  {{ board.lastUpdated | date: 'short' :'fr'}}&ndash;&gt;-->
+<!--&lt;!&ndash;      </p>&ndash;&gt;-->
+<!--      <div class="card-footer">-->
+<!--        <p class="board-meta">-->
+<!--          <img src="./cartes.png" width="20" alt="test">  {{ board.cardCount }}-->
+<!--        </p>-->
+
+<!--        <a [routerLink]="'/boards/' + board.id" class="read-more">open</a>-->
+<!--      </div>-->
+<!--    </div>&lt;!&ndash;
     <div class="board-card" [class]="board.color + '-square'">
 
       <h3 class="board-title">{{ board.name }}</h3>
@@ -61,6 +114,7 @@
 
 
   }
+  </div>
   @if (boardCreated) {
     <div>
       <!--

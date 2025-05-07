@@ -15,6 +15,14 @@ import {DatePipe, registerLocaleData} from '@angular/common';
 import {DialogCreateBoardComponent} from '@components/dialog-create-board/dialog-create-board.component';
 import { provideNativeDateAdapter} from '@angular/material/core';
 import localeFr from '@angular/common/locales/fr';
+import {
+  differenceInDays,
+  differenceInHours,
+  differenceInMinutes,
+  differenceInSeconds,
+  differenceInWeeks
+} from 'date-fns';
+import {UserService} from '@services/users/user.service';
 
 registerLocaleData(localeFr);
 
@@ -27,15 +35,15 @@ registerLocaleData(localeFr);
         RouterLink,
         ReactiveFormsModule,
         MatButtonModule,
-        DatePipe,
     ],
     styleUrl: './workspace.component.css'
 })
 export class WorkspaceComponent implements OnInit{
 
-  private workspaceId : string | null = "null";
-   workspaceService: WorkspaceService = inject(WorkspaceService);
-   mainService: MainService = inject(MainService)
+  private workspaceId : number = 0;
+  workspaceService: WorkspaceService = inject(WorkspaceService);
+  mainService: MainService = inject(MainService);
+  userService: UserService = inject(UserService);
   workspaceName: string = "";
   private route: ActivatedRoute = inject(ActivatedRoute);
   boardCreated: boolean = false;
@@ -85,19 +93,32 @@ export class WorkspaceComponent implements OnInit{
 
   }
 
-  public getBoards(workspaceId: string | null) : void {
+  public getBoards(workspaceId: number) : void {
 
     this.workspaceService.getBoards(workspaceId).subscribe({
         next: (data: Board[]) => {
           //this.boardService.updateBoards(data);
-          this.mainService.setBoards(data);
-          if (typeof this.workspaceId === "string") {
-            localStorage.setItem("workspaceId", this.workspaceId);
-          }
           this.boards.set(data)
-          //console.log(this.boards())
-          //this.boardService.boards().push(data);
-         // console.log(this.mainService.getListBoards())
+
+          this.boards.update(boardTab => boardTab.map((board) => {
+            const updateAt = new Date(board.lastUpdated);
+            const now = new Date();
+
+            const diffWeeks = differenceInWeeks(now,updateAt);
+            const diffDays = differenceInDays(now,updateAt);
+            const diffHours = differenceInHours(now,updateAt);
+            const diffMinutes = differenceInMinutes(now,updateAt);
+            const diffSeconds = differenceInSeconds(now,updateAt);
+            return {
+              ...board,
+              weeksSinceUpdate: diffWeeks,
+              daysSinceUpdate: diffDays,
+              hoursSinceUpdate: diffHours,
+              minutesSinceUpdate: diffMinutes,
+              secondsSinceUpdate: diffSeconds
+            }
+          }))
+          this.mainService.setBoards(data);
         },
         error: (error: HttpErrorResponse) => {
           alert("error -> " + error.message)
@@ -122,7 +143,6 @@ export class WorkspaceComponent implements OnInit{
        this.boardService.deleteBoardById(board.id).subscribe({
          next: () => {
            //this.router.href = "http://localhost:4200/workspaces/"+this.workspaceId+"/boards";
-
            window.location.href = "http://localhost:4200/workspaces/"+this.workspaceId+"/boards"
          },
          error: err => {
@@ -140,14 +160,14 @@ export class WorkspaceComponent implements OnInit{
     });
 
     dialogRef.afterClosed().subscribe((result : Board) => {
-      console.log('The dialog was closed');
+
       if (result !== undefined) {
         this.datePipe.transform(result.lastUpdated, 'dd/MM/yyyy','fr')
         this.workspaceService.createBoard(this.workspaceId, result).subscribe({
           next:boardValue => {
             this.boards.update((currentValue) => [...currentValue,boardValue])
-            window.location.href = "http://localhost:4200/workspaces/"+this.workspaceId+"/boards"
 
+            window.location.href = "http://localhost:4200/workspaces/"+this.workspaceId+"/boards"
           }
         });
 

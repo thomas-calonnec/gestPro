@@ -16,14 +16,21 @@ import {AuthService} from '@services/auth/auth.service';
 export class SidebarComponent implements OnInit{
   workspaceService: WorkspaceService = inject(WorkspaceService);
   mainService : MainService = inject(MainService);
-  workspaceId: string | null = "";
   workspaceName: WritableSignal<string> = signal("");
   authService: AuthService = inject(AuthService);
   router: Router = inject(Router);
 
   ngOnInit() {
-    this.workspaceId = localStorage.getItem('workspaceId');
-    this.getBoards();
+    const storedId = localStorage.getItem('workspaceId');
+
+    if (storedId !== null && !isNaN(Number(storedId))) {
+      this.mainService.setWorkspaceId(Number(storedId));
+      this.getBoards(); // Appeler seulement si l'ID est valide
+    } else {
+      console.warn('Aucun workspaceId valide dans le localStorage');
+      // Optionnel : rediriger ou afficher un message
+    }
+
     this.mainService.removeListBoard();
     //this.getWorkspace();
   }
@@ -31,8 +38,8 @@ export class SidebarComponent implements OnInit{
 
   getBoards() {
 
-    if(this.workspaceId !== null) {
-      this.workspaceService.getBoards(this.workspaceId).subscribe({
+    if(this.mainService.getWorkspaceId() !== null) {
+      this.workspaceService.getBoards(this.mainService.getWorkspaceId()).subscribe({
           next: (data: Board[]) => {
             this.mainService.setBoards(data);
 

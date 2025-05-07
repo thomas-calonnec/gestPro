@@ -5,4 +5,9 @@ export interface Board {
     description: string;
     lastUpdated: Date;
     cardCount: number;
+    weeksSinceUpdate: number;
+    daysSinceUpdate: number;
+    hoursSinceUpdate: number;
+    minutesSinceUpdate: number;
+    secondsSinceUpdate: number;
 }

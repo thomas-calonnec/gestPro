@@ -6,10 +6,13 @@
   /*--bg-card: #2A3E52;*/
 }
 body {
-  background: linear-gradient(135deg, #f4f7fb, #e6f1f5);
+  //background: linear-gradient(to bottom, #eef1f5, #ffffff);
+  font-family: 'Inter', sans-serif;
+
+
   min-height: 100vh;
   margin: 0;
-  font-family: Arial, sans-serif;
+  //font-family: Arial, sans-serif;
 }
 .container2 {
   display: flex;

@@ -130,10 +130,13 @@ public class WorkspaceService {
      * @throws RuntimeException if the Workspace with the specified ID does not exist.
      */
     public Workspace updateWorkspace(Long id, Workspace updateWorkspace){
+        System.err.println("update : " + updateWorkspace.getIsFavorite());
         workspaceRepository.findById(id)
                 .map(workspace -> {
                     workspace.setName(updateWorkspace.getName());
                     workspace.setDescription(updateWorkspace.getDescription());
+                    workspace.setUpdateAt(updateWorkspace.getUpdateAt());
+                    workspace.setIsFavorite(updateWorkspace.getIsFavorite());
                     return workspaceRepository.save(workspace);
                 })
                 .orElseThrow(() -> new RuntimeException("Workspace not found"));
