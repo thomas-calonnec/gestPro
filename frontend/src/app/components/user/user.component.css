@@ -11,17 +11,68 @@
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   box-shadow: 0 4px 6px rgba(13, 110, 253, 0.1); /* Ombre légère par défaut */
 
-}
-.workspace-card {
-  background-color: white;
-  border-radius: 0.75rem; /* 12px */
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-  padding: 1rem;
-  transition: box-shadow 0.2s ease-in-out;
-}
+}.workspace-card {
+   background-color: #ffffff;
+   border-radius: 12px;
+   padding: 16px;
+   width: 100%;
+   max-width: 320px;
+   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+   position: relative;
+   transition: box-shadow 0.2s ease-in-out;
+ }
+
 .workspace-card:hover {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
+
+.workspace-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.workspace-star {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #ccc;
+  cursor: pointer;
+}
+
+.workspace-star:hover {
+  color: #888;
+}
+
+.workspace-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: #111;
+  cursor: pointer;
+}
+
+.workspace-info {
+  font-size: 14px;
+  color: #666;
+  margin-top: 2px;
+}
+
+.workspace-options {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #999;
+  cursor: pointer;
+}
+
+.workspace-options:hover {
+  color: #555;
+}
+
 /* Style de l'effet au hover */
 .hover-card:hover {
   transform: translateY(-10px); /* Élève la carte */
@@ -81,6 +132,7 @@
   font-size: 1.2rem;
   margin-top: 10px;
 }
+
 
 
 

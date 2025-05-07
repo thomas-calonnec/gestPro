@@ -11,6 +11,13 @@ import {MatDialog} from '@angular/material/dialog';
 import {
   DialogAnimationsExampleDialogComponent
 } from '@components/dialog-animations-example-dialog/dialog-animations-example-dialog.component';
+import {
+  differenceInDays,
+  differenceInHours,
+  differenceInMinutes,
+  differenceInSeconds,
+  differenceInWeeks
+} from 'date-fns';
 
 @Component({
     selector: 'app-user',
@@ -28,8 +35,10 @@ export class UserComponent implements  OnInit{
   userService : UserService = inject(UserService);
   route : ActivatedRoute = inject(ActivatedRoute);
   mainService : MainService = inject(MainService);
+  nbBoard: number = 0;
   @Output() paramId  = new EventEmitter<string>();
   workspaceCreated: boolean = false;
+
   private formBuilder : FormBuilder = inject(FormBuilder);
   myForm: FormGroup;
   readonly dialog = inject(MatDialog);
@@ -45,7 +54,7 @@ export class UserComponent implements  OnInit{
     this.paramId.emit(this.userId);
     this.getWorkspaces();
     localStorage.setItem("workspaceName","");
-    this.mainService.removeListBoard()
+    this.mainService.removeListBoard();
 
   }
 
@@ -54,6 +63,23 @@ export class UserComponent implements  OnInit{
     this.userService.getWorkspaces(this.userId).subscribe({
       next: (workspaces: Workspace[]) => {
         this.workspaces.set(workspaces);
+        this.workspaces.update(workspaceTab => workspaceTab.map((workspace) => {
+          const updateAt = new Date(workspace.updateAt);
+          const now = new Date();
+          const diffWeeks = differenceInWeeks(now,updateAt);
+          const diffDays = differenceInDays(now,updateAt);
+          const diffHours = differenceInHours(now,updateAt);
+          const diffMinutes = differenceInMinutes(now,updateAt);
+          const diffSeconds = differenceInSeconds(now,updateAt);
+          return {
+            ...workspace,
+            weeksSinceUpdate: diffWeeks,
+            daysSinceUpdate: diffDays,
+            hoursSinceUpdate: diffHours,
+            minutesSinceUpdate: diffMinutes,
+            secondsSinceUpdate: diffSeconds
+          }
+        }))
       },
       error: err => {console.error(err)}
     })
@@ -63,7 +89,16 @@ export class UserComponent implements  OnInit{
   addWorkspace() {
     const workspace:Workspace =  {
       id: 0,
-      name: this.myForm.value.name
+      name: this.myForm.value.name,
+      description: "",
+      updateAt: new Date(),
+      weeksSinceUpdate: 0,
+      daysSinceUpdate: 0,
+      hoursSinceUpdate: 0,
+      minutesSinceUpdate: 0,
+      secondsSinceUpdate: 0,
+      isFavorite: false,
+      boards: []
     };
     this.userService.createWorkspace(Number(this.userId),workspace).subscribe({
       next: data => {
@@ -102,4 +137,36 @@ export class UserComponent implements  OnInit{
       }
     })
   }
+
+  setFavorite(workspaceId: number) {
+    this.workspaces.update(workspaces => {
+      // Mettre à jour le workspace dont l'id correspond à workspaceId
+      const updatedWorkspaces = workspaces.map(workspace => {
+        if (workspace.id == workspaceId) {
+          return {
+            ...workspace,
+            isFavorite: !workspace.isFavorite // Met à jour l'attribut isFavorite uniquement pour celui-là
+          };
+        }
+        return workspace; // Les autres workspaces restent inchangés
+      });
+
+      // Trouver le workspace modifié pour le renvoyer uniquement (si besoin)
+      const updatedWorkspace = updatedWorkspaces.find(workspace => workspace.id == workspaceId);
+
+      // Tu peux maintenant utiliser updatedWorkspace ou envoyer une action pour l'update
+       this.workspaceService.updateWorkspace(workspaceId, updatedWorkspace).subscribe({
+         next: value => {
+
+         },
+         error: err => {
+
+         }
+       })
+
+      return updatedWorkspaces; // Retourner le tableau mis à jour
+    });
+  }
 }
+
+

@@ -70,7 +70,7 @@ export class BoardComponent implements OnInit{
 
     this.boardId = this.route.snapshot.params['id'];
     this.getListCards(this.boardId);
-    this.workspaceId = this.mainService.getWorkspaceId();
+
     this.boardService.getBoardById(this.boardId).subscribe({
       next: board => {
         this.boardName = board.name

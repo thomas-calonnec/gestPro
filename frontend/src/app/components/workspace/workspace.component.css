@@ -2,14 +2,19 @@
 .hover-card {
   width: 300px;
   height: 60px;
+  border-radius: 12px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  padding: 16px;
+  color: #2e2e2e;
+  transition: transform 0.2s ease;
   background-color: #FFFFFF;
-  border-radius: 15px; /* Bords arrondis */
+  /*border-radius: 15px; !* Bords arrondis *!*/
   display: flex;
   flex-direction: column ;
-  padding-left: 15px;
+  /*padding-left: 15px;*/
   cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  box-shadow: 0 4px 6px rgba(13, 110, 253, 0.1); /* Ombre légère par défaut */
+  /*transition: transform 0.3s ease, box-shadow 0.3s ease;*/
+  /*box-shadow: 0 4px 6px rgba(13, 110, 253, 0.1); !* Ombre légère par défaut *!*/
 
 }
 .workspace-header-gradient {
@@ -56,12 +61,52 @@
 }
 
 /* Style du titre */
-.card-title {
-  font-size: 1.5rem;
-
-  color: #333; /* Couleur du texte */
-  margin: 0;
+/*
+*/
+.board-card {
+  background-color: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  width: 100%;
+  max-width: 300px;
 }
+
+.board-card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+}
+
+.board-header {
+  padding: 16px;
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.board-body {
+  background-color: #fff;
+  padding: 16px;
+  font-size: 14px;
+  color: #555;
+  border-top: 1px solid #e0e0e0;
+}
+
+.board-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  padding: 0 16px 12px;
+}
+
+.board-footer a {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: 500;
+}
+
 /* Centre le contenu de la page pour un effet d'espace de travail */
 .containerBoard {
   display: flex;
@@ -124,56 +169,56 @@
   background-color: #0056b3;
 }
 
-.card {
-  width: 300px;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  margin: 15px;
-  color: white; /* Texte blanc pour contraster avec les couleurs des boards */
-  display: flex;
-  flex-direction: column;
-  transition: transform 0.3s ease;
-  cursor: pointer;
-}
+/*.card {*/
+/*  width: 300px;*/
+/*  border-radius: 10px;*/
+/*  overflow: hidden;*/
+/*  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);*/
+/*  margin: 15px;*/
+/*  color: white; !* Texte blanc pour contraster avec les couleurs des boards *!*/
+/*  display: flex;*/
+/*  flex-direction: column;*/
+/*  transition: transform 0.3s ease;*/
+/*  cursor: pointer;*/
+/*}*/
 
-.card:hover {
-  transform: scale(1.05);
-}
+/*.card:hover {*/
+/*  transform: scale(1.05);*/
+/*}*/
 
-.card-header {
-  padding: 15px;
-  font-size: 1.5em;
-  font-weight: bold;
-  background: rgba(0, 0, 0, 0.3); /* Optionnel, pour une légère transparence */
-  background-size: 30px;
-}
+/*.card-header {*/
+/*  padding: 15px;*/
+/*  font-size: 1.5em;*/
+/*  font-weight: bold;*/
+/*  background: rgba(0, 0, 0, 0.3); !* Optionnel, pour une légère transparence *!*/
+/*  background-size: 30px;*/
+/*}*/
 
-.card-content {
-  padding: 15px;
-  font-size: 0.95em;
-  background-color: white; /* Fond blanc pour le texte */
-  color: #333; /* Texte noir pour la description */
-}
+/*.card-content {*/
+/*  padding: 15px;*/
+/*  font-size: 0.95em;*/
+/*  background-color: white; !* Fond blanc pour le texte *!*/
+/*  color: #333; !* Texte noir pour la description *!*/
+/*}*/
 
-.card-footer {
-  display: flex;
-  justify-content: space-between;
-  padding: 10px 15px;
-  background: white;
-  text-align: right;
-}
+/*.card-footer {*/
+/*  display: flex;*/
+/*  justify-content: space-between;*/
+/*  padding: 10px 15px;*/
+/*  background: white;*/
+/*  text-align: right;*/
+/*}*/
 
-.card-footer .read-more {
-  text-decoration: none;
-  font-weight: bold;
-  color: #007bff; /* Couleur d'accent pour le lien */
-  transition: color 0.3s ease;
-}
+/*.card-footer .read-more {*/
+/*  text-decoration: none;*/
+/*  font-weight: bold;*/
+/*  color: #007bff; !* Couleur d'accent pour le lien *!*/
+/*  transition: color 0.3s ease;*/
+/*}*/
 
-.card-footer .read-more:hover {
-  color: #0056b3;
-}
+/*.card-footer .read-more:hover {*/
+/*  color: #0056b3;*/
+/*}*/
 
 .red-square {
   background-color: #e74c3c; /* Rouge */
@@ -230,4 +275,98 @@
 .cyan-square {
   background-color: #39c4d8; /* Hex for white */
   border: 1px solid #39c4d8;
+}
+
+.cards-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+}
+
+.card {
+  background-color: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 20px;
+  transition: transform 0.2s ease;
+  border-left: 4px solid #4F8DFD;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+}
+
+/* Header */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.card-header h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2e2e2e;
+  margin: 0;
+}
+
+.status-badge {
+  font-size: 0.85rem;
+  color: #996600;
+  background-color: #fffbe6;
+  padding: 4px 10px;
+  border-radius: 8px;
+}
+
+/* Body */
+.card-body {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 14px;
+}
+
+.tags {
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tag {
+  background-color: #f0f2f5;
+  color: #333;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+}
+
+/* Footer */
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.members {
+  font-size: 0.85rem;
+  color: #444;
+}
+
+.btn-open {
+  background-color: #e7f0ff;
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 6px 14px;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.btn-open:hover {
+  background-color: #d5e6fd;
 }

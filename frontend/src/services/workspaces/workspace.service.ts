@@ -14,11 +14,11 @@ export class WorkspaceService {
   private apiServerUrl = environment.apiUrl + '/user/workspaces';
   constructor(private http: HttpClient) { }
 
-  public getBoards(workspaceId: string | null) : Observable<Board[]> {
+  public getBoards(workspaceId: number | null) : Observable<Board[]> {
 
     return this.http.get<Board[]>(`${this.apiServerUrl}/${workspaceId}/boards`,{withCredentials: true});
   }
-  public getWorkspaceById(workspaceId: string | null) : Observable<Workspace> {
+  public getWorkspaceById(workspaceId: number | null) : Observable<Workspace> {
     return this.http.get<Workspace>(`${this.apiServerUrl}/${workspaceId}`,{withCredentials: true});
   }
   public deleteWorkspaceById(workspaceId: number) : Observable<Workspace> {
@@ -30,7 +30,11 @@ export class WorkspaceService {
     return this.http.delete<void>(`${this.apiServerUrl}/${boardId}`);
   }
 
-  public createBoard(workspaceId: string | null, board: Board): Observable<Board> {
+  public updateWorkspace(workspaceId: number,workspace: Workspace | undefined): Observable<Workspace> {
+
+    return this.http.put<Workspace>(`${this.apiServerUrl}/${workspaceId}/update`,workspace);
+  }
+  public createBoard(workspaceId: number, board: Board): Observable<Board> {
     return this.http.post<Board>(`${this.apiServerUrl}/${workspaceId}/board`,board)
   }
 }

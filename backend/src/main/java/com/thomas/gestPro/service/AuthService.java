@@ -60,7 +60,7 @@ public class AuthService {
     }
     private ResponseCookie createJwtCookie(String tokenName, String tokenValue) {
         long maxAgeSeconds = tokenName.equals("accessToken") ?
-                Duration.ofMinutes(15).getSeconds() :
+                Duration.ofMinutes(60).getSeconds() :
                 Duration.ofDays(7).getSeconds();
 
         return ResponseCookie.from(tokenName,tokenValue)
@@ -121,13 +121,6 @@ public class AuthService {
 
     }
 
-//    public ResponseEntity<User> getCurrentUser() {
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        String username = (String) authentication.getPrincipal();
-//        User user = this.userService.getUserByUsername(username);
-//        System.err.println(username);
-//        return authentication.isAuthenticated() ? ResponseEntity.ok(user) : ResponseEntity.notFound().build();
-//    }
     public ResponseEntity<JwtResponse> logout() {
          Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
           authentication.setAuthenticated(false);
@@ -185,7 +178,6 @@ public class AuthService {
             return ResponseEntity.ok(new JwtResponse(this.jwtUtil.getUsernameFromToken(token)));
         }
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        System.err.println("authentication  : " + authentication);
         if (authentication != null &&
                 authentication.isAuthenticated() &&
                 !(authentication instanceof AnonymousAuthenticationToken)) {
