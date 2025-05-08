@@ -54,6 +54,8 @@ export class UserComponent implements  OnInit{
     this.paramId.emit(this.userId);
     this.getWorkspaces();
     localStorage.setItem("workspaceName","");
+    localStorage.setItem("workspaceId","");
+    this.workspaceService.setBoards([]);
     this.mainService.removeListBoard();
 
   }

@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {Injectable, signal} from '@angular/core';
 import { Observable } from 'rxjs';
 import { Board } from '@models/board';
 import {HttpClient} from '@angular/common/http';
@@ -14,10 +14,28 @@ export class WorkspaceService {
   private apiServerUrl = environment.apiUrl + '/user/workspaces';
   constructor(private http: HttpClient) { }
 
-  public getBoards(workspaceId: number | null) : Observable<Board[]> {
+  private _boards = signal<Board[]>([]);
+  readonly boards = this._boards.asReadonly();
 
+  public setBoards(newBoards: Board[]){
+    this._boards.set(newBoards);
+  }
+  public fetchBoards(workspaceId: number) {
+    this.http.get<Board[]>(`${this.apiServerUrl}/${workspaceId}/boards`,{withCredentials: true}).subscribe({
+      next: boardsTab => {
+        this.setBoards(boardsTab);
+
+      },
+      error: err => {
+        console.error('error during boards loading : ',err);
+        this.setBoards([]);
+      }
+    })
+  }
+  public getBoards(workspaceId: number | null) : Observable<Board[]> {
     return this.http.get<Board[]>(`${this.apiServerUrl}/${workspaceId}/boards`,{withCredentials: true});
   }
+
   public getWorkspaceById(workspaceId: number | null) : Observable<Workspace> {
     return this.http.get<Workspace>(`${this.apiServerUrl}/${workspaceId}`,{withCredentials: true});
   }

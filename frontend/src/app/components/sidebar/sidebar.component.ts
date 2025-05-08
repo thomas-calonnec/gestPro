@@ -1,54 +1,48 @@
 import {Component, inject, OnInit, signal, WritableSignal} from '@angular/core';
-import { Router, RouterLink} from '@angular/router';
+import {Router, RouterLink, RouterLinkActive} from '@angular/router';
 import {MainService} from '@services/main/main.service';
 import {WorkspaceService} from '@services/workspaces/workspace.service';
 import {Board} from '@models/board';
 import {AuthService} from '@services/auth/auth.service';
+import {FormsModule} from '@angular/forms';
+import {LucideAngularModule,LayoutDashboard} from 'lucide-angular';
+import {NgOptimizedImage} from '@angular/common';
 
 @Component({
     selector: 'app-sidebar',
-    imports: [
-        RouterLink
-    ],
+  imports: [
+    RouterLink,
+    FormsModule,
+    LucideAngularModule,
+    RouterLinkActive,
+    NgOptimizedImage
+  ],
     templateUrl: './sidebar.component.html',
-    styleUrl: './sidebar.component.css'
+    styleUrl: './sidebar.component.scss'
 })
-export class SidebarComponent implements OnInit{
+export class SidebarComponent {
   workspaceService: WorkspaceService = inject(WorkspaceService);
   mainService : MainService = inject(MainService);
   workspaceName: WritableSignal<string> = signal("");
-  authService: AuthService = inject(AuthService);
+  boards = this.workspaceService.boards;
   router: Router = inject(Router);
+  searchTerm = '';
+  showAll = false;
+  maxVisible = 3;
 
-  ngOnInit() {
-    const storedId = localStorage.getItem('workspaceId');
+    public filteredBoards() {
 
-    if (storedId !== null && !isNaN(Number(storedId))) {
-      this.mainService.setWorkspaceId(Number(storedId));
-      this.getBoards(); // Appeler seulement si l'ID est valide
-    } else {
-      console.warn('Aucun workspaceId valide dans le localStorage');
-      // Optionnel : rediriger ou afficher un message
-    }
-
-    this.mainService.removeListBoard();
-    //this.getWorkspace();
+    return this.boards().filter(board =>
+      board.name.toLowerCase().includes(this.searchTerm.toLowerCase())
+    );
   }
 
 
-  getBoards() {
-
-    if(this.mainService.getWorkspaceId() !== null) {
-      this.workspaceService.getBoards(this.mainService.getWorkspaceId()).subscribe({
-          next: (data: Board[]) => {
-            this.mainService.setBoards(data);
-
-          }
-        }
-      )
-    }
-
+  limitedBoards() {
+    const filtered = this.filteredBoards();
+    return this.showAll ? filtered : filtered.slice(0, this.maxVisible);
   }
+
 
   protected readonly localStorage = localStorage;
 }
