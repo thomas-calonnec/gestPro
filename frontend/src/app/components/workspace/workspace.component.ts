@@ -4,7 +4,7 @@ import {WorkspaceService} from '@services/workspaces/workspace.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {ActivatedRoute, RouterLink} from '@angular/router';
 import {MainService} from '@services/main/main.service';
-import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatButtonModule} from '@angular/material/button';
 import {MatDialog} from '@angular/material/dialog';
 import {
@@ -31,11 +31,12 @@ registerLocaleData(localeFr);
     templateUrl: 'workspace.component.html',
     providers: [provideNativeDateAdapter(), DatePipe, { provide: LOCALE_ID, useValue: 'fr-FR' },
     ],
-    imports: [
-        RouterLink,
-        ReactiveFormsModule,
-        MatButtonModule,
-    ],
+  imports: [
+    RouterLink,
+    ReactiveFormsModule,
+    MatButtonModule,
+    FormsModule,
+  ],
     styleUrl: './workspace.component.css'
 })
 export class WorkspaceComponent implements OnInit{
@@ -56,6 +57,7 @@ export class WorkspaceComponent implements OnInit{
   readonly description = model('');
   readonly dialog = inject(MatDialog);
   protected datePipe: DatePipe = inject(DatePipe);
+  searchTerm = '';
 
   constructor() {
     this.myForm = this.formBuilder.group({
@@ -77,9 +79,11 @@ export class WorkspaceComponent implements OnInit{
 
     this.workspaceId = this.route.snapshot.params['id'];
 
+    this.workspaceService.fetchBoards(this.workspaceId);
     this.getWorkspace();
     this.getBoards(this.workspaceId);
     this.mainService.setWorkspaceId(Number(this.workspaceId))
+
 
 
   }
@@ -126,7 +130,11 @@ export class WorkspaceComponent implements OnInit{
       }
     )
   }
-
+  public filteredBoard() {
+    return this.boards().filter((value) => {
+      return this.searchTerm != '' ? value.name.includes(this.searchTerm) : value
+    })
+  }
   openDialog(enterAnimationDuration: string, exitAnimationDuration: string, board : Board): void {
    const name = board.name;
    const type = "board";

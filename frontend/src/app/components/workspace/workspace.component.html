@@ -16,9 +16,16 @@
 
 
 <div class="containerBoard">
-
+  <div class="board-search-wrapper">
+    <input
+      type="text"
+      placeholder="Search board..."
+      [(ngModel)]="searchTerm"
+      class="board-search"
+    />
+  </div>
   <div class="cards-container">
-  @for (board of this.boards(); track board.id) {
+  @for (board of filteredBoard(); track board.id) {
 
       <div class="card">
         <div class="card-header">
@@ -48,7 +55,7 @@
 
         <div class="card-footer">
           <div class="members">
-            👥 4 membres
+            👥 4 members
           </div>
           <a [routerLink]="'/boards/' + board.id" class="btn-open">Open</a>
         </div>
