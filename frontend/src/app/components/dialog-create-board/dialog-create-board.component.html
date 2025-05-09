@@ -13,5 +13,5 @@
 </mat-dialog-content>
 <mat-dialog-actions>
   <button mat-button (click)="onNoClick()">Cancel</button>
-  <button mat-button [mat-dialog-close]="addBoard()" cdkFocusInitial>Add</button>
+  <button mat-button [mat-dialog-close]="addBoard()" [disabled]="!board.name || !board.description " cdkFocusInitial>Add</button>
 </mat-dialog-actions>

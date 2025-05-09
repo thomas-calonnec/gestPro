@@ -1,6 +1,8 @@
 package com.thomas.gestPro.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,14 +32,17 @@ public class Workspace {
     private Date updateAt;
 
     private Boolean isFavorite;
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name="workspace_id")
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+    @JoinTable(name="tj_workspace_board",
+            joinColumns = @JoinColumn(name="workspace_id"),
+            inverseJoinColumns = @JoinColumn(name = "board_id"))
     private List<Board> boards = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JsonIgnore
     @JoinTable(name="tj_user_workspace",
             joinColumns = @JoinColumn(name="workspace_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id"))
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
     private List<User> users = new ArrayList<>();
 }

@@ -1,7 +1,7 @@
 import {Component, computed, inject, OnInit, signal, WritableSignal} from '@angular/core';
 import { BoardService } from '@services/boards/board.service';
 import {ListCardComponent} from '@components/list-card/list-card.component';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, RouterLink} from '@angular/router';
 import {ListCard} from '@models/list-card';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {CdkDragDrop, CdkDrag, CdkDropList, moveItemInArray} from '@angular/cdk/drag-drop';
@@ -16,6 +16,7 @@ import {MainService} from '@services/main/main.service';
         CdkDropList,
         CdkDrag,
         MatButton,
+        RouterLink,
     ],
     templateUrl: './board.component.html',
     styleUrl: './board.component.scss'
@@ -142,4 +143,6 @@ export class BoardComponent implements OnInit{
       return list.filter(l => !l.isArchived);
     })
   }
+
+    protected readonly localStorage = localStorage;
 }

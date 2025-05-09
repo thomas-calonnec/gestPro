@@ -1,4 +1,34 @@
 /* You can add global styles to this file, and also import other style files */
+:root {
+  --primary: #007bff;
+  --primary-light: #cce5ff;
+  --accent: #ffe066;  /* jaune doux */
+  --gray-100: #f8f9fa;
+  --gray-300: #dee2e6;
+  --gray-900: #212529;
+}
+/* === Variante 2 : fond “pill” derrière le texte === */
+.title.pill {
+  display: inline-block;
+  padding: 0.25em 0.75em;
+  background-color: var(--primary-light);
+  border-radius: 999px;
+}
+.page-header {
+  padding: 1.5rem 1rem;
+  background-color: #d1f7e3;
+  border-bottom: 1px solid var(--gray-300);
+  margin-bottom: 1.5rem;
+}
+
+.page-header .title {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--gray-900);
+  line-height: 1.2;
+}
+
 
 html, body {
   height: 100%;

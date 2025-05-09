@@ -41,8 +41,6 @@ public class UserController {
     @GetMapping("{id}/workspaces")
     public ResponseEntity<List<Workspace>> getWorkspaceByUserId(@PathVariable Long id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        System.err.println("auth : " + authentication);
        /* if (authentication != null && authentication.isAuthenticated()) {
             System.err.println(authentication);
             boolean hasUserRole = authentication.getAuthorities().stream()

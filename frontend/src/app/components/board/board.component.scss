@@ -1,4 +1,21 @@
+.title.marker-rect {
+  display: inline-block;
+  position: relative;
+  padding: 0 2px; /* optionnel : espace intérieur */
+  z-index: 0;
+}
 
+.title.marker-rect::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0.15em;
+  height: 0.4em;
+  background-color: var(--marker-color, #e0c3fc);
+  z-index: -1;
+  border-radius: 2px;
+}
 .buttonAddList2 {
   height: 50px;
   width: 272px;

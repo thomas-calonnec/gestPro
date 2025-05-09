@@ -31,12 +31,13 @@ import {Board} from '@models/board';
 export class DialogCreateBoardComponent {
   readonly dialogRef = inject(MatDialogRef<DialogCreateBoardComponent>);
    board:Board = {
-
     name: '',
     color: '',
     description: '',
     lastUpdated: new Date(),
     cardCount: 0,
+    ownerId: 0,
+    members: [],
     weeksSinceUpdate: 0,
     daysSinceUpdate: 0,
     hoursSinceUpdate: 0,

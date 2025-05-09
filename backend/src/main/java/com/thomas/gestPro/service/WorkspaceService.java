@@ -2,6 +2,7 @@ package com.thomas.gestPro.service;
 
 
 import com.thomas.gestPro.model.Board;
+import com.thomas.gestPro.model.User;
 import com.thomas.gestPro.model.Workspace;
 import com.thomas.gestPro.repository.BoardRepository;
 import com.thomas.gestPro.repository.UserRepository;
@@ -86,39 +87,31 @@ public class WorkspaceService {
      */
     @Transactional
     public Board createBoard(Long workspaceId, Board board) {
+        Workspace workspace = workspaceRepository.findById(workspaceId)
+                .orElseThrow(() -> new RuntimeException("Workspace not found"));
 
-        Workspace workspace = workspaceRepository.findById(workspaceId).orElseThrow(() -> new RuntimeException("Workspace not found"));
         List<String> colors = List.of(
                 "red", "blue", "green", "yellow", "purple",
                 "orange", "pink", "brown", "mediumaquamarine", "cyan"
         );
+        String randomColor = colors.get(new Random().nextInt(colors.size()));
 
-        // Generate a random index
-        Random random = new Random();
-        int randomIndex = random.nextInt(colors.size());
-
-        // Pick one random color
-        String randomColor = colors.get(randomIndex);
-
-        // Print the random color
-        System.err.println("Random Color: " + randomColor);
         board.setColor(randomColor);
         board.setLastUpdated(new Date());
         board.setCardCount(0);
+
         workspace.getBoards().add(board);
-        workspaceRepository.save(workspace);
+        board.getWorkspaces().add(workspace);
+        Board savedBoard;
+
         try {
-            boardRepository.save(board);
+            savedBoard = boardRepository.save(board);
         } catch (ObjectOptimisticLockingFailureException e) {
-            // Recharger l'entité et réessayer
-            System.err.println("err" + e.getMessage());
-            Board reloadedBoard = boardRepository.findById(board.getId()).orElseThrow(() -> new RuntimeException("Board not found"));
-            // Appliquer les modifications à l'entité récupérée
-            boardRepository.save(reloadedBoard);
+            System.err.println("Optimistic locking failed: " + e.getMessage());
+            throw new RuntimeException("Could not create board due to concurrency issue", e);
         }
 
-        return board;
-
+        return savedBoard;
     }
 
     /**
