@@ -42,8 +42,8 @@ export class CallbackComponent implements OnInit {
                     username: response.user.name,
                     password: null,
                     email: response.user.email,
-                    providerId: response.user.id
-
+                    providerId: response.user.id,
+                    boards: []
                   }
                   this.userService.createUser(newUser).subscribe({
                     next : (user) => {

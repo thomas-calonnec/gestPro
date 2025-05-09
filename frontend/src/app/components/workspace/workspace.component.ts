@@ -1,4 +1,4 @@
-import {Component, inject, LOCALE_ID, model, OnInit, signal, WritableSignal} from '@angular/core';
+import {Component, computed, inject, LOCALE_ID, model, OnInit, signal, WritableSignal} from '@angular/core';
 import {Board} from '@models/board';
 import {WorkspaceService} from '@services/workspaces/workspace.service';
 import {HttpErrorResponse} from '@angular/common/http';
@@ -11,9 +11,9 @@ import {
   DialogAnimationsExampleDialogComponent
 } from '@components/dialog-animations-example-dialog/dialog-animations-example-dialog.component';
 import {BoardService} from '@services/boards/board.service';
-import {DatePipe, registerLocaleData} from '@angular/common';
+import {DatePipe, NgOptimizedImage, registerLocaleData} from '@angular/common';
 import {DialogCreateBoardComponent} from '@components/dialog-create-board/dialog-create-board.component';
-import { provideNativeDateAdapter} from '@angular/material/core';
+import {MatOption, provideNativeDateAdapter} from '@angular/material/core';
 import localeFr from '@angular/common/locales/fr';
 import {
   differenceInDays,
@@ -23,6 +23,17 @@ import {
   differenceInWeeks
 } from 'date-fns';
 import {UserService} from '@services/users/user.service';
+import {MatFormField, MatFormFieldModule} from '@angular/material/form-field';
+import {MatChipGrid, MatChipInput, MatChipInputEvent, MatChipRow, MatChipsModule} from '@angular/material/chips';
+import {MatIcon, MatIconModule} from '@angular/material/icon';
+import {
+  MatAutocomplete,
+  MatAutocompleteModule,
+  MatAutocompleteSelectedEvent,
+  MatAutocompleteTrigger
+} from '@angular/material/autocomplete';
+import {LiveAnnouncer} from '@angular/cdk/a11y';
+import {COMMA, ENTER} from '@angular/cdk/keycodes';
 
 registerLocaleData(localeFr);
 
@@ -32,10 +43,19 @@ registerLocaleData(localeFr);
     providers: [provideNativeDateAdapter(), DatePipe, { provide: LOCALE_ID, useValue: 'fr-FR' },
     ],
   imports: [
+    MatFormFieldModule, MatChipsModule, MatIconModule, MatAutocompleteModule, FormsModule,
     RouterLink,
     ReactiveFormsModule,
     MatButtonModule,
     FormsModule,
+    NgOptimizedImage,
+    MatFormFieldModule,
+    MatChipGrid,
+    MatChipRow,
+    MatChipInput,
+    MatAutocompleteTrigger,
+    MatAutocomplete,
+    MatOption,
   ],
     styleUrl: './workspace.component.css'
 })
@@ -58,7 +78,49 @@ export class WorkspaceComponent implements OnInit{
   readonly dialog = inject(MatDialog);
   protected datePipe: DatePipe = inject(DatePipe);
   searchTerm = '';
+  readonly separatorKeysCodes: number[] = [ENTER, COMMA];
+  readonly currentFruit = model('');
+  readonly fruits = signal(['Lemon']);
+  readonly allFruits: string[] = ['Apple', 'Lemon', 'Lime', 'Orange', 'Strawberry'];
+  readonly filteredFruits = computed(() => {
+    const currentFruit = this.currentFruit().toLowerCase();
+    return currentFruit
+      ? this.allFruits.filter(fruit => fruit.toLowerCase().includes(currentFruit))
+      : this.allFruits.slice();
+  });
 
+  readonly announcer = inject(LiveAnnouncer);
+
+  add(event: MatChipInputEvent): void {
+    const value = (event.value || '').trim();
+
+    // Add our fruit
+    if (value) {
+      this.fruits.update(fruits => [...fruits, value]);
+    }
+
+    // Clear the input value
+    this.currentFruit.set('');
+  }
+
+  remove(fruit: string): void {
+    this.fruits.update(fruits => {
+      const index = fruits.indexOf(fruit);
+      if (index < 0) {
+        return fruits;
+      }
+
+      fruits.splice(index, 1);
+      this.announcer.announce(`Removed ${fruit}`);
+      return [...fruits];
+    });
+  }
+
+  selected(event: MatAutocompleteSelectedEvent): void {
+    this.fruits.update(fruits => [...fruits, event.option.viewValue]);
+    this.currentFruit.set('');
+    event.option.deselect();
+  }
   constructor() {
     this.myForm = this.formBuilder.group({
       name: ['', Validators.required],
@@ -91,6 +153,7 @@ export class WorkspaceComponent implements OnInit{
     this.workspaceService.getWorkspaceById(this.workspaceId).subscribe({
       next: workspace => {
         this.mainService.setWorkspace(workspace.name)
+
         // this.workspaceName = workspace.name;
       }
     })
@@ -103,7 +166,11 @@ export class WorkspaceComponent implements OnInit{
         next: (data: Board[]) => {
           //this.boardService.updateBoards(data);
           this.boards.set(data)
-
+          this.userService.getUserById(Number(localStorage.getItem("USER_ID"))).subscribe({
+            next: value => {
+              console.log(value)
+            }
+          })
           this.boards.update(boardTab => boardTab.map((board) => {
             const updateAt = new Date(board.lastUpdated);
             const now = new Date();
@@ -167,19 +234,24 @@ export class WorkspaceComponent implements OnInit{
       data: {name: this.name(), description: this.description()},
     });
 
-    dialogRef.afterClosed().subscribe((result : Board) => {
+    dialogRef.afterClosed().subscribe((newBoard : Board) => {
+      const userId = Number(localStorage.getItem("USER_ID"));
+      if (newBoard !== undefined) {
+        newBoard.ownerId = userId;
+        console.log(newBoard)
 
-      if (result !== undefined) {
-        this.datePipe.transform(result.lastUpdated, 'dd/MM/yyyy','fr')
-        this.workspaceService.createBoard(this.workspaceId, result).subscribe({
+        this.datePipe.transform(newBoard.lastUpdated, 'dd/MM/yyyy','fr')
+        this.workspaceService.createBoard(this.workspaceId, newBoard).subscribe({
           next:boardValue => {
             this.boards.update((currentValue) => [...currentValue,boardValue])
-
-            window.location.href = "http://localhost:4200/workspaces/"+this.workspaceId+"/boards"
+            this.workspaceService.setBoards(this.boards())
           }
         });
 
       }
     });
   }
+
+  protected readonly localStorage = localStorage;
+  protected readonly Number = Number;
 }

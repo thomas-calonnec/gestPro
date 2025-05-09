@@ -1,3 +1,5 @@
+import {User} from '@models/user';
+
 export interface Board {
     id?: number;
     name: string;
@@ -5,6 +7,8 @@ export interface Board {
     description: string;
     lastUpdated: Date;
     cardCount: number;
+    ownerId: number;
+    members: User[];
     weeksSinceUpdate: number;
     daysSinceUpdate: number;
     hoursSinceUpdate: number;

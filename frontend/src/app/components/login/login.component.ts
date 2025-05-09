@@ -13,10 +13,11 @@ import { CookieService } from 'ngx-cookie-service';
 import {environment} from '@environments/environment.development';
 import {MatButton} from '@angular/material/button';
 import {GoogleLoginComponent} from '@components/google-login/google-login.component';
+import {MatProgressBar} from '@angular/material/progress-bar';
 
 @Component({
     selector: 'app-login',
-  imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButton, GoogleLoginComponent],
+  imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButton, GoogleLoginComponent, MatProgressBar],
     templateUrl: './login.component.html',
     styleUrl: './login.component.css'
 })
@@ -24,9 +25,8 @@ export class LoginComponent {
   myForm: FormGroup;
   authService: AuthService = inject(AuthService);
   userService: UserService = inject(UserService);
-  mainService: MainService = inject(MainService);
-  cookieService : CookieService = inject(CookieService);
   router: Router = inject(Router);
+  setLoadBar : boolean = false;
 
   userId: number | null  = 0
   constructor(private fb: FormBuilder) {
@@ -56,14 +56,14 @@ export class LoginComponent {
 
     const username = this.myForm.get('username')?.value;
     const password = this.myForm.get('password')?.value;
-
+    this.setLoadBar = true;
     this.authService.login(username, password).pipe(
       switchMap(() => {
         return this.userService.getUserByUsername(username);
       }),
       catchError((error: HttpErrorResponse) => {
         console.error('Login failed', error);
-
+        this.setLoadBar = false;
         alert("Login failed: your login and/or password is incorrect");
         return of(null); // Renvoyer un observable vide pour éviter des erreurs supplémentaires
       })
@@ -76,7 +76,8 @@ export class LoginComponent {
 
           this.authService.setCurrentUser(user);
           setTimeout(() => {
-            this.router.navigateByUrl(`users/${this.userId}/workspaces`);
+            this.router.navigate(['home'])
+            //this.router.navigateByUrl(`users/${this.userId}/workspaces`);
          //   window.location.href = `users/${this.authService.getCurrentUser()?.id}/workspaces`;
           },2000)
 

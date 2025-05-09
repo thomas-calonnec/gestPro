@@ -7,11 +7,13 @@ import { UserComponent } from '@components/user/user.component';
 import { MainComponent } from '@components/main/main.component';
 import { CallbackComponent} from '@components/callback/callback.component';
 import { AuthGuard } from './auth-guard';
+import {HomeComponent} from '@components/home/home.component';
 
 
 export const routes: Routes = [
   {
     path: '', component: MainComponent, canActivate:[AuthGuard], children: [
+      {path: 'home', component: HomeComponent},
       { path: 'workspaces/:id/boards', component: WorkspaceComponent, data: { id: 'string' } },
       { path: 'boards/:id', component: BoardComponent, data: { id: 'string' } },
       { path: 'board', component: BoardComponent },
