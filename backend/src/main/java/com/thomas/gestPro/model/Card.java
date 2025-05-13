@@ -1,17 +1,14 @@
 package com.thomas.gestPro.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name="t_card")
@@ -25,6 +22,8 @@ public class Card {
     private LocalDateTime deadline;
     private Integer hours;
     private Integer minutes;
+    private String  status;
+    private Integer storyPoint;
     private Boolean isCompleted;
     private Boolean isDateActivated;
     private Boolean isLabelActivated;
@@ -45,4 +44,6 @@ public class Card {
 
     @ManyToMany(mappedBy = "cards")
     private List<User> users = new ArrayList<>();
+
+
 }

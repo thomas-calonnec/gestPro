@@ -7,8 +7,6 @@ import com.thomas.gestPro.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,6 +24,10 @@ public class UserController {
         this.userService = userService;
     }
 
+    @GetMapping
+    public ResponseEntity<List<User>> getAllUsers() {
+        return ResponseEntity.ok(userService.getAllUser());
+    }
     @GetMapping("/id/{id}")
     public ResponseEntity<Optional<User>> getUserById(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getById(id));
@@ -40,21 +42,7 @@ public class UserController {
 
     @GetMapping("{id}/workspaces")
     public ResponseEntity<List<Workspace>> getWorkspaceByUserId(@PathVariable Long id) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-       /* if (authentication != null && authentication.isAuthenticated()) {
-            System.err.println(authentication);
-            boolean hasUserRole = authentication.getAuthorities().stream()
-                    .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_USER"));
 
-            if (hasUserRole) {
-                // L'utilisateur a le rôle ADMIN
-                System.out.println("L'utilisateur a le rôle USER");
-            } else {
-                // L'utilisateur n'a pas le rôle ADMIN
-
-                System.out.println("L'utilisateur n'a pas le rôle USER");
-            }
-        }*/
         return ResponseEntity.ok(userService.getWorkspacesByUserId(id));
     }
 

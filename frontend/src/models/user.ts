@@ -6,5 +6,6 @@ export interface User {
     password: string | null;
     email: string;
     providerId: string;
+    pictureUrl: string;
     boards: Board[];
 }

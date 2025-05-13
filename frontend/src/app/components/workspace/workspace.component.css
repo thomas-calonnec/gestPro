@@ -345,6 +345,9 @@
   flex-wrap: wrap;
   gap: 6px;
 }
+.example-form-field {
+  width: 100%;
+}
 
 .tag {
   background-color: #f0f2f5;
@@ -373,9 +376,62 @@
   font-weight: 500;
   padding: 6px 14px;
   border-radius: 8px;
+  border-color: #e7f0ff;
+  transition: background-color 0.2s ease;
+}
+.btn-closed {
+  background-color: #ed4643;
+  margin-left: 20px;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 6px 14px;
+  border-radius: 8px;
+  border-color: #ed4643;
+  cursor: pointer;
   transition: background-color 0.2s ease;
 }
 
+
 .btn-open:hover {
   background-color: #d5e6fd;
+}
+
+.card-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.card-header input {
+  flex: 1;
+  padding: 0.5rem;
+}
+
+.card-description {
+  display: flex;
+  flex-direction: column;
+  margin-left: 100px;
+  width: 80%;
+  margin-bottom: 10px;
+}
+
+.card-description textarea {
+  padding: 0.5rem;
+  resize: vertical;
+}
+
+.status-badge {
+  background-color: #ffd70033;
+  padding: 0.25rem 0.5rem;
+  border-radius: 8px;
+  font-weight: bold;
+  color: #555;
 }

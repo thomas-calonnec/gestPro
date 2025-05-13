@@ -15,7 +15,8 @@
 </div>
 <div style="display: flex; flex-direction: row">
 
-<div style="display: flex; flex-direction: row" cdkDropList cdkDropListOrientation="horizontal"
+
+<div style="display: flex; flex-direction: row" cdkDropList cdkDropListOrientation="vertical"
      (cdkDropListDropped)="drop($event)" xmlns="http://www.w3.org/1999/html">
   @for(list of sortedListCard(); track list.id) {
 
@@ -24,6 +25,8 @@
   }
 
 </div>
+
+
 @if(!isClicked) {
   <button  mat-flat-button class="buttonAddList"
           (click)="buttonClicked()">  <i class="fa-solid fa-plus"></i> Add an another list</button>
@@ -41,4 +44,5 @@
 
   </div>
 }
+
 </div>

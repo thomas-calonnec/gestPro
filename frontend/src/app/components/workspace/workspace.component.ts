@@ -4,17 +4,16 @@ import {WorkspaceService} from '@services/workspaces/workspace.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {ActivatedRoute, RouterLink} from '@angular/router';
 import {MainService} from '@services/main/main.service';
-import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
+import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatButtonModule} from '@angular/material/button';
-import {MatDialog} from '@angular/material/dialog';
-import {
-  DialogAnimationsExampleDialogComponent
-} from '@components/dialog-animations-example-dialog/dialog-animations-example-dialog.component';
-import {BoardService} from '@services/boards/board.service';
 import {DatePipe, NgOptimizedImage, registerLocaleData} from '@angular/common';
-import {DialogCreateBoardComponent} from '@components/dialog-create-board/dialog-create-board.component';
-import {MatOption, provideNativeDateAdapter} from '@angular/material/core';
+import { provideNativeDateAdapter} from '@angular/material/core';
 import localeFr from '@angular/common/locales/fr';
+
+import {MatChipsModule} from '@angular/material/chips';
+import { MatIconModule } from '@angular/material/icon';
+import {MatAutocompleteModule, MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import {
   differenceInDays,
   differenceInHours,
@@ -23,17 +22,8 @@ import {
   differenceInWeeks
 } from 'date-fns';
 import {UserService} from '@services/users/user.service';
-import {MatFormField, MatFormFieldModule} from '@angular/material/form-field';
-import {MatChipGrid, MatChipInput, MatChipInputEvent, MatChipRow, MatChipsModule} from '@angular/material/chips';
-import {MatIcon, MatIconModule} from '@angular/material/icon';
-import {
-  MatAutocomplete,
-  MatAutocompleteModule,
-  MatAutocompleteSelectedEvent,
-  MatAutocompleteTrigger
-} from '@angular/material/autocomplete';
-import {LiveAnnouncer} from '@angular/cdk/a11y';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
+import {User} from '@models/user';
 
 registerLocaleData(localeFr);
 
@@ -49,84 +39,45 @@ registerLocaleData(localeFr);
     MatButtonModule,
     FormsModule,
     NgOptimizedImage,
-    MatFormFieldModule,
-    MatChipGrid,
-    MatChipRow,
-    MatChipInput,
-    MatAutocompleteTrigger,
-    MatAutocomplete,
-    MatOption,
+
   ],
     styleUrl: './workspace.component.css'
 })
 export class WorkspaceComponent implements OnInit{
 
   private workspaceId : number = 0;
-  workspaceService: WorkspaceService = inject(WorkspaceService);
-  mainService: MainService = inject(MainService);
-  userService: UserService = inject(UserService);
+  private workspaceService: WorkspaceService = inject(WorkspaceService);
+   mainService: MainService = inject(MainService);
+  private userService: UserService = inject(UserService);
+  owner : User | undefined;
   workspaceName: string = "";
   private route: ActivatedRoute = inject(ActivatedRoute);
   boardCreated: boolean = false;
   myForm: FormGroup;
-  private formBuilder: FormBuilder = inject(FormBuilder);
   boards : WritableSignal<Board[]> = signal([])
-  private boardService: BoardService = inject(BoardService);
   board : any;
   readonly name = model('');
   readonly description = model('');
-  readonly dialog = inject(MatDialog);
   protected datePipe: DatePipe = inject(DatePipe);
   searchTerm = '';
-  readonly separatorKeysCodes: number[] = [ENTER, COMMA];
-  readonly currentFruit = model('');
-  readonly fruits = signal(['Lemon']);
-  readonly allFruits: string[] = ['Apple', 'Lemon', 'Lime', 'Orange', 'Strawberry'];
-  readonly filteredFruits = computed(() => {
-    const currentFruit = this.currentFruit().toLowerCase();
-    return currentFruit
-      ? this.allFruits.filter(fruit => fruit.toLowerCase().includes(currentFruit))
-      : this.allFruits.slice();
+  readonly separatorKeysCodes = [ENTER, COMMA] as const;
+  currentUser = new FormControl('');
+  private _users = signal<User[]>([]);
+  allUsers = signal<User[]>([]);
+  users = this._users.asReadonly();
+  readonly filteredUser = computed(() => {
+    const currentUser = this.currentUser.get('currentUser')?.value.toLowerCase();
+    return currentUser
+      ? this.allUsers().filter(member => member.username.toLowerCase().includes(currentUser))
+      : this.allUsers().slice();
   });
-
-  readonly announcer = inject(LiveAnnouncer);
-
-  add(event: MatChipInputEvent): void {
-    const value = (event.value || '').trim();
-
-    // Add our fruit
-    if (value) {
-      this.fruits.update(fruits => [...fruits, value]);
-    }
-
-    // Clear the input value
-    this.currentFruit.set('');
-  }
-
-  remove(fruit: string): void {
-    this.fruits.update(fruits => {
-      const index = fruits.indexOf(fruit);
-      if (index < 0) {
-        return fruits;
-      }
-
-      fruits.splice(index, 1);
-      this.announcer.announce(`Removed ${fruit}`);
-      return [...fruits];
-    });
-  }
-
-  selected(event: MatAutocompleteSelectedEvent): void {
-    this.fruits.update(fruits => [...fruits, event.option.viewValue]);
-    this.currentFruit.set('');
-    event.option.deselect();
-  }
   constructor() {
-    this.myForm = this.formBuilder.group({
-      name: ['', Validators.required],
-      description: ['']
-
+    this.myForm = new FormGroup({
+      name: new FormControl('',[Validators.required]),
+      description: new FormControl('',[Validators.required]),
+      selectedItems: new FormControl([]) // chips choisies
     });
+
     this.board = {
       id: 1,
       name: 'Cloud Beauty',
@@ -134,32 +85,62 @@ export class WorkspaceComponent implements OnInit{
       color: '#f39c12', // Couleur pour chaque Board
     };
 
-
   }
 
   ngOnInit(): void {
-
     this.workspaceId = this.route.snapshot.params['id'];
 
+    this.userService.getAllUser().subscribe({
+      next: users => {
+        this.allUsers.set(
+          users.filter(user => user.id !== Number(localStorage.getItem("USER_ID")))
+        );
+        this.owner = users.filter(user => user.id === Number(localStorage.getItem("USER_ID")))[0];
+      }
+    })
     this.workspaceService.fetchBoards(this.workspaceId);
     this.getWorkspace();
     this.getBoards(this.workspaceId);
     this.mainService.setWorkspaceId(Number(this.workspaceId))
 
-
-
   }
+
+  remove(user: User): void {
+    this._users.update(users => users.filter(u => u.username !== user.username));
+  }
+
+  selected(event: MatAutocompleteSelectedEvent): void {
+    const member: string = event.option.value;
+    // // Vérifie qu'il n'est pas déjà sélectionné
+
+   // const isDuplicate = this.tab.some(u => u === member);
+   const isDuplicate = this._users().some(u => u.username === member)
+     if (!isDuplicate) {
+
+
+       const avatarUrl = this.allUsers().filter((user) => user.username === member)
+       const existedUser = this.allUsers().filter((user) => user.username === member)
+       existedUser[0].pictureUrl = avatarUrl[0].pictureUrl != null ? avatarUrl[0].pictureUrl : './circle-user.png';
+
+       this._users.update(users => [...users, existedUser[0]]);
+
+     }
+
+
+    // Réinitialise le champ et l'autocomplete
+    this.currentUser.setValue('');
+    event.option.deselect();  // facultatif
+  }
+
   public getWorkspace() {
     this.workspaceService.getWorkspaceById(this.workspaceId).subscribe({
       next: workspace => {
         this.mainService.setWorkspace(workspace.name)
-
         // this.workspaceName = workspace.name;
       }
     })
 
   }
-
   public getBoards(workspaceId: number) : void {
 
     this.workspaceService.getBoards(workspaceId).subscribe({
@@ -202,56 +183,60 @@ export class WorkspaceComponent implements OnInit{
       return this.searchTerm != '' ? value.name.includes(this.searchTerm) : value
     })
   }
-  openDialog(enterAnimationDuration: string, exitAnimationDuration: string, board : Board): void {
-   const name = board.name;
-   const type = "board";
-    const dialogRef = this.dialog.open(DialogAnimationsExampleDialogComponent, {
-      width: '290px',
-      enterAnimationDuration,
-      exitAnimationDuration,
-      data: { name, type}
-    });
 
-   dialogRef.afterClosed().subscribe(result => {
+  protected readonly localStorage = localStorage;
+  protected readonly Number = Number;
 
-     if(result && board.id !== undefined) {
-       this.boardService.deleteBoardById(board.id).subscribe({
-         next: () => {
-           //this.router.href = "http://localhost:4200/workspaces/"+this.workspaceId+"/boards";
-           window.location.href = "http://localhost:4200/workspaces/"+this.workspaceId+"/boards"
-         },
-         error: err => {
-           console.error("test false : ", err)
-         }
-       })
-     }
-   })
+  addBoard() {
+    const userId = Number(localStorage.getItem("USER_ID"));
+    const boardName = this.myForm.get('name');
+    const desc = this.myForm.get('description')
+    let newBoard : Board = {
 
-  }
+      cardCount: 0,
+      color: '',
+      daysSinceUpdate: 0,
+      hoursSinceUpdate: 0,
+      lastUpdated: new Date(),
+      members: [],
+      minutesSinceUpdate: 0,
+      ownerId: userId,
+      secondsSinceUpdate: 0,
+      weeksSinceUpdate: 0,
+      name: boardName?.value,
+      description: desc?.value
 
-  createBoardDialog() {
-    const dialogRef = this.dialog.open(DialogCreateBoardComponent, {
-      data: {name: this.name(), description: this.description()},
-    });
+    }
 
-    dialogRef.afterClosed().subscribe((newBoard : Board) => {
-      const userId = Number(localStorage.getItem("USER_ID"));
-      if (newBoard !== undefined) {
-        newBoard.ownerId = userId;
-        console.log(newBoard)
+      this.datePipe.transform(newBoard.lastUpdated, 'dd/MM/yyyy','fr')
 
-        this.datePipe.transform(newBoard.lastUpdated, 'dd/MM/yyyy','fr')
+      if(desc?.invalid && boardName?.invalid){
+        alert("error : missing input")
+      } else {
+
+        newBoard.members = this.users();
         this.workspaceService.createBoard(this.workspaceId, newBoard).subscribe({
           next:boardValue => {
-            this.boards.update((currentValue) => [...currentValue,boardValue])
-            this.workspaceService.setBoards(this.boards())
+            boardValue.members.length = boardValue.members.length + 1
+            this.boards.update((currentValue) => [...currentValue,boardValue]);
+
+            this.workspaceService.setBoards(this.boards());
+
+            this.currentUser.reset();
+
+            this.cancel();
           }
         });
 
       }
-    });
+
+
+
   }
 
-  protected readonly localStorage = localStorage;
-  protected readonly Number = Number;
+  cancel() {
+    this.boardCreated = false;
+    this.myForm.reset();
+    this._users.set([]);
+  }
 }

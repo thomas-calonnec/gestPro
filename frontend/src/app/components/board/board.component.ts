@@ -4,20 +4,26 @@ import {ListCardComponent} from '@components/list-card/list-card.component';
 import {ActivatedRoute, RouterLink} from '@angular/router';
 import {ListCard} from '@models/list-card';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import {CdkDragDrop, CdkDrag, CdkDropList, moveItemInArray} from '@angular/cdk/drag-drop';
+import {
+  CdkDragDrop,
+  CdkDrag,
+  CdkDropList,
+  moveItemInArray
+} from '@angular/cdk/drag-drop';
 import {MatButton} from "@angular/material/button";
 import {MainService} from '@services/main/main.service';
 
 @Component({
     selector: 'app-board',
-    imports: [
-        ListCardComponent,
-        ReactiveFormsModule,
-        CdkDropList,
-        CdkDrag,
-        MatButton,
-        RouterLink,
-    ],
+  imports: [
+
+    ReactiveFormsModule,
+    CdkDropList,
+    CdkDrag,
+    MatButton,
+    RouterLink,
+    ListCardComponent,
+  ],
     templateUrl: './board.component.html',
     styleUrl: './board.component.scss'
 })
@@ -27,23 +33,22 @@ export class BoardComponent implements OnInit{
   sortedListCard = computed(() =>
     this.listCard().slice().sort((a, b) => a.orderIndex - b.orderIndex).filter((list) => !list.isArchived)
   );
+
   public boardService : BoardService = inject(BoardService);
   private route : ActivatedRoute = inject(ActivatedRoute);
   private boardId : number = 0;
   protected isClicked: boolean = false;
+
   cpt = 0
   formBuilder : FormBuilder = inject(FormBuilder);
   mainService: MainService = inject(MainService);
   boardName: string = "";
-  private workspaceId: string | null = "";
 
   constructor() {
     this.myForm = this.formBuilder.group({
       name: ['', Validators.required],
 
     });
-
-
   }
   buttonClicked() {
     this.isClicked = true;
@@ -56,6 +61,7 @@ export class BoardComponent implements OnInit{
       orderIndex: -1,
       isArchived: false
     }
+
 
     if(listCard.name !== ""){
       this.boardService.createListCard(this.boardId,listCard).subscribe({
@@ -91,6 +97,8 @@ export class BoardComponent implements OnInit{
     });
 
   }
+
+  // }
   drop(event : CdkDragDrop<ListCard[]>) {
     moveItemInArray(this.sortedListCard(),event.previousIndex,event.currentIndex);
 

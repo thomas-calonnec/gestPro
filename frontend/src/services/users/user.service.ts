@@ -48,4 +48,8 @@ export class UserService {
     return this.http.get<User>(`${this.apiServerUrl}/id/${userId}`, {withCredentials : true});
   }
 
+  public getAllUser() {
+    return this.http.get<User[]>(`${this.apiServerUrl}`,{withCredentials: true});
+  }
+
 }
