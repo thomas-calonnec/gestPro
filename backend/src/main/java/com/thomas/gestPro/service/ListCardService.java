@@ -63,7 +63,7 @@ public class ListCardService {
     public Card createCard(Long listCardId, Card card) {
         ListCard listCard = findListCardById(listCardId);
         card.setListCard(listCard);
-        // cardRepository.save(card);
+         cardRepository.save(card);
         listCard.getCardList().add(card);
 
         return cardRepository.save(card);

@@ -15,46 +15,16 @@
 </div>
 <div>
   <button mat-flat-button style="text-decoration: none; border-radius: 5px; margin-left: 10px" (click)="this.boardCreated = true">
-    <i class="fa fa-plus"></i> add board
+    <i class="fa fa-plus"></i> add a board
   </button>
 </div>
 
-<form>
-  <mat-form-field class="example-chip-list">
-    <mat-label>Favorite Fruits</mat-label>
-    <mat-chip-grid #chipGrid aria-label="Fruit selection">
-      @for (fruit of fruits(); track $index) {
-        <mat-chip-row (removed)="remove(fruit)">
-          {{fruit}}
-          <button matChipRemove [attr.aria-label]="'remove ' + fruit">
-            <mat-icon>cancel</mat-icon>
-          </button>
-        </mat-chip-row>
-      }
-    </mat-chip-grid>
-    <input
-      name="currentFruit"
-      placeholder="New Fruit..."
-      #fruitInput
-      [(ngModel)]="currentFruit"
-      [matChipInputFor]="chipGrid"
-      [matAutocomplete]="auto"
-      [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-      (matChipInputTokenEnd)="add($event)"
-    />
-    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event); fruitInput.value = ''">
-      @for (fruit of filteredFruits(); track fruit) {
-        <mat-option [value]="fruit">{{fruit}}</mat-option>
-      }
-    </mat-autocomplete>
-  </mat-form-field>
-</form>
 
 <div class="containerBoard">
   <div class="board-search-wrapper">
     <input
       type="text"
-      placeholder="Search board..."
+      placeholder="Search project..."
       [(ngModel)]="searchTerm"
       class="board-search"
     />
@@ -63,39 +33,76 @@
 
     <div class="cards-container">
     <div class="card">
-      <form  [formGroup]="myForm">
-      <div class="card-header">
-        <input formControlName="name">
-        <span class="status-badge">🟡 En cours</span>
-      </div>
+      <form [formGroup]="myForm" (ngSubmit)="addBoard()" >
+        <div class="card-header">
+          <label for="cardTitle">Titre :</label>
+          <input id="cardTitle" type="text" formControlName="name"/>
 
-      <div class="card-body">
-        @if (board.weeksSinceUpdate > 0) {
-          <p class="board-meta" style="padding-left: 15px">Updated {{board.weeksSinceUpdate}} {{board.daysSinceUpdate > 1 ? "weeks": "week"}} ago</p>
-        }
-        @else if (board.daysSinceUpdate > 0){
-          <p class="board-meta" style="padding-left: 15px">Updated {{board.daysSinceUpdate}} {{board.daysSinceUpdate > 1 ? "days": "day"}} ago</p>
-        } @else if (board.hoursSinceUpdate > 0) {
-          <p class="board-meta" style="padding-left: 15px">Updated {{board.hoursSinceUpdate}} {{board.hoursSinceUpdate > 1 ? "hours": "hour"}} ago</p>
-        } @else if(board.minutesSinceUpdate > 0){
-          <p class="board-meta" style="padding-left: 15px">Updated {{board.minutesSinceUpdate}} {{board.minutesSinceUpdate > 1 ? "minutes": "minute"}} ago</p>
-        } @else {
-          <p class="board-meta" style="padding-left: 15px">Updated {{board.secondsSinceUpdate}} {{board.minutesSinceUpdate > 1 ? "seconds": "second"}} ago</p>
-        }
-        <div class="tags">
-
-        </div>
-      </div>
-
-      <div class="card-footer">
-
-        <div>
-          <a [routerLink]="'/boards/' + board.id" class="btn-open">Create</a>
+          <span class="status-badge">🟡 En cours</span>
         </div>
 
+        <div class="card-description">
+          <label for="cardDescription">Description :</label>
+          <textarea
+            id="cardDescription"
+            formControlName="description"
+            rows="4"
+            maxlength="200"
+            required
+          ></textarea>
+          <mat-hint align="end">{{ description().length || 0 }}/200</mat-hint>
+
+
+        </div>
+        <div class="card-description">
+          <label for="cardDescription">Members :</label>
+          <mat-form-field appearance="outline">
+          <mat-chip-grid #chipGrid aria-label="Member selection">
+            @for (user of this.users(); track user.id) {
+              <mat-chip-row (removed)="remove(user)">
+
+                <img
+                  matChipAvatar
+                  [src]="user.pictureUrl"
+                  [alt]="user.username"
+                />{{user.username}}
+
+                <button matChipRemove [attr.aria-label]="'remove ' + user.username">
+                  <mat-icon>cancel</mat-icon>
+                </button>
+              </mat-chip-row>
+            }
+          </mat-chip-grid>
+          <input
+            name="currentUser"
+            placeholder="New member..."
+            #memberInput
+            [formControl]="currentUser"
+            [matChipInputFor]="chipGrid"
+            [matAutocomplete]="auto"
+            [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+
+          />
+          <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event); memberInput.value = ''">
+            @for (user of filteredUser(); track user.username) {
+              <mat-option [value]="user.username"> {{user.username}}</mat-option>
+            }
+          </mat-autocomplete>
+          </mat-form-field>
+        </div>
+
+        <div class="card-footer">
+
+        <div style="display: flex;justify-content: space-between">
+          <button class="btn-open" type="submit">Create</button>
+          <a class="btn-closed" (click)="cancel()" >Cancel</a>
+        </div>
+
       </div>
-      </form>
+</form>
+
     </div>
+
     </div>
 
     <!--
@@ -120,7 +127,7 @@
           <h3>{{ board.name }}</h3>
           <span class="status-badge">🟡 En cours</span>
         </div>
-
+        {{board.description}}
         <div class="card-body">
           @if (board.weeksSinceUpdate > 0) {
             <p class="board-meta" style="padding-left: 15px">Updated {{board.weeksSinceUpdate}} {{board.daysSinceUpdate > 1 ? "weeks": "week"}} ago</p>
@@ -134,11 +141,7 @@
           } @else {
             <p class="board-meta" style="padding-left: 15px">Updated {{board.secondsSinceUpdate}} {{board.minutesSinceUpdate > 1 ? "seconds": "second"}} ago</p>
           }
-          <div class="tags">
-            <span class="tag">Mobile</span>
-            <span class="tag">Client</span>
-            <span class="tag">Priorité haute</span>
-          </div>
+
         </div>
 
         <div class="card-footer">
@@ -153,6 +156,7 @@
               <a href="#"><img ngSrc="./square-pen.png" alt="pen" width="20" height="20" style="margin-right: 20px"/></a>
             }
             <a [routerLink]="'/boards/' + board.id" class="btn-open">Open</a>
+
           </div>
 
         </div>

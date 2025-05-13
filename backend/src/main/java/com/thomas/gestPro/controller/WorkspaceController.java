@@ -49,7 +49,6 @@ public class WorkspaceController {
 
     @PutMapping("/{id}/update")
     public ResponseEntity<Workspace> updateWorkspaceById(@PathVariable Long id, @RequestBody Workspace workspace) {
-        System.err.println("test OK");
         Workspace updateWorkspace = workspaceService.updateWorkspace(id,workspace);
         return ResponseEntity.ok(updateWorkspace);
     }

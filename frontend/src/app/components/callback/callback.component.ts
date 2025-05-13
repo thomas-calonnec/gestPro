@@ -43,6 +43,7 @@ export class CallbackComponent implements OnInit {
                     password: null,
                     email: response.user.email,
                     providerId: response.user.id,
+                    pictureUrl: response.user.pictureUrl,
                     boards: []
                   }
                   this.userService.createUser(newUser).subscribe({

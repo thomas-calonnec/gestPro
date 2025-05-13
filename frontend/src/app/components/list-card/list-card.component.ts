@@ -34,7 +34,6 @@ export class ListCardComponent implements OnInit {
   @Output() listCardEmit  = new EventEmitter<ListCard>()
   myForm : FormGroup;
   protected card : Card = {
-
     name: "",
     description: "",
     deadline: new Date(),

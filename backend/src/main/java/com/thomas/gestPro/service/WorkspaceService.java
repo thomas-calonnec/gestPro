@@ -10,12 +10,9 @@ import com.thomas.gestPro.repository.WorkspaceRepository;
 import jakarta.transaction.Transactional;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Workspace management service.
@@ -81,37 +78,47 @@ public class WorkspaceService {
      * Creates a new Board in a given Workspace.
      *
      * @param workspaceId the identifier of the Workspace where the Board will be added.
-     * @param board the Board object to be added
+     * @param boardInput the Board object to be added
      * @return the newly created Board
      * @throws RuntimeException if the Workspace with the specified ID does not exist.
      */
     @Transactional
-    public Board createBoard(Long workspaceId, Board board) {
+    public Board createBoard(Long workspaceId, Board boardInput) {
         Workspace workspace = workspaceRepository.findById(workspaceId)
                 .orElseThrow(() -> new RuntimeException("Workspace not found"));
 
+        // Charger les membres depuis la base pour éviter les entités détachées
+        List<User> attachedMembers = boardInput.getMembers().stream()
+                .map(user -> userRepository.findById(user.getId())
+                        .orElseThrow(() -> new RuntimeException("User not found with id: " + user.getId())))
+                .toList();
+
+        Board board = new Board();
+        board.setName(boardInput.getName());
+        board.setDescription(boardInput.getDescription());
+        board.setColor(getRandomColor());
+        board.setLastUpdated(new Date());
+        board.setCardCount(0);
+        board.setMembers(attachedMembers);
+        board.setOwnerId(boardInput.getOwnerId());
+
+        board.getWorkspaces().add(workspace);
+        attachedMembers.forEach(user -> user.getBoards().add(board));
+        Optional<User> owner = this.userRepository.findById(board.getOwnerId());
+        owner.ifPresent(user -> user.getBoards().add(board));
+
+        workspace.getBoards().add(board);
+
+        boardRepository.save(board);
+        return board;
+    }
+
+    private String getRandomColor() {
         List<String> colors = List.of(
                 "red", "blue", "green", "yellow", "purple",
                 "orange", "pink", "brown", "mediumaquamarine", "cyan"
         );
-        String randomColor = colors.get(new Random().nextInt(colors.size()));
-
-        board.setColor(randomColor);
-        board.setLastUpdated(new Date());
-        board.setCardCount(0);
-
-        workspace.getBoards().add(board);
-        board.getWorkspaces().add(workspace);
-        Board savedBoard;
-
-        try {
-            savedBoard = boardRepository.save(board);
-        } catch (ObjectOptimisticLockingFailureException e) {
-            System.err.println("Optimistic locking failed: " + e.getMessage());
-            throw new RuntimeException("Could not create board due to concurrency issue", e);
-        }
-
-        return savedBoard;
+        return colors.get(new Random().nextInt(colors.size()));
     }
 
     /**
