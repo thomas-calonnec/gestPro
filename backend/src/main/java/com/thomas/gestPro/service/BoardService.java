@@ -3,13 +3,16 @@ package com.thomas.gestPro.service;
 import com.thomas.gestPro.Exception.ResourceNotFoundException;
 import com.thomas.gestPro.model.Board;
 import com.thomas.gestPro.model.ListCard;
+import com.thomas.gestPro.model.User;
 import com.thomas.gestPro.repository.BoardRepository;
 import com.thomas.gestPro.repository.ListCardRepository;
+import com.thomas.gestPro.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -17,6 +20,7 @@ public class BoardService {
 
     private final BoardRepository boardRepository;
     private final ListCardRepository listCardRepository;
+    private final UserRepository userRepository;
 
 
     /**
@@ -26,9 +30,10 @@ public class BoardService {
      * @param listCardRepository repository for managing lists of cards
      */
     @Autowired
-    public BoardService(BoardRepository boardRepository, ListCardRepository listCardRepository) {
+    public BoardService(BoardRepository boardRepository, ListCardRepository listCardRepository, UserRepository userRepository) {
         this.boardRepository = boardRepository;
         this.listCardRepository = listCardRepository;
+        this.userRepository = userRepository;
     }
 
 
@@ -58,20 +63,30 @@ public class BoardService {
      * Updates the name of an existing board.
      *
      * @param id the ID of the board to update
-     * @param updateBoard the updated board object containing the new name
+     * @param boardInput the updated board object containing the new name
      * @return the updated board
      * @throws ResourceNotFoundException if the board name is null or empty
      */
-    public Board updateBoard(Long id, Board updateBoard){
+    public Board updateBoard(Long id, Board boardInput){
 
-        Board existingBoard = getBoardById(id);
+        // Charger les membres depuis la base pour éviter les entités détachées
+        List<User> attachedMembers = boardInput.getMembers().stream()
+                .map(user -> userRepository.findById(user.getId())
+                        .orElseThrow(() -> new RuntimeException("User not found with id: " + user.getId())))
+                .toList();
 
-        if(existingBoard.getName() == null || existingBoard.getName().isEmpty()){
-            throw new ResourceNotFoundException("Board not found");
-        }
-        existingBoard.setName(updateBoard.getName());
+        Board board = boardRepository.getReferenceById(id);
+        board.setName(boardInput.getName());
+        board.setDescription(boardInput.getDescription());
+        board.setLastUpdated(new Date());
 
-        return boardRepository.save(existingBoard);
+        board.setMembers(attachedMembers);
+        board.setOwnerId(boardInput.getOwnerId());
+
+        attachedMembers.forEach(user -> user.getBoards().add(board));
+
+        boardRepository.save(board);
+        return board;
     }
 
     /**
@@ -133,4 +148,6 @@ public class BoardService {
 
         return existingBoard.getListCards();
     }
+
+
 }

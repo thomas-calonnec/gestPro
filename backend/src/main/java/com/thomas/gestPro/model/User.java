@@ -1,8 +1,5 @@
 package com.thomas.gestPro.model;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -36,17 +33,13 @@ public class User {
     }
 
     @ManyToMany(mappedBy = "users")
-    @JsonIdentityInfo(
-            generator = ObjectIdGenerators.PropertyGenerator.class,
-            property = "id",
-            scope = User.class
-    )
     private List<Workspace> workspaces = new ArrayList<>();
 
     @ManyToMany
     @JoinTable(name = "tj_user_card",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "card_id"))
+
     private List<Card> cards = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = {
@@ -55,17 +48,15 @@ public class User {
     @JoinTable(name = "tj_user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
-    @JsonIdentityInfo(
-            generator = ObjectIdGenerators.PropertyGenerator.class,
-            property = "id",
-            scope = User.class
-    )
+
     private List<Role> roles = new ArrayList<>();
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinTable(name = "tj_user_boards",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "board_id"))
-    @JsonIgnore
+
     private List<Board> boards = new ArrayList<>();
+
+  
 }

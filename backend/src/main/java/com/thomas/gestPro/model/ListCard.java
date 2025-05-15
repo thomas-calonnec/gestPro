@@ -1,6 +1,4 @@
 package com.thomas.gestPro.model;
-
-import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
@@ -24,7 +22,7 @@ public class ListCard {
 
     @ManyToOne
     @JoinColumn(name = "board_id", nullable = false)
-    @JsonIdentityReference
+    @JsonIgnore
     private Board board;
 
     @OneToMany(mappedBy = "listCard", cascade = CascadeType.ALL, orphanRemoval = true)

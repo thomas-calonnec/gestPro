@@ -22,6 +22,10 @@ export class BoardService {
     return this.http.delete<Board>(`${this.apiServerUrl}/${boardId}`);
   }
 
+  public updateBoard(boardId: number,board: Board) {
+    return this.http.put<Board>(`${this.apiServerUrl}/${boardId}/update`,board);
+  }
+
   public getListCards(boardId: number): Observable<ListCard[]>{
     return this.http.get<ListCard[]>(`${this.apiServerUrl}/${boardId}/listCards`,{withCredentials: true});
   }

@@ -104,8 +104,8 @@ public class WorkspaceService {
 
         board.getWorkspaces().add(workspace);
         attachedMembers.forEach(user -> user.getBoards().add(board));
-        Optional<User> owner = this.userRepository.findById(board.getOwnerId());
-        owner.ifPresent(user -> user.getBoards().add(board));
+//        Optional<User> owner = this.userRepository.findById(board.getOwnerId());
+//        owner.ifPresent(user -> user.getBoards().add(board));
 
         workspace.getBoards().add(board);
 
@@ -151,6 +151,8 @@ public class WorkspaceService {
     public void deleteWorkspace(Long workspaceId){
         workspaceRepository.deleteById(workspaceId);
     }
+
+
 
 
 }

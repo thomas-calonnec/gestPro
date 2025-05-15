@@ -64,7 +64,6 @@ export class UserComponent implements  OnInit{
 
     this.userService.getWorkspaces(this.userId).subscribe({
       next: (workspaces: Workspace[]) => {
-        console.log(workspaces)
         this.workspaces.set(workspaces);
         this.workspaces.update(workspaceTab => workspaceTab.map((workspace) => {
           const updateAt = new Date(workspace.updateAt);
