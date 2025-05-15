@@ -1,7 +1,9 @@
 package com.thomas.gestPro.controller;
 
+import com.thomas.gestPro.dto.CardDTO;
+import com.thomas.gestPro.dto.CheckListDTO;
+import com.thomas.gestPro.dto.LabelDTO;
 import com.thomas.gestPro.model.Card;
-import com.thomas.gestPro.model.CheckList;
 import com.thomas.gestPro.model.Label;
 import com.thomas.gestPro.service.CardService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,25 +29,25 @@ public class CardController {
     }
 
     @PostMapping("/{id}/label/create")
-    public ResponseEntity<Card> addLabelColor(@PathVariable Long id, @RequestBody Label label) {
-        Card updateCard = cardService.addCardLabelColor(id,label);
+    public ResponseEntity<CardDTO> addLabelColor(@PathVariable Long id, @RequestBody LabelDTO label) {
+        CardDTO updateCard = cardService.addCardLabelColor(id,label);
         return ResponseEntity.ok(updateCard);
     }
 
     @PutMapping("/{id}/label")
-    public ResponseEntity<Card> updateLabel(@PathVariable Long id, @RequestBody Label label) {
-        Card updateCard = cardService.addCardLabelColor(id,label);
+    public ResponseEntity<CardDTO> updateLabel(@PathVariable Long id, @RequestBody LabelDTO label) {
+        CardDTO updateCard = cardService.addCardLabelColor(id,label);
         return ResponseEntity.ok(updateCard);
     }
 
     @PutMapping("/{id}/check-list/update")
-    public ResponseEntity<Card> updateCheckList(@PathVariable Long id, @RequestBody CheckList checkList) {
+    public ResponseEntity<Card> updateCheckList(@PathVariable Long id, @RequestBody CheckListDTO checkList) {
         Card updateCard = cardService.updateCheckList(id,checkList);
         return ResponseEntity.ok(updateCard);
     }
 
     @PutMapping("/{id}/update")
-    public ResponseEntity<Card> updateCardById(@PathVariable Long id, @RequestBody Card card) {
+    public ResponseEntity<Card> updateCardById(@PathVariable Long id, @RequestBody CardDTO card) {
         Card updateCard = cardService.updateCard(id,card);
         return new ResponseEntity<>(updateCard,HttpStatus.OK);
     }

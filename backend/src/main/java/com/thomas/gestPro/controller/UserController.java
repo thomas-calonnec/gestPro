@@ -40,6 +40,9 @@ public class UserController {
     @GetMapping("{id}/workspaces")
     public ResponseEntity<List<WorkspaceDTO>> getWorkspaceByUserId(@PathVariable Long id) {
 
+        for(WorkspaceDTO workspaceDTOList : userService.getWorkspacesByUserId(id) ) {
+            System.err.println(workspaceDTOList.getId());
+        }
         return ResponseEntity.ok(userService.getWorkspacesByUserId(id));
     }
 

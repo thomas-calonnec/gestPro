@@ -179,7 +179,8 @@
 .card-body {
   font-size: 0.9rem;
   color: #666;
-  margin-bottom: 14px;
+  margin: 0;
+  padding-bottom: 0;
 }
 
 .tags {

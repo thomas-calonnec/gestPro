@@ -187,20 +187,63 @@
         }
 
       </div>
-      <mat-chip-set aria-label="Fish selection">
+      <div style="padding-left: 10px; padding-bottom: 10px">
+        @if (!editingBoard[board.id!]){
 
-        @for (user of board.members; track user) {
+        <mat-chip-set aria-label="Fish selection">
 
-          <mat-chip (removed)="remove(user)">
-            <img
-              matChipAvatar
-              [src]="user.pictureUrl != null? user.pictureUrl : './circle-user.png'"
-              [alt]="user.username"
-            />{{user.username}}
+          @for (user of board.members.slice(0,3); track user) {
 
-          </mat-chip>
+            <mat-chip (removed)="remove(user)">
+              <img
+                matChipAvatar
+                [src]="user.pictureUrl != null? user.pictureUrl : './circle-user.png'"
+                [alt]="user.username"
+              />{{user.username}}
+            </mat-chip>
+
+          }
+          @if (board.members.length > 3) {
+            <mat-chip>+{{board.members.length - 3 }}</mat-chip>
+          }
+        </mat-chip-set>
+        } @else {
+          <mat-form-field appearance="outline">
+            <mat-chip-grid #chipGrid aria-label="Member selection">
+              @for (user of this.users(); track user.id) {
+
+                <mat-chip-row (removed)="remove(user)">
+                  <img
+                    matChipAvatar
+                    [src]="user.pictureUrl"
+                    [alt]="user.username"
+                  />{{user.username}}
+
+                  <button matChipRemove [attr.aria-label]="'remove ' + user.username">
+                    <mat-icon>cancel</mat-icon>
+                  </button>
+                </mat-chip-row>
+              }
+            </mat-chip-grid>
+            <input
+              name="currentUser"
+              placeholder="New member..."
+              #memberInput
+              [formControl]="currentUser"
+              [matChipInputFor]="chipGrid"
+              [matAutocomplete]="auto"
+              [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+
+            />
+            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event); memberInput.value = ''">
+              @for (user of filteredUser(); track user.username) {
+                <mat-option [value]="user.username"> {{user.username}}</mat-option>
+              }
+            </mat-autocomplete>
+          </mat-form-field>
         }
-      </mat-chip-set>
+      </div>
+
 
       <div class="card-footer">
         <div class="members">

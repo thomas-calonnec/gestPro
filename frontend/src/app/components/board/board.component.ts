@@ -1,4 +1,4 @@
-import {Component, computed, inject, Input, OnInit, signal, WritableSignal} from '@angular/core';
+import {Component, computed, inject, OnInit, signal, WritableSignal} from '@angular/core';
 import { BoardService } from '@services/boards/board.service';
 import {ActivatedRoute, RouterLink} from '@angular/router';
 import {ListCard} from '@models/list-card';
@@ -8,7 +8,6 @@ import {
   CdkDragDrop, CdkDropList,
   moveItemInArray
 } from '@angular/cdk/drag-drop';
-import {Board} from '@models/board';
 import {MainService} from '@services/main/main.service';
 import {ListCardComponent} from '@components/list-card/list-card.component';
 import {MatButton} from '@angular/material/button';
@@ -155,5 +154,5 @@ export class BoardComponent implements OnInit{
 
     protected readonly localStorage = localStorage;
     protected readonly Number = Number;
-  @Input() board!: Board;
+
 }
