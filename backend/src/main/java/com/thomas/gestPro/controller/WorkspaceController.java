@@ -1,17 +1,15 @@
 package com.thomas.gestPro.controller;
 
 import com.thomas.gestPro.dto.BoardDTO;
-import com.thomas.gestPro.mapper.BoardMapper;
+import com.thomas.gestPro.dto.WorkspaceDTO;
 import com.thomas.gestPro.model.Board;
 import com.thomas.gestPro.model.Workspace;
 import com.thomas.gestPro.service.WorkspaceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/user/workspaces")
@@ -31,19 +29,16 @@ public class WorkspaceController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('USER','ADMIN')")
-    public ResponseEntity<Workspace> getWorkspaceById(@PathVariable Long id) {
-        Workspace workspace = workspaceService.getWorkspaceById(id);
+    public ResponseEntity<WorkspaceDTO> getWorkspaceById(@PathVariable Long id) {
+        WorkspaceDTO workspace = workspaceService.getWorkspaceById(id);
         return ResponseEntity.ok(workspace);
     }
 
 
     @GetMapping("{id}/boards")
     public ResponseEntity<List<BoardDTO>> getListBoardByWorkspaceId(@PathVariable Long id) {
-        List<BoardDTO> boards = workspaceService.getListBoardByWorkspaceId(id)
-                .stream()
-                .map(BoardMapper::toDTO)
-                .collect(Collectors.toList());
+        List<BoardDTO> boards = workspaceService.getListBoardByWorkspaceId(id);
+
         return new ResponseEntity<>(boards, HttpStatus.OK);
     }
 

@@ -34,7 +34,6 @@ import java.util.Collections;
 @Service
 public class AuthService {
 
-
     private final AuthenticationManager authenticationManager;
     private final JwtTokenUtil jwtUtil;
     private final UserService userService;
@@ -56,6 +55,7 @@ public class AuthService {
     private String generateRefreshToken(String username) {
         return this.jwtUtil.generateRefreshToken(username);
     }
+
     private ResponseCookie createJwtCookie(String tokenName, String tokenValue) {
         long maxAgeSeconds = tokenName.equals("accessToken") ?
                 Duration.ofMinutes(60).getSeconds() :
@@ -86,7 +86,6 @@ public class AuthService {
             String name = (String) payload.get("name");
             String pictureUrl = (String) payload.get("picture");
 
-//            ResponseCookie accessTokenCookie = this.createJwtCookie("accessTokenId",clientId);
             UserDTO googleUser = this.userService.createGoogleUser(name, email, pictureUrl, userId);
             return this.generateTokenAndCreateCookie(name,googleUser);
         }else {
@@ -100,7 +99,6 @@ public class AuthService {
 
         ResponseCookie accessTokenCookie = this.createJwtCookie("accessToken",accessToken);
         ResponseCookie revokeTokenCookie = this.createJwtCookie("refreshToken",refreshToken);
-
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, accessTokenCookie.toString(), revokeTokenCookie.toString())
@@ -122,7 +120,6 @@ public class AuthService {
     public ResponseEntity<JwtResponse> logout() {
          Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
           authentication.setAuthenticated(false);
-//       // Supprimer immédiatement le cookie
          ResponseCookie revokeTokenCookie = this.jwtUtil.deleteJwtCookie("refreshToken");
          ResponseCookie accessTokenCookie = this.jwtUtil.deleteJwtCookie("accessToken");
          ResponseCookie githubTokenCookie = this.jwtUtil.deleteJwtCookie("gh_token");
@@ -166,7 +163,6 @@ public class AuthService {
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
-                //System.err.println(cookie.getName());
                 if (cookie.getName().equals("gh_token")) {
                     return ResponseEntity.ok(new JwtResponse(cookie.getValue()));
                 }
@@ -175,6 +171,7 @@ public class AuthService {
         if (this.jwtUtil.validateGoogleToken(token)) {
             return ResponseEntity.ok(new JwtResponse(this.jwtUtil.getUsernameFromToken(token)));
         }
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null &&
                 authentication.isAuthenticated() &&

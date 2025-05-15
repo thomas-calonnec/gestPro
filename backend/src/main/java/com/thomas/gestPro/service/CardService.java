@@ -1,6 +1,10 @@
 package com.thomas.gestPro.service;
 
 import com.thomas.gestPro.Exception.ResourceNotFoundException;
+import com.thomas.gestPro.dto.CardDTO;
+import com.thomas.gestPro.dto.CheckListDTO;
+import com.thomas.gestPro.dto.LabelDTO;
+import com.thomas.gestPro.mapper.CardMapper;
 import com.thomas.gestPro.model.Card;
 import com.thomas.gestPro.model.CheckList;
 import com.thomas.gestPro.model.Label;
@@ -22,6 +26,7 @@ public class CardService {
     private final CheckListRepository checkListRepository;
     private final LabelRepository labelRepository;
     private final ListCardRepository listCardRepository;
+    private final CardMapper cardMapper;
 
     /**
      * Constructor with dependency injection for CardRepository, LabelRepository, and ListCardRepository.
@@ -31,11 +36,12 @@ public class CardService {
      * @param listCardRepository repository for managing list of cards
      */
     @Autowired
-    public CardService(CardRepository cardRepository, CheckListRepository checkListRepository, LabelRepository labelRepository, ListCardRepository listCardRepository) {
+    public CardService(CardRepository cardRepository, CheckListRepository checkListRepository, LabelRepository labelRepository, ListCardRepository listCardRepository, CardMapper cardMapper) {
         this.cardRepository = cardRepository;
         this.checkListRepository = checkListRepository;
         this.labelRepository = labelRepository;
         this.listCardRepository = listCardRepository;
+        this.cardMapper = cardMapper;
     }
 
 
@@ -47,7 +53,6 @@ public class CardService {
      * @throws ResourceNotFoundException if the card is not found
      */
     public Card getCardById(Long cardId) {
-
         return cardRepository.findById(cardId).orElseThrow(() -> new ResourceNotFoundException("Card not found"));
     }
 
@@ -60,10 +65,9 @@ public class CardService {
      * @return the updated card
      */
     @Transactional
-    public Card updateCard(Long cardId, Card updateCard) {
+    public Card updateCard(Long cardId, CardDTO updateCard) {
         // Récupérer l'entité existante
         Card existingCard = getCardById(cardId);
-        System.err.println("update : " + existingCard.getCheckList());
 
         // Mettre à jour les champs simples
         existingCard.setName(updateCard.getName());
@@ -77,29 +81,32 @@ public class CardService {
         existingCard.setDescription(updateCard.getDescription());
 
         // Gestion de la liste CheckList
-        List<CheckList> updatedCheckLists = updateCard.getCheckList();
+        List<CheckListDTO> updatedCheckLists = updateCard.getCheckList();
         List<CheckList> existingCheckLists = existingCard.getCheckList();
 
-        // Step 1: Remove CheckLists that are no longer in updateCard
+       // Step 1: Supprimer les checklists supprimées
         existingCheckLists.removeIf(existing ->
                 updatedCheckLists.stream().noneMatch(updated ->
                         updated.getId() != null && updated.getId().equals(existing.getId()))
         );
 
-        // Step 2: Add or update CheckLists
-        for (CheckList updatedCheckList : updatedCheckLists) {
-            if (updatedCheckList.getId() == null) {
-                // New CheckList: ensure the relationship is set
-                updatedCheckList.setCard(existingCard);
-                existingCheckLists.add(updatedCheckList);
+// Step 2: Ajouter ou mettre à jour
+        for (CheckListDTO updatedDTO : updatedCheckLists) {
+            if (updatedDTO.getId() == null) {
+                // Nouvelle checklist
+                CheckList newChecklist = new CheckList();
+                newChecklist.setName(updatedDTO.getName());
+                newChecklist.setCompleted(updatedDTO.getCompleted());
+                newChecklist.setCard(existingCard); // relation
+                existingCheckLists.add(newChecklist);
             } else {
-                // Update existing CheckList
+                // Mise à jour
                 existingCheckLists.stream()
-                        .filter(existing -> existing.getId().equals(updatedCheckList.getId()))
+                        .filter(existing -> existing.getId().equals(updatedDTO.getId()))
                         .findFirst()
                         .ifPresent(existing -> {
-                            existing.setName(updatedCheckList.getName());
-                            existing.setCompleted(updatedCheckList.getCompleted());
+                            existing.setName(updatedDTO.getName());
+                            existing.setCompleted(updatedDTO.getCompleted());
                         });
             }
         }
@@ -131,7 +138,6 @@ public class CardService {
 
     }
 
-
     /**
      * Adds a label with a specific color to a card.
      *
@@ -140,7 +146,7 @@ public class CardService {
      * @return the updated card with the label added
      * @throws ResourceNotFoundException if the label is not found
      */
-    public Card addCardLabelColor(Long cardId, Label updateLabel){
+    public CardDTO addCardLabelColor(Long cardId, LabelDTO updateLabel){
         Label label = labelRepository.findLabelByColor(updateLabel.getColor())
                 .orElseThrow(() -> new ResourceNotFoundException("Label not Found"));
 
@@ -154,7 +160,7 @@ public class CardService {
         // Sauvegarder uniquement la carte. Hibernate gérera la relation Many-to-Many.
         cardRepository.save(existingCard);
 
-        return existingCard;
+        return cardMapper.toDTO(existingCard);
     }
 
     /**
@@ -183,26 +189,14 @@ public class CardService {
         labelRepository.save(label);
     }
 
-    public Card updateCheckList(Long cardId, CheckList checkList) {
+    public Card updateCheckList(Long cardId, CheckListDTO checkList) {
         Card updateCard = this.getCardById(cardId);
-        System.err.println("card : " + checkList.getName());
+
         CheckList updateChecklist = updateCard.getCheckList().get(checkList.getId().intValue());
         updateChecklist.setName(checkList.getName());
-        System.err.println(updateCard.getCheckList().get(checkList.getId().intValue()).getName());
-        checkListRepository.save(checkList);
+
+        checkListRepository.save(updateChecklist);
         return cardRepository.save(updateCard);
     }
-   /* public void deleteCardAndLabels(Long cardId) {
-        Card card = cardRepository.findById(cardId)
-                .orElseThrow(() -> new RuntimeException("Card not found"));
 
-        // Supprimer tous les labels associés à la carte
-        card.getLabels().clear();
-
-        // Sauvegarder les modifications
-        cardRepository.save(card);
-
-        // Ensuite, supprimer la carte
-        cardRepository.deleteById(cardId);
-    }*/
 }

@@ -2,12 +2,13 @@ package com.thomas.gestPro.mapper;
 
 import com.thomas.gestPro.dto.RoleDTO;
 import com.thomas.gestPro.model.Role;
+import org.mapstruct.InheritInverseConfiguration;
+import org.mapstruct.Mapper;
 
-public class RoleMapper {
-    public static RoleDTO toRoleDTO(Role role) {
-        RoleDTO roleDTO = new RoleDTO();
-        roleDTO.setId(role.getId());
-        roleDTO.setName(role.getName());
-        return roleDTO;
-    }
+@Mapper(componentModel = "spring")
+public interface RoleMapper {
+  RoleDTO toDTO(Role role);
+
+  @InheritInverseConfiguration
+  Role toEntity(RoleDTO roleDTO);
 }

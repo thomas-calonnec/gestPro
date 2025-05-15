@@ -1,9 +1,9 @@
 package com.thomas.gestPro.controller;
 
-import com.thomas.gestPro.model.Board;
+import com.thomas.gestPro.dto.BoardDTO;
+import com.thomas.gestPro.dto.ListCardDTO;
 import com.thomas.gestPro.model.ListCard;
 import com.thomas.gestPro.service.BoardService;
-import com.thomas.gestPro.service.ListCardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,13 +22,13 @@ public class BoardController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Board> getBoardById(@PathVariable Long id) {
+    public ResponseEntity<BoardDTO> getBoardById(@PathVariable Long id) {
         return ResponseEntity.ok(boardService.getBoardById(id));
     }
 
     @GetMapping("/{id}/listCards")
-    public ResponseEntity<List<ListCard>> getListCard(@PathVariable Long id) {
-        List<ListCard> listCards = boardService.getCardsByBoardId(id);
+    public ResponseEntity<List<ListCardDTO>> getListCard(@PathVariable Long id) {
+        List<ListCardDTO> listCards = boardService.getCardsByBoardId(id);
         return ResponseEntity.ok(listCards);
     }
 
@@ -39,14 +39,14 @@ public class BoardController {
     }
 
     @PutMapping("/{id}/listCards/update")
-    public ResponseEntity<List<ListCard>> updateListCard(@PathVariable Long id, @RequestBody List<ListCard> listCard) {
-        List<ListCard> newListCard =  boardService.updateListCard(id, listCard);
+    public ResponseEntity<List<ListCardDTO>> updateListCard(@PathVariable Long id, @RequestBody List<ListCardDTO> listCard) {
+        List<ListCardDTO> newListCard =  boardService.updateListCard(id, listCard);
         return ResponseEntity.ok(newListCard);
     }
 
     @PutMapping("/{id}/update")
-    public ResponseEntity<Board> updateBoardById(@PathVariable Long id, @RequestBody Board board) {
-        Board updateBoard = boardService.updateBoard(id,board);
+    public ResponseEntity<BoardDTO> updateBoardById(@PathVariable Long id, @RequestBody BoardDTO board) {
+        BoardDTO updateBoard = boardService.updateBoard(id,board);
         return ResponseEntity.ok(updateBoard);
     }
 

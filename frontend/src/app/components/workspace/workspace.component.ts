@@ -135,10 +135,15 @@ export class WorkspaceComponent implements OnInit{
   }
 
   public getWorkspace() {
+
     this.workspaceService.getWorkspaceById(this.workspaceId).subscribe({
       next: workspace => {
         this.mainService.setWorkspace(workspace.name)
         // this.workspaceName = workspace.name;
+      },
+      error: err => {
+        console.log("error")
+        console.error(err)
       }
     })
 

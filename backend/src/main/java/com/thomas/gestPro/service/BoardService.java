@@ -1,6 +1,11 @@
 package com.thomas.gestPro.service;
 
 import com.thomas.gestPro.Exception.ResourceNotFoundException;
+import com.thomas.gestPro.dto.BoardDTO;
+import com.thomas.gestPro.dto.ListCardDTO;
+import com.thomas.gestPro.mapper.BoardMapper;
+import com.thomas.gestPro.mapper.ListCardMapper;
+import com.thomas.gestPro.mapper.UserMapper;
 import com.thomas.gestPro.model.Board;
 import com.thomas.gestPro.model.ListCard;
 import com.thomas.gestPro.model.User;
@@ -10,8 +15,6 @@ import com.thomas.gestPro.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-
 import java.util.Date;
 import java.util.List;
 
@@ -20,6 +23,9 @@ public class BoardService {
 
     private final BoardRepository boardRepository;
     private final ListCardRepository listCardRepository;
+    private final ListCardMapper listCardMapper;
+    private final BoardMapper boardMapper;
+    private final UserMapper userMapper;
     private final UserRepository userRepository;
 
 
@@ -30,9 +36,12 @@ public class BoardService {
      * @param listCardRepository repository for managing lists of cards
      */
     @Autowired
-    public BoardService(BoardRepository boardRepository, ListCardRepository listCardRepository, UserRepository userRepository) {
+    public BoardService(BoardRepository boardRepository, ListCardRepository listCardRepository, ListCardMapper listCardMapper, BoardMapper boardMapper, UserMapper userMapper, UserRepository userRepository) {
         this.boardRepository = boardRepository;
         this.listCardRepository = listCardRepository;
+        this.listCardMapper = listCardMapper;
+        this.boardMapper = boardMapper;
+        this.userMapper = userMapper;
         this.userRepository = userRepository;
     }
 
@@ -44,8 +53,8 @@ public class BoardService {
      * @return the board with the given ID
      * @throws ResourceNotFoundException if the board is not found
      */
-    public Board getBoardById(Long boardId) {
-        return boardRepository.findById(boardId).orElseThrow(() -> new ResourceNotFoundException("Board not found"));
+    public BoardDTO getBoardById(Long boardId) {
+        return boardRepository.findById(boardId).map(boardMapper::toDTO).orElseThrow(() -> new ResourceNotFoundException("Board not found"));
     }
 
     /**
@@ -55,7 +64,7 @@ public class BoardService {
      * @return the list of list cards for the specified board
      * @throws RuntimeException if the board is not found
      */
-    public List<ListCard> getCardsByBoardId(Long id) {
+    public List<ListCardDTO> getCardsByBoardId(Long id) {
         return this.getBoardById(id).getListCards();
     }
 
@@ -67,26 +76,27 @@ public class BoardService {
      * @return the updated board
      * @throws ResourceNotFoundException if the board name is null or empty
      */
-    public Board updateBoard(Long id, Board boardInput){
+    public BoardDTO updateBoard(Long id, BoardDTO boardInput){
 
         // Charger les membres depuis la base pour éviter les entités détachées
-        List<User> attachedMembers = boardInput.getMembers().stream()
-                .map(user -> userRepository.findById(user.getId())
-                        .orElseThrow(() -> new RuntimeException("User not found with id: " + user.getId())))
+        List<User> attachedMembers = boardInput.getMembers()
+                .stream()
+                .map(userMapper::toEntity)
                 .toList();
 
-        Board board = boardRepository.getReferenceById(id);
+
+        Board board = boardMapper.toEntity(this.getBoardById(id));
         board.setName(boardInput.getName());
         board.setDescription(boardInput.getDescription());
         board.setLastUpdated(new Date());
-
-        board.setMembers(attachedMembers);
+        board.setStatus(boardInput.getStatus());
+//        board.setMembers(new ArrayList<>(attachedMembers));
         board.setOwnerId(boardInput.getOwnerId());
 
-        attachedMembers.forEach(user -> user.getBoards().add(board));
+//        attachedMembers.forEach(user -> user.getBoards().add(board));
 
         boardRepository.save(board);
-        return board;
+        return boardMapper.toDTO(board);
     }
 
     /**
@@ -108,7 +118,7 @@ public class BoardService {
      */
     @Transactional
     public ListCard createListCard(Long boardId, ListCard listCard) {
-        Board existingboard = getBoardById(boardId);
+        Board existingboard = boardMapper.toEntity(getBoardById(boardId));
         if(existingboard == null){
             return null;
         }
@@ -120,13 +130,14 @@ public class BoardService {
         //boardRepository.save(existingboard);
         return listCardRepository.save(listCard);
     }
+
     @Transactional
-    public List<ListCard> updateListCard(Long boardId, List<ListCard> listCard) {
+    public List<ListCardDTO> updateListCard(Long boardId, List<ListCardDTO> listCard) {
         // Récupérer le tableau existant par ID
-        Board existingBoard = getBoardById(boardId);
+        Board existingBoard = boardMapper.toEntity(getBoardById(boardId));
 
         // Mettre à jour chaque ListCard dans la base de données
-        for (ListCard card : listCard) {
+        for (ListCardDTO card : listCard) {
 
             // Trouver la carte correspondante dans la liste actuelle du board
             ListCard existingCard = existingBoard.getListCards().stream()
@@ -146,7 +157,10 @@ public class BoardService {
         // Sauvegarder le tableau pour s'assurer que la relation est bien mise à jour
         boardRepository.save(existingBoard);
 
-        return existingBoard.getListCards();
+        return existingBoard.getListCards()
+                .stream()
+                .map(listCardMapper::toDTO)
+                .toList();
     }
 
 

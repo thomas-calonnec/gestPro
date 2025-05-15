@@ -1,6 +1,10 @@
 package com.thomas.gestPro.service;
 
 
+import com.thomas.gestPro.dto.BoardDTO;
+import com.thomas.gestPro.dto.WorkspaceDTO;
+import com.thomas.gestPro.mapper.BoardMapper;
+import com.thomas.gestPro.mapper.WorkspaceMapper;
 import com.thomas.gestPro.model.Board;
 import com.thomas.gestPro.model.User;
 import com.thomas.gestPro.model.Workspace;
@@ -13,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Workspace management service.
@@ -26,6 +31,8 @@ public class WorkspaceService {
     private final WorkspaceRepository workspaceRepository;
     private final UserRepository userRepository;
     private final BoardRepository boardRepository;
+    private final WorkspaceMapper workspaceMapper;
+    private final BoardMapper boardMapper;
 
     /**
      * Constructor to inject the necessary repositories.
@@ -35,10 +42,12 @@ public class WorkspaceService {
      * @param boardRepository the repository for board management
      */
     @Autowired
-    public WorkspaceService(WorkspaceRepository workspaceRepository, UserRepository usersRepository, BoardRepository boardRepository) {
+    public WorkspaceService(WorkspaceRepository workspaceRepository, UserRepository usersRepository, BoardRepository boardRepository, WorkspaceMapper workspaceMapper, BoardMapper boardMapper) {
         this.workspaceRepository = workspaceRepository;
         this.userRepository = usersRepository;
         this.boardRepository = boardRepository;
+        this.workspaceMapper = workspaceMapper;
+        this.boardMapper = boardMapper;
     }
 
     /**
@@ -57,9 +66,9 @@ public class WorkspaceService {
      * @return a list of Boards associated with the Workspace
      * @throws RuntimeException if the Workspace with the specified ID does not exist.
      */
-    public List<Board> getListBoardByWorkspaceId(Long workspaceId) {
+    public List<BoardDTO> getListBoardByWorkspaceId(Long workspaceId) {
         Workspace workspace = workspaceRepository.findById(workspaceId).orElseThrow(() -> new RuntimeException("Workspace not found"));
-        return workspace.getBoards();
+        return workspace.getBoards().stream().map(boardMapper::toDTO).collect(Collectors.toList());
 
     }
 
@@ -70,8 +79,9 @@ public class WorkspaceService {
      * @return le Workspace correspondant
      * @throws RuntimeException si le Workspace avec l'ID spécifié n'existe pas
      */
-    public Workspace getWorkspaceById(Long workspaceId) {
-        return workspaceRepository.findById(workspaceId).orElseThrow(() -> new RuntimeException("Workspace not found"));
+    public WorkspaceDTO getWorkspaceById(Long workspaceId) {
+        Workspace workspace = workspaceRepository.findById(workspaceId).orElseThrow(() -> new RuntimeException("Workspace not found"));
+        return workspaceMapper.toDTO(workspace);
     }
 
     /**
