@@ -1,28 +1,28 @@
-import {Component, computed, inject, OnInit, signal, WritableSignal} from '@angular/core';
+import {Component, computed, inject, Input, OnInit, signal, WritableSignal} from '@angular/core';
 import { BoardService } from '@services/boards/board.service';
-import {ListCardComponent} from '@components/list-card/list-card.component';
 import {ActivatedRoute, RouterLink} from '@angular/router';
 import {ListCard} from '@models/list-card';
-import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {
-  CdkDragDrop,
   CdkDrag,
-  CdkDropList,
+  CdkDragDrop, CdkDropList,
   moveItemInArray
 } from '@angular/cdk/drag-drop';
-import {MatButton} from "@angular/material/button";
+import {Board} from '@models/board';
 import {MainService} from '@services/main/main.service';
+import {ListCardComponent} from '@components/list-card/list-card.component';
+import {MatButton} from '@angular/material/button';
 
 @Component({
     selector: 'app-board',
   imports: [
-
     ReactiveFormsModule,
+    RouterLink,
+    FormsModule,
     CdkDropList,
+    ListCardComponent,
     CdkDrag,
     MatButton,
-    RouterLink,
-    ListCardComponent,
   ],
     templateUrl: './board.component.html',
     styleUrl: './board.component.scss'
@@ -33,15 +33,14 @@ export class BoardComponent implements OnInit{
   sortedListCard = computed(() =>
     this.listCard().slice().sort((a, b) => a.orderIndex - b.orderIndex).filter((list) => !list.isArchived)
   );
+  mainService: MainService = inject(MainService);
 
   public boardService : BoardService = inject(BoardService);
   private route : ActivatedRoute = inject(ActivatedRoute);
   private boardId : number = 0;
   protected isClicked: boolean = false;
 
-  cpt = 0
   formBuilder : FormBuilder = inject(FormBuilder);
-  mainService: MainService = inject(MainService);
   boardName: string = "";
 
   constructor() {
@@ -73,6 +72,7 @@ export class BoardComponent implements OnInit{
       })
     }
   }
+
   ngOnInit() {
 
     this.boardId = this.route.snapshot.params['id'];
@@ -152,5 +152,8 @@ export class BoardComponent implements OnInit{
     })
   }
 
+
     protected readonly localStorage = localStorage;
+    protected readonly Number = Number;
+  @Input() board!: Board;
 }

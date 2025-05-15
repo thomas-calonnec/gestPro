@@ -1,5 +1,7 @@
 package com.thomas.gestPro.controller;
 
+import com.thomas.gestPro.dto.BoardDTO;
+import com.thomas.gestPro.mapper.BoardMapper;
 import com.thomas.gestPro.model.Board;
 import com.thomas.gestPro.model.Workspace;
 import com.thomas.gestPro.service.WorkspaceService;
@@ -9,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/user/workspaces")
@@ -36,8 +39,11 @@ public class WorkspaceController {
 
 
     @GetMapping("{id}/boards")
-    public ResponseEntity<List<Board>> getListBoardByWorkspaceId(@PathVariable Long id) {
-        List<Board> boards = workspaceService.getListBoardByWorkspaceId(id);
+    public ResponseEntity<List<BoardDTO>> getListBoardByWorkspaceId(@PathVariable Long id) {
+        List<BoardDTO> boards = workspaceService.getListBoardByWorkspaceId(id)
+                .stream()
+                .map(BoardMapper::toDTO)
+                .collect(Collectors.toList());
         return new ResponseEntity<>(boards, HttpStatus.OK);
     }
 

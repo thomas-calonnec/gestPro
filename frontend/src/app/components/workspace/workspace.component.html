@@ -24,7 +24,7 @@
   <div class="board-search-wrapper">
     <input
       type="text"
-      placeholder="Search project..."
+      placeholder="Search board..."
       [(ngModel)]="searchTerm"
       class="board-search"
     />
@@ -35,32 +35,32 @@
     <div class="card">
       <form [formGroup]="myForm" (ngSubmit)="addBoard()" >
         <div class="card-header">
-          <label for="cardTitle">Titre :</label>
-          <input id="cardTitle" type="text" formControlName="name"/>
-
-          <span class="status-badge">🟡 En cours</span>
+          <mat-form-field appearance="outline" style="width: 80%">
+            <mat-label>Title </mat-label>
+          <input matInput type="text" formControlName="name"/>
+          </mat-form-field>
+          <span class="status-badge">🟡 In progress</span>
         </div>
 
         <div class="card-description">
-          <label for="cardDescription">Description :</label>
-          <textarea
-            id="cardDescription"
-            formControlName="description"
-            rows="4"
-            maxlength="200"
-            required
-          ></textarea>
-          <mat-hint align="end">{{ description().length || 0 }}/200</mat-hint>
-
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Description</mat-label>
+            <textarea matInput
+                      placeholder="Briefly describe the purpose of the board"
+                      formControlName="description"
+                      maxlength="200"
+                      rows="3"></textarea>
+            <mat-hint align="end">{{ this.description().length || 0 }}/200</mat-hint>
+          </mat-form-field>
 
         </div>
         <div class="card-description">
-          <label for="cardDescription">Members :</label>
+<!--          <label for="cardDescription">Members :</label>-->
           <mat-form-field appearance="outline">
           <mat-chip-grid #chipGrid aria-label="Member selection">
             @for (user of this.users(); track user.id) {
-              <mat-chip-row (removed)="remove(user)">
 
+              <mat-chip-row (removed)="remove(user)">
                 <img
                   matChipAvatar
                   [src]="user.pictureUrl"
@@ -121,47 +121,113 @@
   }
   <div class="cards-container">
   @for (board of filteredBoard(); track board.id) {
-
-      <div class="card">
-        <div class="card-header">
+    <div class="card">
+      <div class="card-header">
+        @if(!editingBoard[board.id!]){
           <h3>{{ board.name }}</h3>
-          <span class="status-badge">🟡 En cours</span>
-        </div>
-        {{board.description}}
-        <div class="card-body">
-          @if (board.weeksSinceUpdate > 0) {
-            <p class="board-meta" style="padding-left: 15px">Updated {{board.weeksSinceUpdate}} {{board.daysSinceUpdate > 1 ? "weeks": "week"}} ago</p>
-          }
-          @else if (board.daysSinceUpdate > 0){
-            <p class="board-meta" style="padding-left: 15px">Updated {{board.daysSinceUpdate}} {{board.daysSinceUpdate > 1 ? "days": "day"}} ago</p>
-          } @else if (board.hoursSinceUpdate > 0) {
-            <p class="board-meta" style="padding-left: 15px">Updated {{board.hoursSinceUpdate}} {{board.hoursSinceUpdate > 1 ? "hours": "hour"}} ago</p>
-          } @else if(board.minutesSinceUpdate > 0){
-            <p class="board-meta" style="padding-left: 15px">Updated {{board.minutesSinceUpdate}} {{board.minutesSinceUpdate > 1 ? "minutes": "minute"}} ago</p>
-          } @else {
-            <p class="board-meta" style="padding-left: 15px">Updated {{board.secondsSinceUpdate}} {{board.minutesSinceUpdate > 1 ? "seconds": "second"}} ago</p>
-          }
+        } @else {
+          <input type="text"
+                 class="w-full border p-1 rounded"
+                 [(ngModel)]="board.name"
+                 placeholder="Board name"/>
+        }
 
+        @if(!editingBoard[board.id!]){
+        <span class="status-badge">
+          {{ board.status === 'DONE' ? '✅ Finished' : '🟡 In progress' }}
+        </span>
+        } @else {
+          <mat-form-field appearance="outline" >
+            <mat-label>Select</mat-label>
+            <mat-select [(value)]="status">
+              <mat-option value="IN_PROGRESS">In progress</mat-option>
+              <mat-option value="DONE">Finished</mat-option>
+            </mat-select>
+          </mat-form-field>
+        }
+      </div>
+      <div class="bg-white border border-gray-200 rounded-lg p-3 shadow-sm mt-2">
+        <div class="flex items-center mb-2 text-blue-700 font-semibold">
+          <mat-icon class="mr-1 text-base" style="color: #0c66e4;margin-top : 10px">info</mat-icon>
+          About this board
         </div>
+        @if(!editingBoard[board.id!]){
+          <div [ngClass]="{'line-clamp-3': !expandedDesc[board.id!]}">
+            {{ board.description || 'No description provided.' }}
+          </div>
+        } @else {
+          <textarea class="w-full border p-1 rounded"
+                    rows="3"
+                    [(ngModel)]="board.description"
+                    placeholder="Board description">
+            </textarea>
+        }
+        @if (board.description?.length!  > 150) {
+          <a
+            (click)="toggleDesc(board.id!)"
+            class="text-blue-500 text-xs mt-1 hover:underline">
+            {{ expandedDesc[board.id!] ? 'See less' : 'See more' }}
+          </a>
+        }
 
-        <div class="card-footer">
-          <div class="members">
-            👥 {{board.members.length }} {{board.members.length > 1 ?  "members" : "member"}}
-          </div>
-          <div class="members">
-            {{board.cardCount}} {{board.cardCount > 1 ? "cards" : "card"}}
-          </div>
-          <div>
-            @if (board.ownerId == Number(localStorage.getItem("USER_ID"))) {
-              <a href="#"><img ngSrc="./square-pen.png" alt="pen" width="20" height="20" style="margin-right: 20px"/></a>
-            }
+      </div>
+
+      <div class="card-body">
+        @if (board.weeksSinceUpdate > 0) {
+          <p class="board-meta" style="padding-left: 15px">Updated {{board.weeksSinceUpdate}} {{board.daysSinceUpdate > 1 ? "weeks": "week"}} ago</p>
+        }
+        @else if (board.daysSinceUpdate > 0){
+          <p class="board-meta" style="padding-left: 15px">Updated {{board.daysSinceUpdate}} {{board.daysSinceUpdate > 1 ? "days": "day"}} ago</p>
+        } @else if (board.hoursSinceUpdate > 0) {
+          <p class="board-meta" style="padding-left: 15px">Updated {{board.hoursSinceUpdate}} {{board.hoursSinceUpdate > 1 ? "hours": "hour"}} ago</p>
+        } @else if(board.minutesSinceUpdate > 0){
+          <p class="board-meta" style="padding-left: 15px">Updated {{board.minutesSinceUpdate}} {{board.minutesSinceUpdate > 1 ? "minutes": "minute"}} ago</p>
+        } @else {
+          <p class="board-meta" style="padding-left: 15px">Updated {{board.secondsSinceUpdate}} {{board.minutesSinceUpdate > 1 ? "seconds": "second"}} ago</p>
+        }
+
+      </div>
+      <mat-chip-set aria-label="Fish selection">
+
+        @for (user of board.members; track user) {
+
+          <mat-chip (removed)="remove(user)">
+            <img
+              matChipAvatar
+              [src]="user.pictureUrl != null? user.pictureUrl : './circle-user.png'"
+              [alt]="user.username"
+            />{{user.username}}
+
+          </mat-chip>
+        }
+      </mat-chip-set>
+
+      <div class="card-footer">
+        <div class="members">
+          👥 {{board.members.length }} {{board.members.length > 1 ?  "members" : "member"}}
+        </div>
+        <div class="members">
+          {{board.cardCount}} {{board.cardCount > 1 ? "cards" : "card"}}
+        </div>
+        <div>
+          @if (board.ownerId == Number(localStorage.getItem("USER_ID"))) {
+            @if(!editingBoard[board.id!]){
+            <span (click)="toggleEdit(board.id!)" style="cursor: pointer;">
+              <img ngSrc="./square-pen.png" alt="pen" width="20" height="20" />
+            </span>
             <a [routerLink]="'/boards/' + board.id" class="btn-open">Open</a>
-
-          </div>
+            }
+            @else{
+              <span class="ml-2">
+                <a (click)="saveBoard(board)" class="btn-save">Save</a>
+                <a (click)="toggleEdit(board.id!)" class="btn-closed">Cancel</a>
+                </span>
+            }
+          }
 
         </div>
       </div>
-
+    </div>
   }
   </div>
 

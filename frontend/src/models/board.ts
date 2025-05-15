@@ -9,6 +9,7 @@ export interface Board {
     cardCount: number;
     ownerId: number;
     members: User[];
+    status: string;
     weeksSinceUpdate: number;
     daysSinceUpdate: number;
     hoursSinceUpdate: number;

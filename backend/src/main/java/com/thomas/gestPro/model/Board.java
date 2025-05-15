@@ -1,8 +1,5 @@
 package com.thomas.gestPro.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -27,26 +24,17 @@ public class Board {
     private String description;
     private Date lastUpdated;
     private Integer cardCount;
-
+    private String status;
     private Long ownerId;
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.PERSIST)
-    @JsonBackReference
     private List<ListCard> listCards = new ArrayList<>();
 
     @ManyToMany(mappedBy = "boards", cascade = CascadeType.MERGE)
-    @JsonIdentityInfo(
-            generator = ObjectIdGenerators.PropertyGenerator.class,
-            property = "id",
-            scope = Board.class
-    )
+
     private List<User> members = new ArrayList<>();
 
     @ManyToMany(mappedBy = "boards", cascade = CascadeType.MERGE)
-    @JsonIdentityInfo(
-            generator = ObjectIdGenerators.PropertyGenerator.class,
-            property = "id",
-            scope = Board.class
-    )
+
     private List<Workspace> workspaces = new ArrayList<>();
 }

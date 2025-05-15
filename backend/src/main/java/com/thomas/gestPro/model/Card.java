@@ -23,7 +23,6 @@ public class Card {
     private Integer hours;
     private Integer minutes;
     private String  status;
-    private Integer storyPoint;
     private Boolean isCompleted;
     private Boolean isDateActivated;
     private Boolean isLabelActivated;
@@ -37,6 +36,7 @@ public class Card {
     @JoinTable(name="tj_label_card",
             joinColumns = @JoinColumn(name = "card_id"),
             inverseJoinColumns = @JoinColumn(name = "label_id"))
+
     private List<Label> labels = new ArrayList<>();
 
     @OneToMany(mappedBy = "card",cascade = CascadeType.PERSIST, orphanRemoval = true)

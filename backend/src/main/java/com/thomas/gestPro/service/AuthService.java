@@ -1,6 +1,5 @@
 package com.thomas.gestPro.service;
 
-import com.google.api.client.googleapis.GoogleUtils;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
@@ -9,6 +8,7 @@ import com.google.api.client.json.gson.GsonFactory;
 import com.thomas.gestPro.Security.JwtResponse;
 import com.thomas.gestPro.Security.JwtTokenUtil;
 import com.thomas.gestPro.Security.TokenRequest;
+import com.thomas.gestPro.dto.UserDTO;
 import com.thomas.gestPro.model.User;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,13 +25,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.CookieValue;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.time.Duration;
 import java.util.Collections;
-import java.util.Optional;
 
 @Service
 public class AuthService {
@@ -89,14 +87,14 @@ public class AuthService {
             String pictureUrl = (String) payload.get("picture");
 
 //            ResponseCookie accessTokenCookie = this.createJwtCookie("accessTokenId",clientId);
-            User googleUser = this.userService.createGoogleUser(name, email, pictureUrl, userId);
+            UserDTO googleUser = this.userService.createGoogleUser(name, email, pictureUrl, userId);
             return this.generateTokenAndCreateCookie(name,googleUser);
         }else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new JwtResponse("false"));
         }
     }
-    public ResponseEntity<JwtResponse> generateTokenAndCreateCookie(String username,User user) {
+    public ResponseEntity<JwtResponse> generateTokenAndCreateCookie(String username, UserDTO user) {
         String accessToken = this.generateAccessToken(username);
         String refreshToken = this.generateRefreshToken(username);
 
@@ -115,7 +113,7 @@ public class AuthService {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        User currentUser = this.userService.getUserByUsername(user.getUsername());
+        UserDTO currentUser = this.userService.getUserByUsername(user.getUsername());
 
         return this.generateTokenAndCreateCookie(user.getUsername(),currentUser);
 
@@ -150,7 +148,7 @@ public class AuthService {
         if (!isValid) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        User currentUser = this.userService.getUserByUsername(username);
+        UserDTO currentUser = this.userService.getUserByUsername(username);
         return ResponseEntity.ok()
                 .body(new JwtResponse(currentUser));
 
@@ -182,7 +180,7 @@ public class AuthService {
                 authentication.isAuthenticated() &&
                 !(authentication instanceof AnonymousAuthenticationToken)) {
 
-            User user = userService.getUserByUsername(authentication.getName());
+            UserDTO user = userService.getUserByUsername(authentication.getName());
             return ResponseEntity.ok(new JwtResponse(user));
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();

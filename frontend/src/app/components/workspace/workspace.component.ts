@@ -6,7 +6,7 @@ import {ActivatedRoute, RouterLink} from '@angular/router';
 import {MainService} from '@services/main/main.service';
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatButtonModule} from '@angular/material/button';
-import {DatePipe, NgOptimizedImage, registerLocaleData} from '@angular/common';
+import {DatePipe, NgClass, NgOptimizedImage, registerLocaleData} from '@angular/common';
 import { provideNativeDateAdapter} from '@angular/material/core';
 import localeFr from '@angular/common/locales/fr';
 
@@ -25,6 +25,11 @@ import {UserService} from '@services/users/user.service';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import {User} from '@models/user';
 
+import {MatInput} from '@angular/material/input';
+import {MatCardModule} from '@angular/material/card';
+import {BoardService} from '@services/boards/board.service';
+import {MatSelect} from '@angular/material/select';
+
 registerLocaleData(localeFr);
 
 @Component({
@@ -38,7 +43,7 @@ registerLocaleData(localeFr);
     ReactiveFormsModule,
     MatButtonModule,
     FormsModule,
-    NgOptimizedImage,
+    MatInput, MatCardModule, NgOptimizedImage, NgClass, MatSelect
 
   ],
     styleUrl: './workspace.component.css'
@@ -52,10 +57,13 @@ export class WorkspaceComponent implements OnInit{
   owner : User | undefined;
   workspaceName: string = "";
   private route: ActivatedRoute = inject(ActivatedRoute);
+  private boardService = inject(BoardService);
+
   boardCreated: boolean = false;
   myForm: FormGroup;
   boards : WritableSignal<Board[]> = signal([])
-  board : any;
+  status = 'IN_PROGRESS';
+  editingBoard: { [boardId: number]: boolean } = {};
   readonly name = model('');
   readonly description = model('');
   protected datePipe: DatePipe = inject(DatePipe);
@@ -71,19 +79,13 @@ export class WorkspaceComponent implements OnInit{
       ? this.allUsers().filter(member => member.username.toLowerCase().includes(currentUser))
       : this.allUsers().slice();
   });
+
   constructor() {
     this.myForm = new FormGroup({
       name: new FormControl('',[Validators.required]),
       description: new FormControl('',[Validators.required]),
       selectedItems: new FormControl([]) // chips choisies
     });
-
-    this.board = {
-      id: 1,
-      name: 'Cloud Beauty',
-      description: 'Une plateforme pour simplifier et optimiser vos projets.',
-      color: '#f39c12', // Couleur pour chaque Board
-    };
 
   }
 
@@ -93,7 +95,8 @@ export class WorkspaceComponent implements OnInit{
     this.userService.getAllUser().subscribe({
       next: users => {
         this.allUsers.set(
-          users.filter(user => user.id !== Number(localStorage.getItem("USER_ID")))
+          users
+       //   users.filter(user => user.id !== Number(localStorage.getItem("USER_ID")))
         );
         this.owner = users.filter(user => user.id === Number(localStorage.getItem("USER_ID")))[0];
       }
@@ -126,7 +129,6 @@ export class WorkspaceComponent implements OnInit{
 
      }
 
-
     // Réinitialise le champ et l'autocomplete
     this.currentUser.setValue('');
     event.option.deselect();  // facultatif
@@ -146,12 +148,13 @@ export class WorkspaceComponent implements OnInit{
     this.workspaceService.getBoards(workspaceId).subscribe({
         next: (data: Board[]) => {
           //this.boardService.updateBoards(data);
+
           this.boards.set(data)
-          this.userService.getUserById(Number(localStorage.getItem("USER_ID"))).subscribe({
-            next: value => {
-              console.log(value)
-            }
-          })
+          // this.userService.getUserById(Number(localStorage.getItem("USER_ID"))).subscribe({
+          //   next: value => {
+          //     console.log(value)
+          //   }
+          // })
           this.boards.update(boardTab => boardTab.map((board) => {
             const updateAt = new Date(board.lastUpdated);
             const now = new Date();
@@ -191,14 +194,15 @@ export class WorkspaceComponent implements OnInit{
     const userId = Number(localStorage.getItem("USER_ID"));
     const boardName = this.myForm.get('name');
     const desc = this.myForm.get('description')
-    let newBoard : Board = {
 
+    let newBoard : Board = {
       cardCount: 0,
       color: '',
       daysSinceUpdate: 0,
       hoursSinceUpdate: 0,
       lastUpdated: new Date(),
       members: [],
+      status: this.status,
       minutesSinceUpdate: 0,
       ownerId: userId,
       secondsSinceUpdate: 0,
@@ -210,14 +214,14 @@ export class WorkspaceComponent implements OnInit{
 
       this.datePipe.transform(newBoard.lastUpdated, 'dd/MM/yyyy','fr')
 
-      if(desc?.invalid && boardName?.invalid){
+      if(desc?.invalid || boardName?.invalid){
         alert("error : missing input")
       } else {
 
         newBoard.members = this.users();
+
         this.workspaceService.createBoard(this.workspaceId, newBoard).subscribe({
           next:boardValue => {
-            boardValue.members.length = boardValue.members.length + 1
             this.boards.update((currentValue) => [...currentValue,boardValue]);
 
             this.workspaceService.setBoards(this.boards());
@@ -230,8 +234,6 @@ export class WorkspaceComponent implements OnInit{
 
       }
 
-
-
   }
 
   cancel() {
@@ -239,4 +241,32 @@ export class WorkspaceComponent implements OnInit{
     this.myForm.reset();
     this._users.set([]);
   }
+  expandedDesc: Record<number, boolean> = {};
+
+  toggleDesc(id: number) {
+    this.expandedDesc[id] = !this.expandedDesc[id];
+  }
+
+  saveBoard(board: Board) {
+    board.status = this.status;
+    console.log(board)
+    this.boardService.updateBoard(board.id!, board).subscribe({
+      next: () => {
+        this.editingBoard[board.id!] = false;
+        // Optionnel : notify success or update state
+      },
+      error: () => {
+        alert('Error while saving board');
+      }
+    });
+  }
+
+  toggleEdit(boardId: number) {
+    this.editingBoard[boardId] = !this.editingBoard[boardId];
+  }
+  valueInput(event: Event) {
+    this.description.set((event.target as HTMLInputElement).value);
+  }
+
+
 }

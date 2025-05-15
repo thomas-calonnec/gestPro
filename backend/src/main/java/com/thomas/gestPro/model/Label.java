@@ -1,6 +1,6 @@
 package com.thomas.gestPro.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,6 +20,6 @@ public class Label {
     private String color;
 
     @ManyToMany(mappedBy = "labels")
-    @JsonIgnore
+    @JsonBackReference
     private List<Card> cards = new ArrayList<>();
 }
