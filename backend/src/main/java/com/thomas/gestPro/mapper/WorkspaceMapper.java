@@ -5,7 +5,7 @@ import com.thomas.gestPro.model.Workspace;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring",uses = {BoardMapper.class})
 public interface WorkspaceMapper {
 
      WorkspaceDTO toDTO(Workspace workspace);

@@ -5,7 +5,7 @@ import com.thomas.gestPro.model.User;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring",uses = {WorkspaceMapper.class})
 public interface UserMapper {
 
        UserDTO toDTO(User user);

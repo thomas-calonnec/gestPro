@@ -5,7 +5,7 @@ import com.thomas.gestPro.model.Board;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring",uses = {ListCardMapper.class})
 public interface BoardMapper {
 
     BoardDTO toDTO(Board board);

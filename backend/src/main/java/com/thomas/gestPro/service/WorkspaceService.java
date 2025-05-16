@@ -68,6 +68,7 @@ public class WorkspaceService {
      */
     public List<BoardDTO> getListBoardByWorkspaceId(Long workspaceId) {
         Workspace workspace = workspaceRepository.findById(workspaceId).orElseThrow(() -> new RuntimeException("Workspace not found"));
+
         return workspace.getBoards().stream().map(boardMapper::toDTO).collect(Collectors.toList());
 
     }
