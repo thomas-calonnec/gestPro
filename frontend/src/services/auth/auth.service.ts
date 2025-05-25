@@ -88,8 +88,17 @@ export class AuthService {
        // this.setAccessToken(googleResponse.accessToken);
         this.currentUser = googleResponse.user
         console.log(googleResponse.user)
-        localStorage.setItem("USER_ID",googleResponse.user.id.toString())
-        this.router.navigateByUrl(`users/${googleResponse.user.id}/workspaces`);
+        if(googleResponse.user.id)
+          localStorage.setItem("USER_ID",googleResponse.user.id.toString())
+
+        this.setCurrentUser(googleResponse.user);
+        setTimeout(() => {
+          this.router.navigateByUrl(`users/${googleResponse.user.id}/workspaces`);
+          this.router.navigate(['home'])
+          //this.router.navigateByUrl(`users/${this.userId}/workspaces`);
+          //   window.location.href = `users/${this.authService.getCurrentUser()?.id}/workspaces`;
+        },2000)
+
 
         // window.location.href = `users/${googleResponse.userId}/workspaces`;
       }

@@ -1,7 +1,6 @@
 package com.thomas.gestPro.controller;
 
 import com.thomas.gestPro.dto.UserDTO;
-import com.thomas.gestPro.dto.WorkspaceDTO;
 import com.thomas.gestPro.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -32,19 +31,9 @@ public class UserController {
 
     @GetMapping("/username/{name}")
     public ResponseEntity<UserDTO> getUserByUsername(@PathVariable String name) {
-
         return ResponseEntity.ok(userService.getUserByUsername(name));
     }
 
-
-    @GetMapping("{id}/workspaces")
-    public ResponseEntity<List<WorkspaceDTO>> getWorkspaceByUserId(@PathVariable Long id) {
-
-        for(WorkspaceDTO workspaceDTOList : userService.getWorkspacesByUserId(id) ) {
-            System.err.println(workspaceDTOList.getId());
-        }
-        return ResponseEntity.ok(userService.getWorkspacesByUserId(id));
-    }
 
 //    @PostMapping("/{id}/addCard")
 //    public ResponseEntity<UserDTO> addCardToUser(@PathVariable Long id, @RequestBody Card card) {
@@ -59,16 +48,12 @@ public class UserController {
 //    }
 
     @DeleteMapping("/{id}/delete")
-    public ResponseEntity<String> deleteUserById(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteUserById(@PathVariable Long id) {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }
 
-//    @PostMapping("/{id}/workspace")
-//    public ResponseEntity<WorkspaceDTO> createWorkspace( @PathVariable Long id, @RequestBody Workspace workspace) {
-//        Workspace newWorkspace = userService.createWorkspace(id,workspace);
-//        return ResponseEntity.ok(newWorkspace);
-//    }
+
 //
 //    @PutMapping("/create")
 //    public ResponseEntity<UserDTO> createUser(@RequestBody User user) {

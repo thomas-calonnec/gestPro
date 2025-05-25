@@ -1,12 +1,9 @@
-import {Component, inject, OnInit, signal, WritableSignal} from '@angular/core';
+import {Component, inject, signal, WritableSignal} from '@angular/core';
 import {Router, RouterLink, RouterLinkActive} from '@angular/router';
-import {MainService} from '@services/main/main.service';
-import {WorkspaceService} from '@services/workspaces/workspace.service';
-import {Board} from '@models/board';
-import {AuthService} from '@services/auth/auth.service';
 import {FormsModule} from '@angular/forms';
-import {LucideAngularModule,LayoutDashboard} from 'lucide-angular';
+import {LucideAngularModule} from 'lucide-angular';
 import {NgOptimizedImage} from '@angular/common';
+import {BoardService} from '@services/boards/board.service';
 
 @Component({
     selector: 'app-sidebar',
@@ -21,10 +18,9 @@ import {NgOptimizedImage} from '@angular/common';
     styleUrl: './sidebar.component.scss'
 })
 export class SidebarComponent {
-  workspaceService: WorkspaceService = inject(WorkspaceService);
-  mainService : MainService = inject(MainService);
+  boardService : BoardService = inject(BoardService);
   workspaceName: WritableSignal<string> = signal("");
-  boards = this.workspaceService.boards;
+  boards = this.boardService.boards;
   router: Router = inject(Router);
   searchTerm = '';
   showAll = false;

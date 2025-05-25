@@ -3,15 +3,12 @@ package com.thomas.gestPro.service;
 import com.thomas.gestPro.Exception.ResourceNotFoundException;
 import com.thomas.gestPro.dto.CardDTO;
 import com.thomas.gestPro.dto.CheckListDTO;
-import com.thomas.gestPro.dto.LabelDTO;
 import com.thomas.gestPro.mapper.CardMapper;
 import com.thomas.gestPro.model.Card;
 import com.thomas.gestPro.model.CheckList;
-import com.thomas.gestPro.model.Label;
 import com.thomas.gestPro.model.ListCard;
 import com.thomas.gestPro.repository.CardRepository;
 import com.thomas.gestPro.repository.CheckListRepository;
-import com.thomas.gestPro.repository.LabelRepository;
 import com.thomas.gestPro.repository.ListCardRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +21,6 @@ public class CardService {
 
     private final CardRepository cardRepository;
     private final CheckListRepository checkListRepository;
-    private final LabelRepository labelRepository;
     private final ListCardRepository listCardRepository;
     private final CardMapper cardMapper;
 
@@ -32,14 +28,12 @@ public class CardService {
      * Constructor with dependency injection for CardRepository, LabelRepository, and ListCardRepository.
      *
      * @param cardRepository repository for managing cards
-     * @param labelRepository repository for managing labels
      * @param listCardRepository repository for managing list of cards
      */
     @Autowired
-    public CardService(CardRepository cardRepository, CheckListRepository checkListRepository, LabelRepository labelRepository, ListCardRepository listCardRepository, CardMapper cardMapper) {
+    public CardService(CardRepository cardRepository, CheckListRepository checkListRepository, ListCardRepository listCardRepository, CardMapper cardMapper) {
         this.cardRepository = cardRepository;
         this.checkListRepository = checkListRepository;
-        this.labelRepository = labelRepository;
         this.listCardRepository = listCardRepository;
         this.cardMapper = cardMapper;
     }
@@ -57,6 +51,30 @@ public class CardService {
     }
 
 
+    /**
+     * Creates a new card and associates it with an existing ListCard.
+     *
+     * @param listCardId the ID of the ListCard to which the card will be added
+     * @param card the card to create and add
+     */
+    public CardDTO createCard(Long listCardId, Card card) {
+        ListCard listCard = findListCardById(listCardId);
+        card.setListCard(listCard);
+        cardRepository.save(card);
+        listCard.getCardList().add(card);
+        cardRepository.save(card);
+        return cardMapper.toDTO(card);
+    }
+    /**
+     * Finds a ListCard by its ID.
+     *
+     * @param id the ID of the ListCard to find
+     * @return the found ListCard
+     * @throws ResourceNotFoundException if no ListCard is found with the given ID
+     */
+    public ListCard findListCardById(Long id) {
+        return listCardRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("ListCard not found with id : " + id));
+    }
     /**
      * Updates the details of an existing card.
      *
@@ -90,7 +108,7 @@ public class CardService {
                         updated.getId() != null && updated.getId().equals(existing.getId()))
         );
 
-// Step 2: Ajouter ou mettre à jour
+       // Step 2: Ajouter ou mettre à jour
         for (CheckListDTO updatedDTO : updatedCheckLists) {
             if (updatedDTO.getId() == null) {
                 // Nouvelle checklist
@@ -138,65 +156,17 @@ public class CardService {
 
     }
 
-    /**
-     * Adds a label with a specific color to a card.
-     *
-     * @param cardId the ID of the card
-     * @param updateLabel the label to add to the card
-     * @return the updated card with the label added
-     * @throws ResourceNotFoundException if the label is not found
-     */
-    public CardDTO addCardLabelColor(Long cardId, LabelDTO updateLabel){
-        Label label = labelRepository.findLabelByColor(updateLabel.getColor())
-                .orElseThrow(() -> new ResourceNotFoundException("Label not Found"));
 
-        Card existingCard = getCardById(cardId);
 
-        // Ajouter le label à la carte et la carte au label
-        existingCard.getLabels().add(label);
-        label.getCards().add(existingCard);
-        labelRepository.save(label);
-
-        // Sauvegarder uniquement la carte. Hibernate gérera la relation Many-to-Many.
-        cardRepository.save(existingCard);
-
-        return cardMapper.toDTO(existingCard);
-    }
-
-    /**
-     * Removes a label with a specific color from a card.
-     *
-     * @param cardId the ID of the card
-     * @param labelColor the color of the label to remove
-     */
-    public void removeLabelFromCard(Long cardId, String labelColor) {
-        // Retrieve the card by ID
-        Card card = cardRepository.findById(cardId)
-                .orElseThrow(() -> new RuntimeException("Card not found"));
-
-        // Retrieve the label by color
-        Label label = labelRepository.findLabelByColor(labelColor)
-                .orElseThrow(() -> new RuntimeException("Label not found"));
-
-        // Remove the label from the card's collection
-        card.getLabels().remove(label);
-
-        // Remove the card from the label's collection (bidirectional relationship)
-        label.getCards().remove(card);
-
-        // Save both entities to update the relationship
-        cardRepository.save(card);
-        labelRepository.save(label);
-    }
-
-    public Card updateCheckList(Long cardId, CheckListDTO checkList) {
+    public CardDTO updateCheckList(Long cardId, CheckListDTO checkList) {
         Card updateCard = this.getCardById(cardId);
 
         CheckList updateChecklist = updateCard.getCheckList().get(checkList.getId().intValue());
         updateChecklist.setName(checkList.getName());
 
         checkListRepository.save(updateChecklist);
-        return cardRepository.save(updateCard);
+         cardRepository.save(updateCard);
+         return cardMapper.toDTO(updateCard);
     }
 
 }

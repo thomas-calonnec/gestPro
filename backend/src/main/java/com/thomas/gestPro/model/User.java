@@ -39,7 +39,6 @@ public class User {
     @JoinTable(name = "tj_user_card",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "card_id"))
-
     private List<Card> cards = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = {
@@ -48,14 +47,9 @@ public class User {
     @JoinTable(name = "tj_user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
-
     private List<Role> roles = new ArrayList<>();
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-    @JoinTable(name = "tj_user_boards",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "board_id"))
-
+    @ManyToMany(mappedBy = "members")
     private List<Board> boards = new ArrayList<>();
 
   

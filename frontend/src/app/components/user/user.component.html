@@ -24,27 +24,7 @@
 
   @for (workspace of this.workspaces(); track workspace.id) {
 
-    <div class="workspace-card">
-      <div class="workspace-header">
-        <button class="workspace-star" [style]="workspace.isFavorite ? 'color:#df3838': 'color: #ccc'" title="Favorite" (click)="setFavorite(workspace.id)">★</button>
-        <div class="workspace-name" routerLink="/workspaces/{{workspace.id}}/boards">{{ workspace.name }}</div>
-      </div>
-    @if (workspace.weeksSinceUpdate > 0) {
-      <div class="workspace-info">Updated {{workspace.weeksSinceUpdate}} {{workspace.daysSinceUpdate > 1 ? "weeks": "week"}} ago</div>
-    }
-    @else if (workspace.daysSinceUpdate > 0){
-      <div class="workspace-info">Updated {{workspace.daysSinceUpdate}} {{workspace.daysSinceUpdate > 1 ? "days": "day"}} ago</div>
-    } @else if (workspace.hoursSinceUpdate > 0) {
-      <div class="workspace-info">Updated {{workspace.hoursSinceUpdate}} {{workspace.hoursSinceUpdate > 1 ? "hours": "hour"}} ago</div>
-    } @else if(workspace.minutesSinceUpdate > 0){
-      <div class="workspace-info">Updated {{workspace.minutesSinceUpdate}} {{workspace.minutesSinceUpdate > 1 ? "minutes": "minute"}} ago</div>
-    } @else {
-      <div class="workspace-info">Updated {{workspace.secondsSinceUpdate}} {{workspace.minutesSinceUpdate > 1 ? "seconds": "second"}} ago</div>
-    }
-      <div class="workspace-info">{{workspace.boards.length}} {{workspace.boards.length > 1 ? "boards" : "board"}}</div>
-      <button class="workspace-options" title="More options">⋯</button>
-    </div>
-
+   <app-workspace [workspace]="workspace" (onFavoriteToggle)="setFavorite($event)"></app-workspace>
 
   }
 

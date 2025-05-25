@@ -1,22 +1,23 @@
 package com.thomas.gestPro.dto;
 
-import java.util.Date;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Date;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class WorkspaceDTO {
+public class BoardLightDTO {
     private Long id;
     private String name;
+    private String color;
     private String description;
-    private Date updateAt;
-    private Boolean isFavorite;
-    private List<BoardLightDTO> boards;
-
+    private Date lastUpdated;
+    private Integer cardCount;
+    private String status;
+    private Long ownerId;
 }

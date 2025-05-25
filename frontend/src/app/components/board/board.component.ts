@@ -1,16 +1,16 @@
-import {Component, computed, inject, OnInit, signal, WritableSignal} from '@angular/core';
+import {Component, computed, inject,  OnInit, signal, WritableSignal} from '@angular/core';
 import { BoardService } from '@services/boards/board.service';
-import {ActivatedRoute, RouterLink} from '@angular/router';
+import { RouterLink} from '@angular/router';
 import {ListCard} from '@models/list-card';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {
-  CdkDrag,
-  CdkDragDrop, CdkDropList,
-  moveItemInArray
+  CdkDrag, CdkDragDrop,
+  CdkDropList, moveItemInArray,
 } from '@angular/cdk/drag-drop';
 import {MainService} from '@services/main/main.service';
-import {ListCardComponent} from '@components/list-card/list-card.component';
 import {MatButton} from '@angular/material/button';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {ListCardComponent} from '@components/list-card/list-card.component';
 
 @Component({
     selector: 'app-board',
@@ -18,29 +18,30 @@ import {MatButton} from '@angular/material/button';
     ReactiveFormsModule,
     RouterLink,
     FormsModule,
+    MatButton,
+    MatFormFieldModule,
     CdkDropList,
     ListCardComponent,
     CdkDrag,
-    MatButton,
   ],
     templateUrl: './board.component.html',
     styleUrl: './board.component.scss'
 })
 export class BoardComponent implements OnInit{
-  myForm : FormGroup;
+
+
+  mainService: MainService = inject(MainService);
+
   public listCard: WritableSignal<ListCard[]> = signal<ListCard[]>([]);
   sortedListCard = computed(() =>
     this.listCard().slice().sort((a, b) => a.orderIndex - b.orderIndex).filter((list) => !list.isArchived)
   );
-  mainService: MainService = inject(MainService);
-
   public boardService : BoardService = inject(BoardService);
-  private route : ActivatedRoute = inject(ActivatedRoute);
-  private boardId : number = 0;
+  private boardId : number | undefined;
   protected isClicked: boolean = false;
-
-  formBuilder : FormBuilder = inject(FormBuilder);
   boardName: string = "";
+  myForm : FormGroup;
+  formBuilder : FormBuilder = inject(FormBuilder);
 
   constructor() {
     this.myForm = this.formBuilder.group({
@@ -62,7 +63,7 @@ export class BoardComponent implements OnInit{
 
 
     if(listCard.name !== ""){
-      this.boardService.createListCard(this.boardId,listCard).subscribe({
+      this.boardService.createListCard(this.boardId!,listCard).subscribe({
         next: (data: ListCard) =>{
           this.isClicked = false;
           this.listCard.update((currentList) => [...currentList, data])
@@ -74,19 +75,40 @@ export class BoardComponent implements OnInit{
 
   ngOnInit() {
 
-    this.boardId = this.route.snapshot.params['id'];
-    this.getListCards(this.boardId);
+    if(this.boardId) {
+      this.boardService.getBoardById(this.boardId).subscribe({
+        next: board => {
+          this.boardName = board.name
+        }
+      })
 
-    this.boardService.getBoardById(this.boardId).subscribe({
-      next: board => {
-        this.boardName = board.name
-      }
-    })
+    }
 
   }
+
+
   autoResize(textarea: HTMLTextAreaElement): void {
     textarea.style.height = 'auto';
     textarea.style.height = textarea.scrollHeight + 'px';
+  }
+
+  drop(event : CdkDragDrop<ListCard[]>) {
+    moveItemInArray(this.sortedListCard(),event.previousIndex,event.currentIndex);
+
+    this.sortedListCard().forEach((item, index) => {
+      item.orderIndex = index + 1;
+    });
+
+    // Appelez le backend pour sauvegarder les modifications d'ordre
+    this.boardService.updateListCard(this.boardId!, this.sortedListCard()).subscribe({
+      next: (response) => {
+        console.log("Ordre mis à jour avec succès", response);
+      },
+      error: (err) => {
+        console.error("Erreur lors de la mise à jour de l'ordre", err);
+        // Vous pouvez également restaurer l'état précédent si nécessaire en cas d'erreur
+      }
+    });
   }
   getListCards(boardId: number): void {
     this.boardService.getListCards(boardId).subscribe({
@@ -97,25 +119,6 @@ export class BoardComponent implements OnInit{
 
   }
 
-  // }
-  drop(event : CdkDragDrop<ListCard[]>) {
-    moveItemInArray(this.sortedListCard(),event.previousIndex,event.currentIndex);
-
-    this.sortedListCard().forEach((item, index) => {
-      item.orderIndex = index + 1;
-    });
-
-    // Appelez le backend pour sauvegarder les modifications d'ordre
-    this.boardService.updateListCard(this.boardId, this.sortedListCard()).subscribe({
-      next: (response) => {
-        console.log("Ordre mis à jour avec succès", response);
-      },
-      error: (err) => {
-        console.error("Erreur lors de la mise à jour de l'ordre", err);
-        // Vous pouvez également restaurer l'état précédent si nécessaire en cas d'erreur
-      }
-    });
-  }
 
 
   closeButton() {
@@ -137,7 +140,7 @@ export class BoardComponent implements OnInit{
     })
 
 
-    this.boardService.updateListCard(this.boardId, this.listCard()).subscribe({
+    this.boardService.updateListCard(this.boardId!, this.listCard()).subscribe({
       next: (response) => {
         console.log("Ordre mis à jour avec succès", response);
       },
@@ -151,8 +154,7 @@ export class BoardComponent implements OnInit{
     })
   }
 
-
-    protected readonly localStorage = localStorage;
-    protected readonly Number = Number;
+  protected readonly Number = Number;
+  protected readonly localStorage = localStorage;
 
 }

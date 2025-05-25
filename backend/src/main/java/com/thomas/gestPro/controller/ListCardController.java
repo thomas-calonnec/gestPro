@@ -33,12 +33,6 @@ public class ListCardController {
         return ResponseEntity.ok(listCardService.getCardsByListCardId(id));
     }
 
-    @PutMapping("{listCardId}/card")
-    public ResponseEntity<Card> createCard(@PathVariable Long listCardId, @RequestBody Card card) {
-       Card newCard = listCardService.createCard(listCardId,card);
-        return ResponseEntity.ok(newCard);
-    }
-
     @PutMapping("/{id}")
     public ResponseEntity<ListCard> updateListCardById(@PathVariable Long id, @RequestBody ListCard listCard) {
         ListCard updateListCard = listCardService.updateListCard(id,listCard);
