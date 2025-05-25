@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import {Injectable} from '@angular/core';
+import {Injectable, signal} from '@angular/core';
 import { Observable } from 'rxjs';
 import { Board } from '@models/board';
 import { ListCard } from '@models/list-card';
@@ -14,8 +14,35 @@ export class BoardService {
 
   constructor(private http: HttpClient) { }
 
+
+  private _boards = signal<Board[]>([]);
+  readonly boards = this._boards.asReadonly();
+
+  public setBoards(newBoards: Board[]){
+    this._boards.set(newBoards);
+  }
+  public fetchBoards(workspaceId: number) {
+    this.http.get<Board[]>(`${this.apiServerUrl}/${workspaceId}/boards`,{withCredentials: true}).subscribe({
+      next: boardsTab => {
+        this.setBoards(boardsTab);
+
+      },
+      error: err => {
+        console.error('error during boards loading : ',err);
+        this.setBoards([]);
+      }
+    })
+  }
   public getBoardById(boardId: number) : Observable<Board> {
     return this.http.get<Board>(`${this.apiServerUrl}/${boardId}`);
+  }
+
+  public createBoard(workspaceId: number, board: Board): Observable<Board> {
+    return this.http.post<Board>(`${this.apiServerUrl}/${workspaceId}/board`,board)
+  }
+
+  public getBoardsByWorkspaceId(workspaceId: number | null) : Observable<Board[]> {
+    return this.http.get<Board[]>(`${this.apiServerUrl}/workspace/${workspaceId}`,{withCredentials: true});
   }
 
   public deleteBoardById(boardId: number) : Observable<Board> {

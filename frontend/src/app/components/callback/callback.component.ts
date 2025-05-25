@@ -40,7 +40,7 @@ export class CallbackComponent implements OnInit {
                   const newUser : User = {
                     id : -1,
                     username: response.user.name,
-                    password: null,
+                    password: "",
                     email: response.user.email,
                     providerId: response.user.id,
                     pictureUrl: response.user.pictureUrl,

@@ -16,10 +16,6 @@ export class UserService {
   private apiServerUrl = environment.apiUrl + '/user/users';
   constructor(private http: HttpClient) { }
 
-  public getWorkspaces(id: string): Observable<Workspace[]>{
-    return this.http.get<Workspace[]>(`${this.apiServerUrl}/${id}/workspaces`,{withCredentials: true});
-  }
-
   public addCardToUser(userId: number, card: Card): Observable<Workspace>{
     return this.http.post<Workspace>(`${this.apiServerUrl}/${userId}/addCard`,card);
   }
@@ -34,10 +30,6 @@ export class UserService {
 
   public deleteUser(userId: number): Observable<void>{
     return this.http.delete<void>(`${this.apiServerUrl}/${userId}`);
-  }
-
-  public createWorkspace(userId: number, workspace: Workspace): Observable<Workspace>{
-    return this.http.post<Workspace>(`${this.apiServerUrl}/${userId}/workspace`,workspace);
   }
 
   public getUserByUsername(username: string): Observable<User>{

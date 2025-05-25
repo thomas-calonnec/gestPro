@@ -8,7 +8,7 @@
       <img ngSrc="./layout-dashboard.png" height="18" width="18" alt="dashboard"/>
       Dashboard
     </a>
-    <a [routerLink]="'/users/' + localStorage.getItem('USER_ID') + '/workspaces'" [routerLinkActive]="this.workspaceService.boards().length != 0 ? 'active' : ''">
+    <a [routerLink]="'/users/' + localStorage.getItem('USER_ID') + '/workspaces'" [routerLinkActive]="this.boardService.boards().length != 0 ? 'active' : ''">
       <img ngSrc="./folder.png" height="18" width="18" alt="dashboard"/>
       Workspaces
     </a>

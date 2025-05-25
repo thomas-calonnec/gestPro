@@ -5,27 +5,32 @@ import com.thomas.gestPro.dto.BoardDTO;
 import com.thomas.gestPro.dto.ListCardDTO;
 import com.thomas.gestPro.mapper.BoardMapper;
 import com.thomas.gestPro.mapper.ListCardMapper;
-import com.thomas.gestPro.mapper.UserMapper;
 import com.thomas.gestPro.model.Board;
 import com.thomas.gestPro.model.ListCard;
 import com.thomas.gestPro.model.User;
+import com.thomas.gestPro.model.Workspace;
 import com.thomas.gestPro.repository.BoardRepository;
 import com.thomas.gestPro.repository.ListCardRepository;
 import com.thomas.gestPro.repository.UserRepository;
+import com.thomas.gestPro.repository.WorkspaceRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
+import java.util.stream.Collectors;
 
 @Service
 public class BoardService {
 
     private final BoardRepository boardRepository;
     private final ListCardRepository listCardRepository;
+    private final WorkspaceRepository workspaceRepository;
     private final ListCardMapper listCardMapper;
     private final BoardMapper boardMapper;
-    private final UserMapper userMapper;
     private final UserRepository userRepository;
 
 
@@ -36,12 +41,12 @@ public class BoardService {
      * @param listCardRepository repository for managing lists of cards
      */
     @Autowired
-    public BoardService(BoardRepository boardRepository, ListCardRepository listCardRepository, ListCardMapper listCardMapper, BoardMapper boardMapper, UserMapper userMapper, UserRepository userRepository) {
+    public BoardService(BoardRepository boardRepository, ListCardRepository listCardRepository, WorkspaceRepository workspaceRepository, ListCardMapper listCardMapper, BoardMapper boardMapper, UserRepository userRepository) {
         this.boardRepository = boardRepository;
         this.listCardRepository = listCardRepository;
+        this.workspaceRepository = workspaceRepository;
         this.listCardMapper = listCardMapper;
         this.boardMapper = boardMapper;
-        this.userMapper = userMapper;
         this.userRepository = userRepository;
     }
 
@@ -69,6 +74,66 @@ public class BoardService {
     }
 
     /**
+     * Retrieves the list of Boards associated with a specific Workspace.
+     *
+     * @param workspaceId the Workspace identifier
+     * @return a list of Boards associated with the Workspace
+     * @throws RuntimeException if the Workspace with the specified ID does not exist.
+     */
+
+    public List<BoardDTO> getListBoardByWorkspaceId(Long workspaceId) {
+        Workspace workspace = workspaceRepository.findById(workspaceId).orElseThrow(() -> new RuntimeException("Workspace not found"));
+        return workspace.getBoards().stream().map(boardMapper::toDTO).collect(Collectors.toList());
+    }
+
+    /**
+     * Creates a new Board in a given Workspace.
+     *
+     * @param workspaceId the identifier of the Workspace where the Board will be added.
+     * @param boardInput the Board object to be added
+     * @return the newly created Board
+     * @throws RuntimeException if the Workspace with the specified ID does not exist.
+     */
+    @Transactional
+    public BoardDTO createBoard(Long workspaceId, BoardDTO boardInput) {
+        Workspace workspace = workspaceRepository.findById(workspaceId)
+                .orElseThrow(() -> new RuntimeException("Workspace not found"));
+
+        // Charger les membres depuis la base pour éviter les entités détachées
+        List<User> attachedMembers = boardInput.getMembers().stream()
+                .map(user -> userRepository.findById(user.getId())
+                        .orElseThrow(() -> new RuntimeException("User not found with id: " + user.getId())))
+                .toList();
+
+        Board board = new Board();
+        board.setName(boardInput.getName());
+        board.setDescription(boardInput.getDescription());
+        board.setColor(getRandomColor());
+        board.setLastUpdated(new Date());
+        board.setCardCount(0);
+        board.setMembers(attachedMembers);
+        board.setOwnerId(boardInput.getOwnerId());
+
+        board.getWorkspaces().add(workspace);
+        attachedMembers.forEach(user -> user.getBoards().add(board));
+//        Optional<User> owner = this.userRepository.findById(board.getOwnerId());
+//        owner.ifPresent(user -> user.getBoards().add(board));
+
+        workspace.getBoards().add(board);
+
+        boardRepository.save(board);
+        return boardMapper.toDTO(board);
+    }
+
+    private String getRandomColor() {
+        List<String> colors = List.of(
+                "red", "blue", "green", "yellow", "purple",
+                "orange", "pink", "brown", "mediumaquamarine", "cyan"
+        );
+        return colors.get(new Random().nextInt(colors.size()));
+    }
+
+    /**
      * Updates the name of an existing board.
      *
      * @param id the ID of the board to update
@@ -78,22 +143,21 @@ public class BoardService {
      */
     public BoardDTO updateBoard(Long id, BoardDTO boardInput){
 
-        // Charger les membres depuis la base pour éviter les entités détachées
         List<User> attachedMembers = boardInput.getMembers()
                 .stream()
-                .map(userMapper::toEntity)
-                .toList();
+                .map(userLightDTO -> userRepository.getUserByUsername(userLightDTO.getUsername())
+                        .orElseThrow(() -> new RuntimeException("User not found: " + userLightDTO.getUsername())))
+                .collect(Collectors.toCollection(ArrayList::new));
 
-
-        Board board = boardMapper.toEntity(this.getBoardById(id));
+        Board board = boardRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Board not found"));
         board.setName(boardInput.getName());
         board.setDescription(boardInput.getDescription());
         board.setLastUpdated(new Date());
         board.setStatus(boardInput.getStatus());
-//        board.setMembers(new ArrayList<>(attachedMembers));
         board.setOwnerId(boardInput.getOwnerId());
-
-//        attachedMembers.forEach(user -> user.getBoards().add(board));
+        board.setMembers(attachedMembers);
+        //  attachedMembers.forEach(user -> user.getBoards().add(board));
 
         boardRepository.save(board);
         return boardMapper.toDTO(board);

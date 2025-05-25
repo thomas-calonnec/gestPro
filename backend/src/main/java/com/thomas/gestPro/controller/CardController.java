@@ -6,6 +6,7 @@ import com.thomas.gestPro.dto.LabelDTO;
 import com.thomas.gestPro.model.Card;
 import com.thomas.gestPro.model.Label;
 import com.thomas.gestPro.service.CardService;
+import com.thomas.gestPro.service.LabelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,10 +18,12 @@ import org.springframework.web.bind.annotation.*;
 public class CardController {
 
     private final CardService cardService;
+    private final LabelService labelService;
 
     @Autowired
-    public CardController(CardService cardService) {
+    public CardController(CardService cardService, LabelService labelService) {
         this.cardService = cardService;
+        this.labelService = labelService;
     }
 
     @GetMapping("/{id}")
@@ -28,21 +31,27 @@ public class CardController {
         return ResponseEntity.ok(cardService.getCardById(id));
     }
 
+    @PutMapping("{listCardId}/card")
+    public ResponseEntity<CardDTO> createCard(@PathVariable Long listCardId, @RequestBody Card card) {
+        CardDTO newCard = cardService.createCard(listCardId,card);
+        return ResponseEntity.ok(newCard);
+    }
+
     @PostMapping("/{id}/label/create")
     public ResponseEntity<CardDTO> addLabelColor(@PathVariable Long id, @RequestBody LabelDTO label) {
-        CardDTO updateCard = cardService.addCardLabelColor(id,label);
+        CardDTO updateCard = labelService.addCardLabelColor(id,label);
         return ResponseEntity.ok(updateCard);
     }
 
     @PutMapping("/{id}/label")
     public ResponseEntity<CardDTO> updateLabel(@PathVariable Long id, @RequestBody LabelDTO label) {
-        CardDTO updateCard = cardService.addCardLabelColor(id,label);
+        CardDTO updateCard = labelService.addCardLabelColor(id,label);
         return ResponseEntity.ok(updateCard);
     }
 
     @PutMapping("/{id}/check-list/update")
-    public ResponseEntity<Card> updateCheckList(@PathVariable Long id, @RequestBody CheckListDTO checkList) {
-        Card updateCard = cardService.updateCheckList(id,checkList);
+    public ResponseEntity<CardDTO> updateCheckList(@PathVariable Long id, @RequestBody CheckListDTO checkList) {
+        CardDTO updateCard = cardService.updateCheckList(id,checkList);
         return ResponseEntity.ok(updateCard);
     }
 
@@ -59,8 +68,8 @@ public class CardController {
     }
 
     @PostMapping("/{id}/label/remove")
-    public ResponseEntity<Card> removeLabelFromCard(@PathVariable Long id, @RequestBody Label label) {
-        cardService.removeLabelFromCard(id,label.getColor());
+    public ResponseEntity<Void> removeLabelFromCard(@PathVariable Long id, @RequestBody Label label) {
+        labelService.removeLabelFromCard(id,label.getColor());
         return ResponseEntity.noContent().build();
     }
 

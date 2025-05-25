@@ -5,6 +5,7 @@ import com.thomas.gestPro.dto.ListCardDTO;
 import com.thomas.gestPro.model.ListCard;
 import com.thomas.gestPro.service.BoardService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -24,6 +25,18 @@ public class BoardController {
     @GetMapping("/{id}")
     public ResponseEntity<BoardDTO> getBoardById(@PathVariable Long id) {
         return ResponseEntity.ok(boardService.getBoardById(id));
+    }
+
+    @PostMapping("{id}/board")
+    public ResponseEntity<BoardDTO> createBoard(@PathVariable Long id, @RequestBody BoardDTO board) {
+        BoardDTO newBoard = boardService.createBoard(id,board);
+        return new ResponseEntity<>(newBoard, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/workspace/{id}")
+    public ResponseEntity<List<BoardDTO>> getListBoardByWorkspaceId(@PathVariable Long id) {
+        List<BoardDTO> boards = boardService.getListBoardByWorkspaceId(id);
+        return ResponseEntity.ok(boards);
     }
 
     @GetMapping("/{id}/listCards")

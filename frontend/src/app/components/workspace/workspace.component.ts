@@ -1,41 +1,33 @@
-import {Component, computed, inject, LOCALE_ID, model, OnInit, signal, WritableSignal} from '@angular/core';
-import {Board} from '@models/board';
+import {
+  Component,
+   EventEmitter,
+  inject,
+  Input,
+  OnInit,
+  Output,
+
+} from '@angular/core';
 import {WorkspaceService} from '@services/workspaces/workspace.service';
-import {HttpErrorResponse} from '@angular/common/http';
-import {ActivatedRoute, RouterLink} from '@angular/router';
+import {RouterLink} from '@angular/router';
 import {MainService} from '@services/main/main.service';
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatButtonModule} from '@angular/material/button';
-import {DatePipe, NgClass, NgOptimizedImage, registerLocaleData} from '@angular/common';
-import { provideNativeDateAdapter} from '@angular/material/core';
+import { registerLocaleData} from '@angular/common';
 import localeFr from '@angular/common/locales/fr';
 
 import {MatChipsModule} from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
-import {MatAutocompleteModule, MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import {
-  differenceInDays,
-  differenceInHours,
-  differenceInMinutes,
-  differenceInSeconds,
-  differenceInWeeks
-} from 'date-fns';
-import {UserService} from '@services/users/user.service';
-import {COMMA, ENTER} from '@angular/cdk/keycodes';
-import {User} from '@models/user';
-
-import {MatInput} from '@angular/material/input';
 import {MatCardModule} from '@angular/material/card';
-import {BoardService} from '@services/boards/board.service';
-import {MatSelect} from '@angular/material/select';
+import {Workspace} from '@models/workspace';
 
 registerLocaleData(localeFr);
 
 @Component({
     selector: 'app-workspace',
     templateUrl: 'workspace.component.html',
-    providers: [provideNativeDateAdapter(), DatePipe, { provide: LOCALE_ID, useValue: 'fr-FR' },
+    providers: [
     ],
   imports: [
     MatFormFieldModule, MatChipsModule, MatIconModule, MatAutocompleteModule, FormsModule,
@@ -43,7 +35,7 @@ registerLocaleData(localeFr);
     ReactiveFormsModule,
     MatButtonModule,
     FormsModule,
-    MatInput, MatCardModule, NgOptimizedImage, NgClass, MatSelect
+     MatCardModule
 
   ],
     styleUrl: './workspace.component.css'
@@ -53,32 +45,12 @@ export class WorkspaceComponent implements OnInit{
   private workspaceId : number = 0;
   private workspaceService: WorkspaceService = inject(WorkspaceService);
    mainService: MainService = inject(MainService);
-  private userService: UserService = inject(UserService);
-  owner : User | undefined;
   workspaceName: string = "";
-  private route: ActivatedRoute = inject(ActivatedRoute);
-  private boardService = inject(BoardService);
 
-  boardCreated: boolean = false;
   myForm: FormGroup;
-  boards : WritableSignal<Board[]> = signal([])
-  status = 'IN_PROGRESS';
-  editingBoard: { [boardId: number]: boolean } = {};
-  readonly name = model('');
-  readonly description = model('');
-  protected datePipe: DatePipe = inject(DatePipe);
-  searchTerm = '';
-  readonly separatorKeysCodes = [ENTER, COMMA] as const;
-  currentUser = new FormControl('');
-  private _users = signal<User[]>([]);
-  allUsers = signal<User[]>([]);
-  users = this._users.asReadonly();
-  readonly filteredUser = computed(() => {
-    const currentUser = this.currentUser.get('currentUser')?.value.toLowerCase();
-    return currentUser
-      ? this.allUsers().filter(member => member.username.toLowerCase().includes(currentUser))
-      : this.allUsers().slice();
-  });
+
+  @Input() workspace!: Workspace;
+  @Output() onFavoriteToggle = new EventEmitter<number>();
 
   constructor() {
     this.myForm = new FormGroup({
@@ -90,53 +62,13 @@ export class WorkspaceComponent implements OnInit{
   }
 
   ngOnInit(): void {
-    this.workspaceId = this.route.snapshot.params['id'];
-
-    this.userService.getAllUser().subscribe({
-      next: users => {
-        this.allUsers.set(
-          users
-       //   users.filter(user => user.id !== Number(localStorage.getItem("USER_ID")))
-        );
-        this.owner = users.filter(user => user.id === Number(localStorage.getItem("USER_ID")))[0];
-      }
-    })
-    this.workspaceService.fetchBoards(this.workspaceId);
     this.getWorkspace();
-    this.getBoards(this.workspaceId);
     this.mainService.setWorkspaceId(Number(this.workspaceId))
-
-  }
-
-  remove(user: User): void {
-    this._users.update(users => users.filter(u => u.username !== user.username));
-  }
-
-  selected(event: MatAutocompleteSelectedEvent): void {
-    const member: string = event.option.value;
-    // // Vérifie qu'il n'est pas déjà sélectionné
-
-   // const isDuplicate = this.tab.some(u => u === member);
-   const isDuplicate = this._users().some(u => u.username === member)
-     if (!isDuplicate) {
-
-
-       const avatarUrl = this.allUsers().filter((user) => user.username === member)
-       const existedUser = this.allUsers().filter((user) => user.username === member)
-       existedUser[0].pictureUrl = avatarUrl[0].pictureUrl != null ? avatarUrl[0].pictureUrl : './circle-user.png';
-
-       this._users.update(users => [...users, existedUser[0]]);
-
-     }
-
-    // Réinitialise le champ et l'autocomplete
-    this.currentUser.setValue('');
-    event.option.deselect();  // facultatif
   }
 
   public getWorkspace() {
 
-    this.workspaceService.getWorkspaceById(this.workspaceId).subscribe({
+    this.workspaceService.getWorkspaceById(this.workspace.id).subscribe({
       next: workspace => {
         this.mainService.setWorkspace(workspace.name)
         // this.workspaceName = workspace.name;
@@ -148,130 +80,8 @@ export class WorkspaceComponent implements OnInit{
     })
 
   }
-  public getBoards(workspaceId: number) : void {
 
-    this.workspaceService.getBoards(workspaceId).subscribe({
-        next: (data: Board[]) => {
-          //this.boardService.updateBoards(data);
-
-          this.boards.set(data)
-          // this.userService.getUserById(Number(localStorage.getItem("USER_ID"))).subscribe({
-          //   next: value => {
-          //     console.log(value)
-          //   }
-          // })
-          this.boards.update(boardTab => boardTab.map((board) => {
-            const updateAt = new Date(board.lastUpdated);
-            const now = new Date();
-
-            const diffWeeks = differenceInWeeks(now,updateAt);
-            const diffDays = differenceInDays(now,updateAt);
-            const diffHours = differenceInHours(now,updateAt);
-            const diffMinutes = differenceInMinutes(now,updateAt);
-            const diffSeconds = differenceInSeconds(now,updateAt);
-            return {
-              ...board,
-              weeksSinceUpdate: diffWeeks,
-              daysSinceUpdate: diffDays,
-              hoursSinceUpdate: diffHours,
-              minutesSinceUpdate: diffMinutes,
-              secondsSinceUpdate: diffSeconds
-            }
-          }))
-          this.mainService.setBoards(data);
-        },
-        error: (error: HttpErrorResponse) => {
-          alert("error -> " + error.message)
-        }
-      }
-    )
+  toggleFavorite() {
+    this.onFavoriteToggle.emit(this.workspace.id);
   }
-  public filteredBoard() {
-    return this.boards().filter((value) => {
-      return this.searchTerm != '' ? value.name.includes(this.searchTerm) : value
-    })
-  }
-
-  protected readonly localStorage = localStorage;
-  protected readonly Number = Number;
-
-  addBoard() {
-    const userId = Number(localStorage.getItem("USER_ID"));
-    const boardName = this.myForm.get('name');
-    const desc = this.myForm.get('description')
-
-    let newBoard : Board = {
-      cardCount: 0,
-      color: '',
-      daysSinceUpdate: 0,
-      hoursSinceUpdate: 0,
-      lastUpdated: new Date(),
-      members: [],
-      status: this.status,
-      minutesSinceUpdate: 0,
-      ownerId: userId,
-      secondsSinceUpdate: 0,
-      weeksSinceUpdate: 0,
-      name: boardName?.value,
-      description: desc?.value
-
-    }
-
-      this.datePipe.transform(newBoard.lastUpdated, 'dd/MM/yyyy','fr')
-
-      if(desc?.invalid || boardName?.invalid){
-        alert("error : missing input")
-      } else {
-
-        newBoard.members = this.users();
-
-        this.workspaceService.createBoard(this.workspaceId, newBoard).subscribe({
-          next:boardValue => {
-            this.boards.update((currentValue) => [...currentValue,boardValue]);
-
-            this.workspaceService.setBoards(this.boards());
-
-            this.currentUser.reset();
-
-            this.cancel();
-          }
-        });
-
-      }
-
-  }
-
-  cancel() {
-    this.boardCreated = false;
-    this.myForm.reset();
-    this._users.set([]);
-  }
-  expandedDesc: Record<number, boolean> = {};
-
-  toggleDesc(id: number) {
-    this.expandedDesc[id] = !this.expandedDesc[id];
-  }
-
-  saveBoard(board: Board) {
-    board.status = this.status;
-    console.log(board)
-    this.boardService.updateBoard(board.id!, board).subscribe({
-      next: () => {
-        this.editingBoard[board.id!] = false;
-        // Optionnel : notify success or update state
-      },
-      error: () => {
-        alert('Error while saving board');
-      }
-    });
-  }
-
-  toggleEdit(boardId: number) {
-    this.editingBoard[boardId] = !this.editingBoard[boardId];
-  }
-  valueInput(event: Event) {
-    this.description.set((event.target as HTMLInputElement).value);
-  }
-
-
 }

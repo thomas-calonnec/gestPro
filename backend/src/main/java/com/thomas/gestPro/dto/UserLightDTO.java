@@ -1,7 +1,5 @@
 package com.thomas.gestPro.dto;
 
-import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,12 +9,9 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ListCardDTO {
-
+public class UserLightDTO {
     private Long id;
-    private String name;
-    private int orderIndex;
-    private Boolean isArchived;
-    private BoardLightDTO board;
-    private List<CardDTO> cards;
+    private String username;
+    private String email;
+    private String pictureUrl;
 }

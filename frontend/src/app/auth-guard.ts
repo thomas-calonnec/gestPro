@@ -9,7 +9,6 @@ export const AuthGuard = (): Observable<boolean> => {
 
   return authService.checkAuth().pipe(
     tap((isLoggedIn) => {
-      console.log(isLoggedIn)
       if(!isLoggedIn) {
         router.navigate(['/login'])
       }

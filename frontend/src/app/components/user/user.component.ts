@@ -1,4 +1,4 @@
-import {Component, EventEmitter, inject, OnInit, Output, signal, WritableSignal} from '@angular/core';
+import {Component, EventEmitter, inject, model, OnInit, Output, signal, WritableSignal} from '@angular/core';
 import {Workspace} from '@models/workspace';
 import {UserService} from '@services/users/user.service';
 import {ActivatedRoute, RouterLink} from '@angular/router';
@@ -18,16 +18,19 @@ import {
   differenceInSeconds,
   differenceInWeeks
 } from 'date-fns';
+import {WorkspaceComponent} from '@components/workspace/workspace.component';
+import {BoardService} from '@services/boards/board.service';
 
 @Component({
     selector: 'app-user',
     templateUrl: 'user.component.html',
-    imports: [
-        RouterLink,
-        MatButton,
-        ReactiveFormsModule
-    ],
-    styleUrl: './user.component.css'
+  imports: [
+    RouterLink,
+    MatButton,
+    ReactiveFormsModule,
+    WorkspaceComponent
+  ],
+    styleUrl: 'user.component.css'
 })
 export class UserComponent implements  OnInit{
   workspaces : WritableSignal<Workspace[]> = signal([]);
@@ -35,10 +38,11 @@ export class UserComponent implements  OnInit{
   userService : UserService = inject(UserService);
   route : ActivatedRoute = inject(ActivatedRoute);
   mainService : MainService = inject(MainService);
+  boardService :BoardService = inject(BoardService);
   nbBoard: number = 0;
   @Output() paramId  = new EventEmitter<string>();
   workspaceCreated: boolean = false;
-
+  favorite = model<boolean>(false);
   private formBuilder : FormBuilder = inject(FormBuilder);
   myForm: FormGroup;
   readonly dialog = inject(MatDialog);
@@ -55,16 +59,15 @@ export class UserComponent implements  OnInit{
     this.getWorkspaces();
     localStorage.setItem("workspaceName","");
     localStorage.setItem("workspaceId","");
-    this.workspaceService.setBoards([]);
+    this.boardService.setBoards([]);
     this.mainService.removeListBoard();
 
   }
 
   getWorkspaces(): void {
 
-    this.userService.getWorkspaces(this.userId).subscribe({
+    this.workspaceService.getWorkspaces(this.userId).subscribe({
       next: (workspaces: Workspace[]) => {
-        console.log(workspaces)
         this.workspaces.set(workspaces);
         this.workspaces.update(workspaceTab => workspaceTab.map((workspace) => {
           const updateAt = new Date(workspace.updateAt);
@@ -103,7 +106,7 @@ export class UserComponent implements  OnInit{
       isFavorite: false,
       boards: []
     };
-    this.userService.createWorkspace(Number(this.userId),workspace).subscribe({
+    this.workspaceService.createWorkspace(Number(this.userId),workspace).subscribe({
       next: data => {
         this.workspaceCreated = false;
         this.workspaces.update(currentValue => [...currentValue,data]);
@@ -158,14 +161,7 @@ export class UserComponent implements  OnInit{
       const updatedWorkspace = updatedWorkspaces.find(workspace => workspace.id == workspaceId);
 
       // Tu peux maintenant utiliser updatedWorkspace ou envoyer une action pour l'update
-       this.workspaceService.updateWorkspace(workspaceId, updatedWorkspace).subscribe({
-         next: value => {
-
-         },
-         error: err => {
-
-         }
-       })
+       this.workspaceService.updateWorkspace(workspaceId, updatedWorkspace)
 
       return updatedWorkspaces; // Retourner le tableau mis à jour
     });

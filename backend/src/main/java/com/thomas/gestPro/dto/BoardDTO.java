@@ -21,7 +21,7 @@ public class BoardDTO {
     private String status;
     private Long ownerId;
     private List<ListCardDTO> listCards;
-    private List<UserDTO> members;
+    private List<UserLightDTO> members;
    
 
 }

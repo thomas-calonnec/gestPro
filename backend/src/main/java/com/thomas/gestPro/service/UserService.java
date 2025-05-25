@@ -3,23 +3,16 @@ package com.thomas.gestPro.service;
 import com.thomas.gestPro.Exception.InvalidInputException;
 import com.thomas.gestPro.Exception.ResourceNotFoundException;
 import com.thomas.gestPro.dto.UserDTO;
-import com.thomas.gestPro.dto.WorkspaceDTO;
 import com.thomas.gestPro.mapper.UserMapper;
-import com.thomas.gestPro.mapper.WorkspaceMapper;
 import com.thomas.gestPro.model.Role;
 import com.thomas.gestPro.model.User;
-import com.thomas.gestPro.model.Workspace;
-import com.thomas.gestPro.repository.CardRepository;
 import com.thomas.gestPro.repository.RoleRepository;
 import com.thomas.gestPro.repository.UserRepository;
-import com.thomas.gestPro.repository.WorkspaceRepository;
-
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -34,29 +27,21 @@ import java.util.stream.Collectors;
 @Service
 public class UserService {
     private final UserRepository userRepository;
-    private final CardRepository cardRepository;
     private final UserMapper userMapper;
-    private final WorkspaceRepository workspaceRepository;
     private final RoleRepository roleRepository;
-    private final WorkspaceMapper workspaceMapper;
 
     /**
      * Constructor with dependency injection for repositories.
      * s
      * 
      * @param userRepository      repository for managing users
-     * @param cardRepository      repository for managing cards
-     * @param workspaceRepository repository for managing workspaces
      */
     @Autowired
-    public UserService(UserRepository userRepository, CardRepository cardRepository, UserMapper userMapper,
-                       WorkspaceRepository workspaceRepository, RoleRepository roleRepository, WorkspaceMapper workspaceMapper) {
+    public UserService(UserRepository userRepository, UserMapper userMapper,
+                        RoleRepository roleRepository) {
         this.userRepository = userRepository;
-        this.cardRepository = cardRepository;
         this.userMapper = userMapper;
-        this.workspaceRepository = workspaceRepository;
         this.roleRepository = roleRepository;
-        this.workspaceMapper = workspaceMapper;
     }
 
     /**
@@ -92,24 +77,24 @@ public class UserService {
      *
      * @throws InvalidInputException if a user with the same username already exists
      */
-//    @Transactional
-//    public User createUserGithub(User incomingUser) {
-//        Optional<UserDTO> optionalUser = userRepository.findByEmail(incomingUser.getEmail());
-//
+    @Transactional
+    public UserDTO createUserGithub(User incomingUser) {
+        Optional<User> optionalUser = userRepository.findByEmail(incomingUser.getEmail());
+
 //        Role userRole = roleRepository.findByName("ROLE_USER");
-//
-//        if (optionalUser.isEmpty()) {
-//            // Création
-//            UserDTO newUser = new User();
-//            newUser.setEmail(incomingUser.getEmail());
-//            newUser.setUsername(incomingUser.getUsername());
-//
-//           // newUser.setRoles(new ArrayList<>(List.of(userRole)));
-//            userRepository.save(newUser);
-//            return newUser;
-//        }
-//        return optionalUser.get();
-//    }
+
+        if (optionalUser.isEmpty()) {
+            // Création
+            User newUser = new User();
+            newUser.setEmail(incomingUser.getEmail());
+            newUser.setUsername(incomingUser.getUsername());
+
+           // newUser.setRoles(new ArrayList<>(List.of(userRole)));
+            userRepository.save(newUser);
+            return userMapper.toDTO(newUser);
+        }
+        return userMapper.toDTO(optionalUser.get());
+    }
 
     /**
      * Updates an existing user's details.
@@ -118,20 +103,17 @@ public class UserService {
      * @param updateUser the user object containing updated information
      * @return the updated user
      */
-    // public User updateUser(Long userId, User updateUser) {
-    //     User existingUser = getById(userId);
-    //     if (existingUser.isPresent()) {
-    //         User user = existingUser.get();
-    //         user.setUsername(updateUser.getUsername());
-    //         user.setEmail(updateUser.getEmail());
-    //         user.setPassword(updateUser.getPassword());
-    //         user.setRoles(updateUser.getRoles());
-    //         return userRepository.save(user);
-    //     }
+     public UserDTO updateUser(Long userId, User updateUser) {
+         UserDTO existingUser = getById(userId);
 
-    //     return null;
-
-    // }
+         User user = userMapper.toEntity(existingUser);
+         user.setUsername(updateUser.getUsername());
+         user.setEmail(updateUser.getEmail());
+         user.setPassword(updateUser.getPassword());
+         user.setRoles(updateUser.getRoles());
+         userRepository.save(user);
+         return userMapper.toDTO(user);
+     }
 
     /**
      * Deletes a user by their ID.
@@ -167,56 +149,12 @@ public class UserService {
 //         return null;
 //     }
 
-    /**
-     * Creates a new workspace and adds it to a user's list of workspaces.
-     *
-     * @param userId    the ID of the user who will own the workspace
-     * @param workspace the workspace to create
-     * @return the created workspace
-     */
-     @Transactional
-     public Workspace createWorkspace(Long userId, Workspace workspace) {
-         User user = userMapper.toEntity(getById(userId));
 
-         Workspace newWorkspace = new Workspace();
-         newWorkspace.setName(workspace.getName());
-         newWorkspace.getUsers().add(user);
-
-         workspaceRepository.save(newWorkspace);
-         user.getWorkspaces().add(newWorkspace);
-
-         userRepository.save(user);
-         return newWorkspace;
-
-     }
 
     public UserDTO getUserByUsername(String username) {
         return userRepository.getUserByUsername(username)
                 .map(userMapper::toDTO)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with username: " + username));
-    }
-
-    // public List<Workspace> getWorkspacesByUserId(Long userId) {
-    //     Optional<User> existingUser = getById(userId);
-    //     if (existingUser.isPresent()) {
-    //         User user = existingUser.get();
-    //         return user.getWorkspaces();
-    //     }
-    //     return null;
-
-    // }
-
-    public List<WorkspaceDTO> getWorkspacesByUserId(Long userId) {
-
-         System.err.println(userRepository.findById(userId).get().getWorkspaces().getFirst().getName());
-
-        return userRepository.findById(userId)
-        .map(user -> user.getWorkspaces().stream()
-            .map(workspaceMapper::toDTO)
-            .collect(Collectors.toList())
-        )
-        .orElse(Collections.emptyList());
-       
     }
 
     public UserDTO createGoogleUser(String username, String email, String pictureUrl, String googleId) {
