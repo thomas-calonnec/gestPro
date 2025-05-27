@@ -64,6 +64,7 @@ export class WorkspaceComponent implements OnInit{
   ngOnInit(): void {
     this.getWorkspace();
     this.mainService.setWorkspaceId(Number(this.workspaceId))
+
   }
 
   public getWorkspace() {

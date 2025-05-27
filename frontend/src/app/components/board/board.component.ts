@@ -1,6 +1,6 @@
 import {Component, computed, inject,  OnInit, signal, WritableSignal} from '@angular/core';
 import { BoardService } from '@services/boards/board.service';
-import { RouterLink} from '@angular/router';
+import {ActivatedRoute, RouterLink} from '@angular/router';
 import {ListCard} from '@models/list-card';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {
@@ -11,6 +11,8 @@ import {MainService} from '@services/main/main.service';
 import {MatButton} from '@angular/material/button';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {ListCardComponent} from '@components/list-card/list-card.component';
+import {WorkspaceService} from '@services/workspaces/workspace.service';
+import {ListCardService} from '@services/list-cards/list-card.service';
 
 @Component({
     selector: 'app-board',
@@ -29,16 +31,21 @@ import {ListCardComponent} from '@components/list-card/list-card.component';
 })
 export class BoardComponent implements OnInit{
 
-
   mainService: MainService = inject(MainService);
 
   public listCard: WritableSignal<ListCard[]> = signal<ListCard[]>([]);
   sortedListCard = computed(() =>
     this.listCard().slice().sort((a, b) => a.orderIndex - b.orderIndex).filter((list) => !list.isArchived)
   );
+
   public boardService : BoardService = inject(BoardService);
+  protected workspaceService: WorkspaceService = inject(WorkspaceService);
+  protected listCardService: ListCardService = inject(ListCardService);
   private boardId : number | undefined;
+  private route : ActivatedRoute = inject(ActivatedRoute);
   protected isClicked: boolean = false;
+  workspaceName : string | undefined;
+  workspaceId : number | undefined;
   boardName: string = "";
   myForm : FormGroup;
   formBuilder : FormBuilder = inject(FormBuilder);
@@ -49,21 +56,44 @@ export class BoardComponent implements OnInit{
 
     });
   }
+
+
+  ngOnInit() {
+    this.boardId = this.route.snapshot.params['id'];
+    this.workspaceId = Number(localStorage.getItem("workspaceId"));
+
+    if(this.boardId) {
+      this.boardService.getBoardById(this.boardId).subscribe({
+        next: board => {
+          this.boardName = board.name
+        }
+      });
+
+      this.workspaceService.getWorkspaceByBoardId(this.boardId).subscribe({
+        next: workspace => {
+          this.workspaceId = workspace.id;
+          this.workspaceName = workspace.name;
+        }
+      });
+      this.getListCards(this.boardId);
+
+    }
+
+  }
+
   buttonClicked() {
     this.isClicked = true;
   }
 
   addList() {
     const listCard: ListCard = {
-
       name:  this.myForm.value.name.toLowerCase(),
       orderIndex: -1,
       isArchived: false
     }
 
-
     if(listCard.name !== ""){
-      this.boardService.createListCard(this.boardId!,listCard).subscribe({
+      this.listCardService.createListCard(this.boardId!,listCard).subscribe({
         next: (data: ListCard) =>{
           this.isClicked = false;
           this.listCard.update((currentList) => [...currentList, data])
@@ -72,20 +102,6 @@ export class BoardComponent implements OnInit{
       })
     }
   }
-
-  ngOnInit() {
-
-    if(this.boardId) {
-      this.boardService.getBoardById(this.boardId).subscribe({
-        next: board => {
-          this.boardName = board.name
-        }
-      })
-
-    }
-
-  }
-
 
   autoResize(textarea: HTMLTextAreaElement): void {
     textarea.style.height = 'auto';
@@ -100,7 +116,7 @@ export class BoardComponent implements OnInit{
     });
 
     // Appelez le backend pour sauvegarder les modifications d'ordre
-    this.boardService.updateListCard(this.boardId!, this.sortedListCard()).subscribe({
+    this.listCardService.updateListCard(this.boardId!, this.sortedListCard()).subscribe({
       next: (response) => {
         console.log("Ordre mis à jour avec succès", response);
       },
@@ -110,16 +126,15 @@ export class BoardComponent implements OnInit{
       }
     });
   }
+
   getListCards(boardId: number): void {
-    this.boardService.getListCards(boardId).subscribe({
+    this.listCardService.getListCards(boardId).subscribe({
       next: (data: ListCard[]) => {
         this.listCard.set(data);
       }
     });
 
   }
-
-
 
   closeButton() {
     this.isClicked = false;
@@ -140,7 +155,7 @@ export class BoardComponent implements OnInit{
     })
 
 
-    this.boardService.updateListCard(this.boardId!, this.listCard()).subscribe({
+    this.listCardService.updateListCard(this.boardId!, this.listCard()).subscribe({
       next: (response) => {
         console.log("Ordre mis à jour avec succès", response);
       },

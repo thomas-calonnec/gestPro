@@ -1,5 +1,7 @@
 package com.thomas.gestPro.controller;
 
+import com.thomas.gestPro.dto.CardDTO;
+import com.thomas.gestPro.dto.ListCardDTO;
 import com.thomas.gestPro.model.Card;
 import com.thomas.gestPro.model.ListCard;
 import com.thomas.gestPro.service.ListCardService;
@@ -29,13 +31,31 @@ public class ListCardController {
     }
 
     @GetMapping("{id}/cards")
-    public ResponseEntity<List<Card>> getCardsByListCardId(@PathVariable Long id) {
+    public ResponseEntity<List<CardDTO>> getCardsByListCardId(@PathVariable Long id) {
         return ResponseEntity.ok(listCardService.getCardsByListCardId(id));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ListCard> updateListCardById(@PathVariable Long id, @RequestBody ListCard listCard) {
-        ListCard updateListCard = listCardService.updateListCard(id,listCard);
+    @GetMapping("/board/{id}")
+    public ResponseEntity<List<ListCardDTO>> getListCard(@PathVariable Long id) {
+        List<ListCardDTO> listCards = listCardService.getCardsByBoardId(id);
+        return ResponseEntity.ok(listCards);
+    }
+
+    @PostMapping("/board/{id}")
+    public ResponseEntity<ListCardDTO> createListCard(@PathVariable Long id, @RequestBody ListCard listCard) {
+        ListCardDTO newListCard = listCardService.createListCard(id,listCard);
+        return ResponseEntity.ok(newListCard);
+    }
+
+//    @PutMapping("/board/{id}")
+//    public ResponseEntity<List<ListCardDTO>> updateListCard(@PathVariable Long id, @RequestBody List<ListCardDTO> listCard) {
+//        List<ListCardDTO> newListCard =  listCardService.updateListCard(id, listCard);
+//        return ResponseEntity.ok(newListCard);
+//    }
+
+    @PutMapping("/board/{id}")
+    public ResponseEntity<ListCardDTO> updateListCardById(@PathVariable Long id, @RequestBody ListCardDTO listCard) {
+        ListCardDTO updateListCard = listCardService.updateListCard(id,listCard);
         return ResponseEntity.ok(updateListCard);
     }
 

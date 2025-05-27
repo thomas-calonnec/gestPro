@@ -16,6 +16,7 @@ import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} fr
 import {provideNativeDateAdapter} from '@angular/material/core';
 import {ListCard} from '@models/list-card';
 import {CdkDragHandle} from '@angular/cdk/drag-drop';
+import {CardService} from '@services/cards/card.service';
 
 @Component({
     selector: 'app-list-card',
@@ -52,11 +53,14 @@ export class ListCardComponent implements OnInit {
     orderIndex: 0,
     isArchived: false
   }
+
+  private cardService : CardService = inject(CardService);
   public cards : WritableSignal<Card[]> = signal<Card[]>([]);
   private formBuilder : FormBuilder = inject(FormBuilder)
   public listCardService = inject(ListCardService);
   isClicked: boolean = false;
   modifyTitle: boolean = false;
+
   // Écoute globale des clics sur le document
   @HostListener('document:click', ['$event'])
   handleOutsideClick(event: MouseEvent) {
@@ -65,18 +69,23 @@ export class ListCardComponent implements OnInit {
       this.disableEdit();
     }
   }
+
   disableEdit() {
     this.modifyTitle = false;
   }
+
   constructor(private elementRef: ElementRef) {
     this.myForm = this.formBuilder.group({
       name: ['', Validators.required],
 
     });
   }
+
   ngOnInit(): void {
-    if(this.listCard.id !== undefined)
-      this.getListCard(this.listCard.id);
+
+     if(this.listCard.id !== undefined)
+       this.getListCard(this.listCard.id);
+
   }
 
   public getListCard(listCardId : number) : void{
@@ -85,14 +94,16 @@ export class ListCardComponent implements OnInit {
         this.cards.set(data);
       }
     })
+
   }
 
   addCard() {
+
     this.card.name = this.myForm.value.name;
 
     if(this.listCard.id !== undefined && this.card.name !== ""){
 
-      this.listCardService.createCard(this.listCard.id,this.card).subscribe({
+      this.cardService.createCard(this.listCard.id,this.card).subscribe({
         next: (data: Card ) => {
           this.isClicked = false;
           this.myForm.reset();
@@ -103,7 +114,6 @@ export class ListCardComponent implements OnInit {
     }
 
   }
-
 
   modifyTitleConfirm() {
    this.modifyTitle = false;

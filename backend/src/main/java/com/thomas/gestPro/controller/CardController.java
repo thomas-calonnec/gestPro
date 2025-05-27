@@ -31,7 +31,7 @@ public class CardController {
         return ResponseEntity.ok(cardService.getCardById(id));
     }
 
-    @PutMapping("{listCardId}/card")
+    @PostMapping("/listCard/{listCardId}")
     public ResponseEntity<CardDTO> createCard(@PathVariable Long listCardId, @RequestBody Card card) {
         CardDTO newCard = cardService.createCard(listCardId,card);
         return ResponseEntity.ok(newCard);
@@ -56,8 +56,8 @@ public class CardController {
     }
 
     @PutMapping("/{id}/update")
-    public ResponseEntity<Card> updateCardById(@PathVariable Long id, @RequestBody CardDTO card) {
-        Card updateCard = cardService.updateCard(id,card);
+    public ResponseEntity<CardDTO> updateCardById(@PathVariable Long id, @RequestBody CardDTO card) {
+        CardDTO updateCard = cardService.updateCard(id,card);
         return new ResponseEntity<>(updateCard,HttpStatus.OK);
     }
 

@@ -53,19 +53,5 @@ export class BoardService {
     return this.http.put<Board>(`${this.apiServerUrl}/${boardId}/update`,board);
   }
 
-  public getListCards(boardId: number): Observable<ListCard[]>{
-    return this.http.get<ListCard[]>(`${this.apiServerUrl}/${boardId}/listCards`,{withCredentials: true});
-  }
 
-  public createListCard(boardId: number, listCard : ListCard): Observable<ListCard>{
-    return this.http.put<ListCard>(`${this.apiServerUrl}/${boardId}/listCards`,listCard);
-  }
-
-  public updateListCard(boardId: number, listCard: ListCard[]): Observable<ListCard[]>{
-    return this.http.put<ListCard[]>(`${this.apiServerUrl}/${boardId}/listCards/update`,listCard);
-  }
-
-  public deleteListCard(boardId: number): Observable<void>{
-    return this.http.delete<void>(`${this.apiServerUrl}/${boardId}`);
-  }
 }

@@ -1,5 +1,6 @@
 package com.thomas.gestPro.controller;
 
+import com.thomas.gestPro.dto.BoardDTO;
 import com.thomas.gestPro.dto.WorkspaceDTO;
 import com.thomas.gestPro.model.Workspace;
 import com.thomas.gestPro.service.WorkspaceService;
@@ -28,8 +29,13 @@ public class WorkspaceController {
     @GetMapping("{id}/workspaces")
     public ResponseEntity<List<WorkspaceDTO>> getWorkspaceByUserId(@PathVariable Long id) {
         return ResponseEntity.ok(workspaceService.getWorkspacesByUserId(id));
-
     }
+
+    @GetMapping("/board/{boardId}")
+    public ResponseEntity<WorkspaceDTO> getWorkspaceByBoard(@PathVariable Long boardId) {
+        return ResponseEntity.ok(workspaceService.getWorkspacesByBoardId(boardId));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<WorkspaceDTO> getWorkspaceById(@PathVariable Long id) {
         WorkspaceDTO workspace = workspaceService.getWorkspaceById(id);

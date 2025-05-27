@@ -172,60 +172,7 @@ public class BoardService {
         boardRepository.deleteById(boardId);
     }
 
-    /**
-     * Creates a new list card and associates it with a board.
-     * This method is transactional, meaning that if anything fails, all changes will be rolled back.
-     *
-     * @param boardId the ID of the board to associate the list card with
-     * @param listCard the new list card to create
-     * @return the created list card
-     */
-    @Transactional
-    public ListCard createListCard(Long boardId, ListCard listCard) {
-        Board existingboard = boardMapper.toEntity(getBoardById(boardId));
-        if(existingboard == null){
-            return null;
-        }
-        listCard.setOrderIndex(existingboard.getListCards().size() + 1);
-        listCard.setBoard(existingboard);
-        existingboard.setCardCount(existingboard.getListCards().size()+1);
 
-       // existingboard.getListCards().add(listCard);
-        //boardRepository.save(existingboard);
-        return listCardRepository.save(listCard);
-    }
-
-    @Transactional
-    public List<ListCardDTO> updateListCard(Long boardId, List<ListCardDTO> listCard) {
-        // Récupérer le tableau existant par ID
-        Board existingBoard = boardMapper.toEntity(getBoardById(boardId));
-
-        // Mettre à jour chaque ListCard dans la base de données
-        for (ListCardDTO card : listCard) {
-
-            // Trouver la carte correspondante dans la liste actuelle du board
-            ListCard existingCard = existingBoard.getListCards().stream()
-                    .filter(c -> c.getId().equals(card.getId()))
-                    .findFirst()
-                    .orElseThrow(() -> new RuntimeException("Carte introuvable : " + card.getId()));
-
-            // Mettre à jour l'ordre de la carte
-            existingCard.setOrderIndex(card.getOrderIndex());
-            existingCard.setName(card.getName());
-            existingCard.setIsArchived(card.getIsArchived());
-        }
-
-        // Sauvegarder toutes les cartes mises à jour
-        listCardRepository.saveAll(existingBoard.getListCards());
-
-        // Sauvegarder le tableau pour s'assurer que la relation est bien mise à jour
-        boardRepository.save(existingBoard);
-
-        return existingBoard.getListCards()
-                .stream()
-                .map(listCardMapper::toDTO)
-                .toList();
-    }
 
 
 }
