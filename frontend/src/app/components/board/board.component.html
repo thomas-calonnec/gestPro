@@ -14,8 +14,8 @@
       <a routerLink="/home">Home</a> >
 
       <a [routerLink]="['/users/',localStorage.getItem('USER_ID'),'workspaces']">Your workspaces</a> >
-      <span>{{this.mainService.workspace()}}</span> >
-      <a [routerLink]="['/workspaces/',localStorage.getItem('workspaceId'),'boards']">Your boards</a> >
+      <span>{{localStorage.getItem("workspaceName")}}</span> >
+      <a [routerLink]="['/workspaces/',this.workspaceId,'boards']">Your boards</a> >
       <span>{{this.boardName}}</span>
     </div>
     <div style="display: flex; flex-direction: row">

@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {environment} from '@environments/environment.development';
 import {Workspace} from '@models/workspace';
+import {Board} from '@models/board';
 
 
 @Injectable({
@@ -22,6 +23,9 @@ export class WorkspaceService {
     return this.http.get<Workspace>(`${this.apiServerUrl}/${workspaceId}`,{withCredentials: true});
   }
 
+  public getWorkspaceByBoardId( boardId:number) {
+    return this.http.get<Workspace>(`${this.apiServerUrl}/board/${boardId}`,{withCredentials : true})
+  }
   public getWorkspaces(id: string): Observable<Workspace[]>{
     return this.http.get<Workspace[]>(`${this.apiServerUrl}/${id}/workspaces`,{withCredentials: true});
   }
@@ -35,7 +39,6 @@ export class WorkspaceService {
   }
 
   public updateWorkspace(workspaceId: number,workspace: Workspace | undefined): Observable<Workspace> {
-
     return this.http.put<Workspace>(`${this.apiServerUrl}/${workspaceId}/update`,workspace);
   }
 

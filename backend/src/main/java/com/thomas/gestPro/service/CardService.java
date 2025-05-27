@@ -83,7 +83,7 @@ public class CardService {
      * @return the updated card
      */
     @Transactional
-    public Card updateCard(Long cardId, CardDTO updateCard) {
+    public CardDTO updateCard(Long cardId, CardDTO updateCard) {
         // Récupérer l'entité existante
         Card existingCard = getCardById(cardId);
 
@@ -133,7 +133,9 @@ public class CardService {
         checkListRepository.saveAll(existingCheckLists);
 
         // Save the updated Card (cascade should handle CheckLists)
-        return cardRepository.save(existingCard);
+        cardRepository.save(existingCard);
+
+        return cardMapper.toDTO(existingCard);
     }
 
 

@@ -39,24 +39,6 @@ public class BoardController {
         return ResponseEntity.ok(boards);
     }
 
-    @GetMapping("/{id}/listCards")
-    public ResponseEntity<List<ListCardDTO>> getListCard(@PathVariable Long id) {
-        List<ListCardDTO> listCards = boardService.getCardsByBoardId(id);
-        return ResponseEntity.ok(listCards);
-    }
-
-    @PutMapping("/{id}/listCards")
-    public ResponseEntity<ListCard> createListCard(@PathVariable Long id, @RequestBody ListCard listCard) {
-        ListCard newListCard = boardService.createListCard(id,listCard);
-        return ResponseEntity.ok(newListCard);
-    }
-
-    @PutMapping("/{id}/listCards/update")
-    public ResponseEntity<List<ListCardDTO>> updateListCard(@PathVariable Long id, @RequestBody List<ListCardDTO> listCard) {
-        List<ListCardDTO> newListCard =  boardService.updateListCard(id, listCard);
-        return ResponseEntity.ok(newListCard);
-    }
-
     @PutMapping("/{id}/update")
     public ResponseEntity<BoardDTO> updateBoardById(@PathVariable Long id, @RequestBody BoardDTO board) {
         BoardDTO updateBoard = boardService.updateBoard(id,board);

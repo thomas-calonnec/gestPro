@@ -1,6 +1,7 @@
 package com.thomas.gestPro.service;
 
 
+import com.thomas.gestPro.dto.BoardDTO;
 import com.thomas.gestPro.dto.WorkspaceDTO;
 import com.thomas.gestPro.mapper.BoardMapper;
 import com.thomas.gestPro.mapper.UserMapper;
@@ -139,4 +140,16 @@ public class WorkspaceService {
         workspaceRepository.deleteById(workspaceId);
     }
 
+    public WorkspaceDTO getWorkspacesByBoardId(Long boardId) {
+        return this.workspaceRepository
+                .findAll()
+                .stream()
+                .filter(workspace ->
+                        workspace.getBoards().stream().anyMatch(board -> board.getId().equals(boardId))
+                )
+                .findFirst()
+                .map(workspaceMapper::toDTO)
+                .orElseThrow(() -> new RuntimeException("Workspace not found"));
+
+    }
 }
