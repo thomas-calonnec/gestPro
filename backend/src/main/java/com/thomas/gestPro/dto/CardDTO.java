@@ -24,6 +24,7 @@ public class CardDTO {
     private Boolean isLabelActivated;
     private Boolean isChecklistActivated;
     private List<CheckListDTO> checkList;
+    private List<LabelDTO> labels;
 
 
 }

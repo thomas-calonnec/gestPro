@@ -11,6 +11,6 @@ public interface CardMapper {
     CardDTO toDTO(Card card);
 
     @InheritInverseConfiguration
-    Card toCard(CardDTO cardDTO);
+    Card toEntity(CardDTO cardDTO);
 
 }
