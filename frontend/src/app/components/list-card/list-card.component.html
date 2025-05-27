@@ -12,10 +12,11 @@
       </div>
     </div>
 
-    @for (card of cards(); track card.id) {
 
-      <app-card [card]="card"></app-card>
-    }
+      @for (card of cards(); track card.id) {
+        <app-card [card]="card"></app-card>
+      }
+
 
     @if(!isClicked){
       <div class="card-footer" (click)="isClicked = true;" >

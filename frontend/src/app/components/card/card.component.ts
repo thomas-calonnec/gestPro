@@ -60,7 +60,6 @@ import {Label} from '@models/label';
         MatCard,
         MatCardHeader,
     ],
-    changeDetection: ChangeDetectionStrategy.OnPush,
     templateUrl: './card.component.html',
     styleUrl: './card.component.scss'
 })
@@ -68,7 +67,6 @@ export class CardComponent implements OnInit {
   value: Date = new Date();
 
   @Input() card: Card = {
-
     name: "",
     description: "",
     deadline: new Date(),
@@ -90,6 +88,7 @@ export class CardComponent implements OnInit {
   protected showOptions: WritableSignal<boolean[]> = signal([])
   checkListSignal: WritableSignal<CheckList[]> = signal<CheckList[]>([]);
   isSoon = signal(false);
+  labelList = signal<Label[]>([]);
   protected now : Date = new Date()
   protected selectedTime = ""
   myForm: FormGroup;
@@ -117,7 +116,6 @@ export class CardComponent implements OnInit {
   constructor() {
    this.myForm = this.formBuilder.group({
      name: ['', Validators.required],
-
    });
    this.formDate = this.formBuilder.group({})
  }
@@ -127,9 +125,43 @@ export class CardComponent implements OnInit {
     return this.checkListSignal().filter(task => task.completed).length;
   }
 
+  ngOnInit(): void {
+
+    if(this.card !== null && this.card.checkList !== undefined){
+
+      const now = new Date();
+      this.checkList = this.card.checkList.length > 0 ? this.card.checkList : [];
+      this.checkListSignal.set(this.checkList);
+      this.showOptions.set(Array(this.checkListSignal().length).fill(false));
+      this.updateOptions = new Array(this.checkListSignal().length).fill(false);
+      this.dateChecked = this.card.isCompleted;
+      this.card.deadline = new Date(this.card.deadline)
+      this.count = 0;
+      this.isSoon.set(this.isDueSoon());
+      const hours = this.card.hours === null ? now.getHours() : this.card.hours;
+      const minutes  = this.card.minutes === null? now.getMinutes() : this.card.minutes;
+      this.date.set(new Date(this.card.deadline.toISOString().split('T')[0]));
+      this.selectedDate = this.datePipe.transform(this.date(), 'dd/MM/yyyy','fr') || ''
+      this.selectedTime = hours + ":" + minutes
+      this.signalTime.set(this.selectedTime);
+      this.progress = this.completedTasksCount === 0 ? 0 : Math.floor((this.completedTasksCount / this.totalTasksCount) * 100);
+
+    }
+    console.log(this.card)
+    this.labelService.getLabels().subscribe({
+      next: (labels) => {
+        this.labels = labels
+        console.log(labels)
+      }
+    })
+
+    this.formDate = this.formBuilder.group({
+      time: [[this.selectedTime || ''], Validators.required],
+      date: [[this.selectedDate || ''], Validators.required]
+    })
+  }
   onMouseEnter(task: Card): void {
     task.isHovered = true;
-    
   }
 
   onMouseLeave(task: Card): void {
@@ -137,9 +169,7 @@ export class CardComponent implements OnInit {
   }
 
   completedTasks = computed(() => {
-
     return this.checkListSignal().filter((item => !this.hideCompleted() || !item.completed)) ;
-
   })
    formatDate(date: Date): string {
     return new Intl.DateTimeFormat('en-US', { day: '2-digit', month: 'short' }).format(date);
@@ -164,11 +194,13 @@ export class CardComponent implements OnInit {
 
 
   }
+
   onCheckedChange(dateChecked: boolean){
     this.dateChecked = dateChecked;
     this.isSoon.set(this.isDueSoon());
 
   }
+
   updateProgress(completed: boolean, index: number): void {
 
     if(this.completedTasksCount == 0 || this.totalTasksCount == 0)
@@ -184,37 +216,7 @@ export class CardComponent implements OnInit {
 
   }
 
-  ngOnInit(): void {
-    if(this.card !== null && this.card.checkList !== undefined){
 
-      const now = new Date();
-      this.checkList = this.card.checkList.length > 0 ? this.card.checkList : [];
-      this.checkListSignal.set(this.checkList);
-      this.showOptions.set(Array(this.checkListSignal().length).fill(false));
-      this.updateOptions = new Array(this.checkListSignal().length).fill(false);
-      this.dateChecked = this.card.isCompleted;
-      this.card.deadline = new Date(this.card.deadline)
-      this.count = 0;
-      this.isSoon.set(this.isDueSoon());
-      const hours = this.card.hours === null ? now.getHours() : this.card.hours;
-      const minutes  = this.card.minutes === null? now.getMinutes() : this.card.minutes;
-      this.date.set(new Date(this.card.deadline.toISOString().split('T')[0]));
-      this.selectedDate = this.datePipe.transform(this.date(), 'dd/MM/yyyy','fr') || ''
-      this.selectedTime = hours + ":" + minutes
-      this.signalTime.set(this.selectedTime);
-      this.progress = this.completedTasksCount === 0 ? 0 : Math.floor((this.completedTasksCount / this.totalTasksCount) * 100);
-      this.labelService.getLabels().subscribe({
-        next: (labels) => {
-          this.labels = labels;
-        }
-      })
-    }
-
-    this.formDate = this.formBuilder.group({
-      time: [[this.selectedTime || ''], Validators.required],
-      date: [[this.selectedDate || ''], Validators.required]
-    })
-  }
 
   isOverDue(): boolean {
     if (!this.date() || !this.signalTime()) {
@@ -265,14 +267,13 @@ export class CardComponent implements OnInit {
 
     return new Date(`${year}/${month}/${day}`); // Les mois commencent à zéro
   }
+
   hoverList(idx: number) {
     this.showOptions.update(list => {
       list[idx] = true;
       return list
     });
   }
-
-
 
   openModal() {
     this.isModalOpen = true;
