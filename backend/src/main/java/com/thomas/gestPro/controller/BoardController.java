@@ -1,10 +1,8 @@
 package com.thomas.gestPro.controller;
 
 import com.thomas.gestPro.dto.BoardDTO;
-import com.thomas.gestPro.dto.ListCardDTO;
-import com.thomas.gestPro.model.ListCard;
 import com.thomas.gestPro.service.BoardService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,14 +11,10 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
 @RestController
 @RequestMapping("/api/user/boards")
+@RequiredArgsConstructor
 public class BoardController {
 
     private final BoardService boardService;
-
-    @Autowired
-    public BoardController(BoardService boardService) {
-        this.boardService = boardService;
-    }
 
     @GetMapping("/{id}")
     public ResponseEntity<BoardDTO> getBoardById(@PathVariable Long id) {

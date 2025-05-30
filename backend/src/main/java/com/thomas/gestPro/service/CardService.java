@@ -11,12 +11,13 @@ import com.thomas.gestPro.repository.CardRepository;
 import com.thomas.gestPro.repository.CheckListRepository;
 import com.thomas.gestPro.repository.ListCardRepository;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class CardService {
 
     private final CardRepository cardRepository;
@@ -24,19 +25,6 @@ public class CardService {
     private final ListCardRepository listCardRepository;
     private final CardMapper cardMapper;
 
-    /**
-     * Constructor with dependency injection for CardRepository, LabelRepository, and ListCardRepository.
-     *
-     * @param cardRepository repository for managing cards
-     * @param listCardRepository repository for managing list of cards
-     */
-    @Autowired
-    public CardService(CardRepository cardRepository, CheckListRepository checkListRepository, ListCardRepository listCardRepository, CardMapper cardMapper) {
-        this.cardRepository = cardRepository;
-        this.checkListRepository = checkListRepository;
-        this.listCardRepository = listCardRepository;
-        this.cardMapper = cardMapper;
-    }
 
 
     /**

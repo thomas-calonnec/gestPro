@@ -9,17 +9,17 @@ import com.thomas.gestPro.mapper.BoardMapper;
 import com.thomas.gestPro.mapper.CardMapper;
 import com.thomas.gestPro.mapper.ListCardMapper;
 import com.thomas.gestPro.model.Board;
-import com.thomas.gestPro.model.Card;
 import com.thomas.gestPro.model.ListCard;
 import com.thomas.gestPro.repository.BoardRepository;
 import com.thomas.gestPro.repository.ListCardRepository;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class ListCardService {
 
     private final ListCardRepository listCardRepository;
@@ -27,21 +27,6 @@ public class ListCardService {
     private final BoardMapper boardMapper;
     private final ListCardMapper listCardMapper;
     private final CardMapper cardMapper;
-
-    /**
-     * Constructor with dependency injection for ListCardRepository and CardRepository.
-     *
-     * @param listCardRepository repository for managing list of cards
-     */
-    @Autowired
-    public ListCardService(ListCardRepository listCardRepository, BoardRepository boardRepository, BoardMapper boardMapper, ListCardMapper listCardMapper, CardMapper cardMapper) {
-        this.listCardRepository = listCardRepository;
-        this.boardRepository = boardRepository;
-        this.boardMapper = boardMapper;
-        this.listCardMapper = listCardMapper;
-        this.cardMapper = cardMapper;
-    }
-
 
 
     /**

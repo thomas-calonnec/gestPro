@@ -4,6 +4,8 @@
     <button class="workspace-star" [style]="workspace.isFavorite ? 'color:#df3838': 'color: #ccc'" title="Favorite" (click)="toggleFavorite()">★</button>
     <div class="workspace-name" routerLink="/workspaces/{{workspace.id}}/boards">{{ workspace.name }}</div>
   </div>
+  <div style="display: flex;flex-direction: row;justify-content: space-between">
+    <div style="display: flex;flex-direction: column">
   @if (workspace.weeksSinceUpdate > 0) {
     <div class="workspace-info">Updated {{workspace.weeksSinceUpdate}} {{workspace.daysSinceUpdate > 1 ? "weeks": "week"}} ago</div>
   }
@@ -17,6 +19,26 @@
     <div class="workspace-info">Updated {{workspace.secondsSinceUpdate}} {{workspace.minutesSinceUpdate > 1 ? "seconds": "second"}} ago</div>
   }
   <div class="workspace-info">{{workspace.boards.length}} {{workspace.boards.length > 1 ? "boards" : "board"}}</div>
+    </div>
+  <div class="workspace-actions">
+    <button class="invite-btn" (click)="openInviteDialog(workspace)">Invite</button>
+    <button class="workspace-options" title="More options">⋯</button>
+  </div>
+
+  </div>
+  <!-- Invitation Popup (Basic) -->
+  @if(selectedWorkspaceForInvite) {
+  <div  class="popup-backdrop">
+    <div class="invite-popup">
+      <h3>Invite to {{ selectedWorkspaceForInvite.name }}</h3>
+      <input type="email" [(ngModel)]="inviteEmail" placeholder="Enter email" class="invite-input" />
+      <div class="popup-actions">
+        <button (click)="sendInvite()">Send</button>
+        <button (click)="closeInvitePopup()">Cancel</button>
+      </div>
+    </div>
+  </div>
+  }
   <button class="workspace-options" title="More options">⋯</button>
 </div>
 

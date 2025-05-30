@@ -1,7 +1,6 @@
 package com.thomas.gestPro.service;
 
 
-import com.thomas.gestPro.dto.BoardDTO;
 import com.thomas.gestPro.dto.WorkspaceDTO;
 import com.thomas.gestPro.mapper.BoardMapper;
 import com.thomas.gestPro.mapper.UserMapper;
@@ -11,8 +10,8 @@ import com.thomas.gestPro.model.Workspace;
 import com.thomas.gestPro.repository.BoardRepository;
 import com.thomas.gestPro.repository.UserRepository;
 import com.thomas.gestPro.repository.WorkspaceRepository;
-import lombok.Data;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,8 +23,10 @@ import java.util.stream.Collectors;
  * Allows you to manage Workspaces, Boards associated with these spaces,
  * and user relations.
  */
-@Data
+
 @Service
+@RequiredArgsConstructor
+@Getter
 public class WorkspaceService {
 
     private final WorkspaceRepository workspaceRepository;
@@ -35,22 +36,6 @@ public class WorkspaceService {
     private final BoardMapper boardMapper;
     private final UserMapper userMapper;
 
-    /**
-     * Constructor to inject the necessary repositories.
-     *
-     * @param workspaceRepository the repository for workspace management
-     * @param usersRepository the repository for user management
-     * @param boardRepository the repository for board management
-     */
-    @Autowired
-    public WorkspaceService(WorkspaceRepository workspaceRepository, UserRepository usersRepository, BoardRepository boardRepository, WorkspaceMapper workspaceMapper, BoardMapper boardMapper, UserMapper userMapper) {
-        this.workspaceRepository = workspaceRepository;
-        this.userRepository = usersRepository;
-        this.boardRepository = boardRepository;
-        this.workspaceMapper = workspaceMapper;
-        this.boardMapper = boardMapper;
-        this.userMapper = userMapper;
-    }
 
     /**
      * Retrieves the list of all Workspaces.

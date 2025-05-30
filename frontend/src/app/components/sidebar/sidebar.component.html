@@ -12,6 +12,16 @@
       <img ngSrc="./folder.png" height="18" width="18" alt="dashboard"/>
       Workspaces
     </a>
+    <a routerLink="/invitations" routerLinkActive="active" class="nav-item">
+      <div class="nav-label">
+        <img src="./user-plus.png" height="18" width="18" alt="dashboard" />
+        <span class="label-text">Invitations</span>
+        @if (this.invitationCount > 0) {
+          <span class="badge-count">{{this.invitationCount}}</span>
+
+        }
+      </div>
+    </a>
     <a routerLink="/tasks" routerLinkActive="active">
       <img ngSrc="./layout-list.png" height="18" width="18" alt="dashboard"/>
       Tasks

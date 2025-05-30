@@ -9,7 +9,7 @@ import com.thomas.gestPro.model.User;
 import com.thomas.gestPro.repository.RoleRepository;
 import com.thomas.gestPro.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,24 +25,13 @@ import java.util.stream.Collectors;
  *
  */
 @Service
+@RequiredArgsConstructor
 public class UserService {
+
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final RoleRepository roleRepository;
 
-    /**
-     * Constructor with dependency injection for repositories.
-     * s
-     * 
-     * @param userRepository      repository for managing users
-     */
-    @Autowired
-    public UserService(UserRepository userRepository, UserMapper userMapper,
-                        RoleRepository roleRepository) {
-        this.userRepository = userRepository;
-        this.userMapper = userMapper;
-        this.roleRepository = roleRepository;
-    }
 
     /**
      * Retrieves a user by their ID.

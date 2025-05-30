@@ -7,7 +7,7 @@ import com.thomas.gestPro.model.Card;
 import com.thomas.gestPro.model.Label;
 import com.thomas.gestPro.service.CardService;
 import com.thomas.gestPro.service.LabelService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,16 +15,12 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin("http://localhost:4200")
 @RestController
 @RequestMapping("/api/user/cards")
+@RequiredArgsConstructor
 public class CardController {
 
     private final CardService cardService;
     private final LabelService labelService;
 
-    @Autowired
-    public CardController(CardService cardService, LabelService labelService) {
-        this.cardService = cardService;
-        this.labelService = labelService;
-    }
 
     @GetMapping("/{id}")
     public ResponseEntity<Card> getCardById(@PathVariable Long id) {
