@@ -12,7 +12,7 @@ import com.thomas.gestPro.dto.UserDTO;
 import com.thomas.gestPro.model.User;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
@@ -32,6 +32,7 @@ import java.time.Duration;
 import java.util.Collections;
 
 @Service
+@RequiredArgsConstructor
 public class AuthService {
 
     private final AuthenticationManager authenticationManager;
@@ -40,18 +41,11 @@ public class AuthService {
     private final TemporaryUserService temporaryUserService;
     private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
 
-    @Autowired
-    public AuthService(AuthenticationManager authenticationManager, JwtTokenUtil jwtUtil, UserService userService, TemporaryUserService temporaryUserService) {
-        this.authenticationManager = authenticationManager;
-        this.jwtUtil = jwtUtil;
-        this.userService = userService;
-        this.temporaryUserService = temporaryUserService;
-    }
-
     private String generateAccessToken(String username) {
 
         return this.jwtUtil.generateAccessToken(username);
     }
+
     private String generateRefreshToken(String username) {
         return this.jwtUtil.generateRefreshToken(username);
     }

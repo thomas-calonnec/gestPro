@@ -21,6 +21,11 @@ import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import {MatCardModule} from '@angular/material/card';
 import {Workspace} from '@models/workspace';
+import {InviteUserDialogComponent} from '@components/invite-user-dialog/invite-user-dialog.component';
+import {MatDialog} from '@angular/material/dialog';
+import {InvitationService} from '@services/invitations/invitation.service';
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {Invitation} from '@models/invitation';
 
 registerLocaleData(localeFr);
 
@@ -45,7 +50,16 @@ export class WorkspaceComponent implements OnInit{
   private workspaceId : number = 0;
   private workspaceService: WorkspaceService = inject(WorkspaceService);
    mainService: MainService = inject(MainService);
+  private dialog: MatDialog = inject(MatDialog);
+  private snackBar: MatSnackBar = inject(MatSnackBar);
+  private invitationService: InvitationService = inject(InvitationService);
   workspaceName: string = "";
+  invitation : Invitation = {
+    email : "",
+    id: 0,
+    status: "PENDING",
+    createdAt: new Date()
+  }
 
   myForm: FormGroup;
 
@@ -81,7 +95,77 @@ export class WorkspaceComponent implements OnInit{
     })
 
   }
+  selectedWorkspaceForInvite: Workspace | null = null;
+  inviteEmail: string = '';
 
+  openInvitePopup(workspace: Workspace): void {
+    this.selectedWorkspaceForInvite = workspace;
+  }
+
+  closeInvitePopup(): void {
+    this.selectedWorkspaceForInvite = null;
+    this.inviteEmail = '';
+  }
+
+  sendInvite(): void {
+    if (!this.inviteEmail.includes('@')) {
+      alert('Invalid email');
+      return;
+    }
+
+   // this.invitation = {
+   //   createdAt: new Date(),
+   //   id: 0,
+   //   invitee: 0,
+   //   email: this.inviteEmail,
+   //    workspace: this.selectedWorkspaceForInvite!,
+   //    status: "PENDING",
+   //    invitedBy: 0
+   // }
+   //
+   //  console.log(this.invitation)
+   //  this.invitationService.inviteUserToWorkspace(this.invitation).subscribe({
+   //   next: (value) => {
+   //     console.log("invitation created ! ", value)
+   //   },
+   //   error : (err) => {
+   //     console.error("error : ",err);
+   //   }
+   // })
+    console.log(`Inviting ${this.inviteEmail} to ${this.selectedWorkspaceForInvite?.name}`);
+    this.closeInvitePopup();
+  }
+
+  openInviteDialog(workspace : Workspace): void {
+    const dialogRef = this.dialog.open(InviteUserDialogComponent, {
+      width: '400px',
+      data: { workspaceName: workspace.name }
+    });
+
+
+    dialogRef.afterClosed().subscribe(email => {
+
+      if (email) {
+        this.invitation = {
+          createdAt: new Date(),
+          id: 0,
+          email: email,
+          workspace: workspace,
+          status: "PENDING",
+        }
+
+        this.invitationService.inviteUserToWorkspace(this.invitation).subscribe({
+          next: () => {
+            this.snackBar.open('Invitation sent!', 'Close', { duration: 3000 });
+          },
+          error: (err) => {
+            console.log(err)
+            this.snackBar.open('Failed to send invitation.', 'Close', { duration: 3000 });
+          }
+        });
+      }
+    });
+  }
   toggleFavorite() {
     this.onFavoriteToggle.emit(this.workspace.id);
   }

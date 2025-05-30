@@ -2,27 +2,20 @@ package com.thomas.gestPro.controller;
 
 import com.thomas.gestPro.dto.CardDTO;
 import com.thomas.gestPro.dto.ListCardDTO;
-import com.thomas.gestPro.model.Card;
 import com.thomas.gestPro.model.ListCard;
 import com.thomas.gestPro.service.ListCardService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 
-@CrossOrigin("http://localhost:4200")
 @RestController
 @RequestMapping("/api/user/listCards")
+@RequiredArgsConstructor
 public class ListCardController {
 
     private final ListCardService listCardService;
-
-    @Autowired
-    public ListCardController(ListCardService listCardService) {
-        this.listCardService = listCardService;
-
-    }
 
     @GetMapping("/{id}")
     public ResponseEntity<ListCard> getListCardById(@PathVariable Long id) {

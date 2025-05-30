@@ -42,7 +42,8 @@ export class DialogCreateBoardComponent {
     daysSinceUpdate: 0,
     hoursSinceUpdate: 0,
     minutesSinceUpdate: 0,
-    secondsSinceUpdate: 0
+    secondsSinceUpdate: 0,
+     status: ""
 
   }
   readonly addBoard = model(this.board)

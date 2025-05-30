@@ -8,31 +8,20 @@ import com.thomas.gestPro.model.Card;
 import com.thomas.gestPro.model.Label;
 import com.thomas.gestPro.repository.CardRepository;
 import com.thomas.gestPro.repository.LabelRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 
 @Service
+@RequiredArgsConstructor
 public class LabelService {
 
     private final LabelRepository labelRepository;
     private final CardRepository cardRepository;
     private final CardMapper cardMapper;
 
-    /**
-     * Constructor with dependency injection for LabelRepository.
-     *
-     * @param labelRepository repository for managing labels
-     */
-    @Autowired
-    public LabelService(LabelRepository labelRepository, CardRepository cardRepository, CardMapper cardMapper) {
-        this.labelRepository = labelRepository;
-
-        this.cardRepository = cardRepository;
-        this.cardMapper = cardMapper;
-    }
 
     /**
      * Finds a Label by its ID.

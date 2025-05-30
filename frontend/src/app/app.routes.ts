@@ -8,6 +8,7 @@ import { CallbackComponent} from '@components/callback/callback.component';
 import { AuthGuard } from './auth-guard';
 import {HomeComponent} from '@components/home/home.component';
 import {ListBoardsComponent} from '@components/list-boards/list-boards.component';
+import {InvitationsComponent} from '@components/invitation/invitation.component';
 
 
 export const routes: Routes = [
@@ -17,6 +18,7 @@ export const routes: Routes = [
       { path: 'workspaces/:id/boards', component: ListBoardsComponent, data: { id: 'string' } },
       { path: 'boards/:id', component: BoardComponent, data: { id: 'string' } },
       // { path: 'board', component: BoardComponent },
+      {path: 'invitations',component: InvitationsComponent},
       { path: 'users/:userId/workspaces', component: UserComponent, data: { userId: 'string' } },
       { path: 'boards/:id/listCards', component: ListCardComponent, data: { id: 'string' } },
       { path: 'listCard', component: ListCardComponent },

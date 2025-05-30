@@ -8,6 +8,36 @@
   flex-direction: column;
   font-family: 'Segoe UI', sans-serif;
 }
+.nav-item {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  padding: 8px 12px;
+  color: white;
+  font-size: 14px;
+}
+
+.nav-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.label-text {
+  margin-left: 8px;
+  flex: 1;
+}
+
+.badge-count {
+  background-color: #1976d2; /* bleu Material */
+  color: white;
+  padding: 2px 6px;
+  font-size: 12px;
+  border-radius: 12px;
+  min-width: 18px;
+  text-align: center;
+}
 
 .logo {
   font-size: 1.4rem;

@@ -2,7 +2,7 @@ package com.thomas.gestPro.controller;
 
 import com.thomas.gestPro.model.Label;
 import com.thomas.gestPro.service.LabelService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,15 +12,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/user/labels")
-@CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
+@RequiredArgsConstructor
 public class LabelController {
 
     private final LabelService labelService;
-
-    @Autowired
-    public LabelController(LabelService labelService) {
-        this.labelService = labelService;
-    }
 
     @GetMapping
     public ResponseEntity<List<Label>> getAllLabel(){

@@ -6,7 +6,6 @@ import com.thomas.gestPro.dto.ListCardDTO;
 import com.thomas.gestPro.mapper.BoardMapper;
 import com.thomas.gestPro.mapper.ListCardMapper;
 import com.thomas.gestPro.model.Board;
-import com.thomas.gestPro.model.ListCard;
 import com.thomas.gestPro.model.User;
 import com.thomas.gestPro.model.Workspace;
 import com.thomas.gestPro.repository.BoardRepository;
@@ -14,7 +13,7 @@ import com.thomas.gestPro.repository.ListCardRepository;
 import com.thomas.gestPro.repository.UserRepository;
 import com.thomas.gestPro.repository.WorkspaceRepository;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -24,6 +23,7 @@ import java.util.Random;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class BoardService {
 
     private final BoardRepository boardRepository;
@@ -32,23 +32,6 @@ public class BoardService {
     private final ListCardMapper listCardMapper;
     private final BoardMapper boardMapper;
     private final UserRepository userRepository;
-
-
-    /**
-     * Constructor with dependency injection for BoardRepository and ListCardRepository.
-     *
-     * @param boardRepository repository for managing boards
-     * @param listCardRepository repository for managing lists of cards
-     */
-    @Autowired
-    public BoardService(BoardRepository boardRepository, ListCardRepository listCardRepository, WorkspaceRepository workspaceRepository, ListCardMapper listCardMapper, BoardMapper boardMapper, UserRepository userRepository) {
-        this.boardRepository = boardRepository;
-        this.listCardRepository = listCardRepository;
-        this.workspaceRepository = workspaceRepository;
-        this.listCardMapper = listCardMapper;
-        this.boardMapper = boardMapper;
-        this.userRepository = userRepository;
-    }
 
 
     /**
@@ -173,6 +156,11 @@ public class BoardService {
     }
 
 
+    public ListCardRepository getListCardRepository() {
+        return listCardRepository;
+    }
 
-
+    public ListCardMapper getListCardMapper() {
+        return listCardMapper;
+    }
 }

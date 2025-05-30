@@ -69,6 +69,7 @@ public class GitHubOAuthController {
         }
         return ResponseEntity.notFound().build();
     }
+
     @GetMapping("/profile")
     public ResponseEntity<?> getUserProfile(@CookieValue("gh_token") String token) {
         var user = webClient.get()
