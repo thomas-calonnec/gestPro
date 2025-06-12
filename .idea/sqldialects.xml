@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SqlDialectMappings">
+    <file url="file://$PROJECT_DIR$/create_database_GestPro.sql" dialect="PostgreSQL" />
+    <file url="file://$USER_HOME$/gestpro_localhost-2025_05_30_18_15_05-dump.sql" dialect="H2" />
+    <file url="file://$USER_HOME$/gestpro_localhost-2025_06_01_12_50_33-dump.sql" dialect="H2" />
+  </component>
+</project>

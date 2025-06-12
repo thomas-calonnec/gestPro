@@ -1,9 +1,7 @@
 package com.thomas.gestPro.Security;
 
 
-import com.thomas.gestPro.model.CustomUserDetails;
 import com.thomas.gestPro.service.TemporaryUserService;
-import com.thomas.gestPro.service.UserService;
 import io.micrometer.common.lang.Nullable;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

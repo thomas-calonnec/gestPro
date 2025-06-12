@@ -1,17 +1,15 @@
 package com.thomas.gestPro.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Getter
 @Setter
-@Table(name = "t_invitations")
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "t_invitations")
 public class Invitation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,6 +18,7 @@ public class Invitation {
     private String email; // Celui de l'invité
 
     @Enumerated(EnumType.STRING)
+    @Builder.Default
     private InvitationStatus status = InvitationStatus.PENDING;
 
     @ManyToOne(fetch = FetchType.LAZY)

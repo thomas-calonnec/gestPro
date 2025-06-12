@@ -7,14 +7,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(
-        name = "t_users",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"providerName", "providerId"})
-)
+@Table(name = "t_users")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class User {
 
     @Id
@@ -33,12 +31,14 @@ public class User {
     }
 
     @ManyToMany(mappedBy = "users")
+    @Builder.Default
     private List<Workspace> workspaces = new ArrayList<>();
 
     @ManyToMany
     @JoinTable(name = "tj_user_card",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "card_id"))
+    @Builder.Default
     private List<Card> cards = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = {
@@ -47,10 +47,11 @@ public class User {
     @JoinTable(name = "tj_user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
+    @Builder.Default
     private List<Role> roles = new ArrayList<>();
 
     @ManyToMany(mappedBy = "members")
+    @Builder.Default
     private List<Board> boards = new ArrayList<>();
 
-  
 }

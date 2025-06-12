@@ -11,6 +11,7 @@ import java.util.List;
 @Table(name = "t_board")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Board {
@@ -28,6 +29,7 @@ public class Board {
     private Long ownerId;
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.PERSIST)
+    @Builder.Default
     private List<ListCard> listCards = new ArrayList<>();
 
     @ManyToMany
@@ -36,9 +38,11 @@ public class Board {
             joinColumns = @JoinColumn(name = "board_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
+    @Builder.Default
     private List<User> members = new ArrayList<>();
 
     @ManyToMany(mappedBy = "boards", cascade = CascadeType.MERGE)
+    @Builder.Default
     private List<Workspace> workspaces = new ArrayList<>();
 
     public void setMembers(List<User> newMembers) {

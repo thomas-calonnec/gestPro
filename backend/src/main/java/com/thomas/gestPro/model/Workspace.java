@@ -14,7 +14,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-
+@Builder
 public class Workspace {
 
     @Id
@@ -31,13 +31,14 @@ public class Workspace {
     @JoinTable(name = "tj_workspace_board",
             joinColumns = @JoinColumn(name = "workspace_id"),
             inverseJoinColumns = @JoinColumn(name = "board_id"))
-
+    @Builder.Default
     private List<Board> boards = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "tj_user_workspace",
             joinColumns = @JoinColumn(name = "workspace_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id"))
+    @Builder.Default
     private List<User> users = new ArrayList<>();
 
   
