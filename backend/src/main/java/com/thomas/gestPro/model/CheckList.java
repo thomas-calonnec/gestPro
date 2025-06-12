@@ -5,10 +5,11 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name="t_check_list")
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@Table(name="t_check_list")
 public class CheckList {
 
     @Id

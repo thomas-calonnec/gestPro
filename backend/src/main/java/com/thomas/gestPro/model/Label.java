@@ -11,6 +11,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Table(name="t_labels")
 public class Label {
 
@@ -21,5 +22,6 @@ public class Label {
 
     @ManyToMany(mappedBy = "labels")
     @JsonBackReference
+    @Builder.Default
     private List<Card> cards = new ArrayList<>();
 }

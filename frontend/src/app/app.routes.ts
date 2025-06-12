@@ -9,11 +9,12 @@ import { AuthGuard } from './auth-guard';
 import {HomeComponent} from '@components/home/home.component';
 import {ListBoardsComponent} from '@components/list-boards/list-boards.component';
 import {InvitationsComponent} from '@components/invitation/invitation.component';
-
+import {GestproComponent} from '@components/gestpro/gestpro.component';
 
 export const routes: Routes = [
   {
     path: '', component: MainComponent, canActivate:[AuthGuard], children: [
+      {path: '', component: GestproComponent},
       {path: 'home', component: HomeComponent},
       { path: 'workspaces/:id/boards', component: ListBoardsComponent, data: { id: 'string' } },
       { path: 'boards/:id', component: BoardComponent, data: { id: 'string' } },
@@ -22,10 +23,8 @@ export const routes: Routes = [
       { path: 'users/:userId/workspaces', component: UserComponent, data: { userId: 'string' } },
       { path: 'boards/:id/listCards', component: ListCardComponent, data: { id: 'string' } },
       { path: 'listCard', component: ListCardComponent },
-
     ]
   },
   { path: 'login', component: LoginComponent },
   { path: 'callback', component: CallbackComponent }
-
 ];

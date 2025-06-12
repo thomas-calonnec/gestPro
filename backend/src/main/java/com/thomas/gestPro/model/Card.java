@@ -11,6 +11,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Table(name="t_card")
 public class Card {
 
@@ -36,13 +37,15 @@ public class Card {
     @JoinTable(name="tj_label_card",
             joinColumns = @JoinColumn(name = "card_id"),
             inverseJoinColumns = @JoinColumn(name = "label_id"))
-
+    @Builder.Default
     private List<Label> labels = new ArrayList<>();
 
     @OneToMany(mappedBy = "card",cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @Builder.Default
     private List<CheckList> checkList = new ArrayList<>();
 
     @ManyToMany(mappedBy = "cards")
+    @Builder.Default
     private List<User> users = new ArrayList<>();
 
 

@@ -11,6 +11,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Table(name="t_list_card")
 public class ListCard {
     @Id
@@ -27,5 +28,6 @@ public class ListCard {
 
     @OneToMany(mappedBy = "listCard", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
+    @Builder.Default
     private List<Card> cardList = new ArrayList<>();
 }

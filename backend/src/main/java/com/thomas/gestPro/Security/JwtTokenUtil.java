@@ -5,7 +5,6 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
-import com.thomas.gestPro.service.UserService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.Claims;
 // ✅ Import correct
@@ -70,7 +69,7 @@ public class JwtTokenUtil {
     public boolean validateToken(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
-        }
+    }
 
     // Extraire le nom d'utilisateur d'un token
     public String getUsernameFromToken(String token) {
