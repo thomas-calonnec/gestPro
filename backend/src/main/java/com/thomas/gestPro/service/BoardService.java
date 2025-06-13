@@ -99,8 +99,6 @@ public class BoardService {
 
         board.getWorkspaces().add(workspace);
         attachedMembers.forEach(user -> user.getBoards().add(board));
-//        Optional<User> owner = this.userRepository.findById(board.getOwnerId());
-//        owner.ifPresent(user -> user.getBoards().add(board));
 
         workspace.getBoards().add(board);
 

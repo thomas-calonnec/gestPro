@@ -9,6 +9,7 @@ import com.thomas.gestPro.Security.JwtResponse;
 import com.thomas.gestPro.Security.JwtTokenUtil;
 import com.thomas.gestPro.Security.TokenRequest;
 import com.thomas.gestPro.dto.UserDTO;
+import com.thomas.gestPro.dto.RegisterRequest;
 import com.thomas.gestPro.model.User;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,6 +36,7 @@ import java.util.Collections;
 @RequiredArgsConstructor
 public class AuthService {
 
+
     private final AuthenticationManager authenticationManager;
     private final JwtTokenUtil jwtUtil;
     private final UserService userService;
@@ -49,6 +51,7 @@ public class AuthService {
     private String generateRefreshToken(String username) {
         return this.jwtUtil.generateRefreshToken(username);
     }
+
 
     private ResponseCookie createJwtCookie(String tokenName, String tokenValue) {
         long maxAgeSeconds = tokenName.equals("accessToken") ?
@@ -94,21 +97,35 @@ public class AuthService {
         ResponseCookie accessTokenCookie = this.createJwtCookie("accessToken",accessToken);
         ResponseCookie revokeTokenCookie = this.createJwtCookie("refreshToken",refreshToken);
 
-        return ResponseEntity.ok()
+        return ResponseEntity.status(HttpStatus.CREATED)
                 .header(HttpHeaders.SET_COOKIE, accessTokenCookie.toString(), revokeTokenCookie.toString())
                 .body(new JwtResponse(user));
     }
 
+    public ResponseEntity<JwtResponse> register(RegisterRequest request) {
+        if (userService.existsByUsernameOrEmail(request.getUsername(), request.getEmail())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
+
+        UserDTO registeredUser = userService.createUser(request);
+        return this.generateTokenAndCreateCookie(registeredUser.getUsername(), registeredUser);
+    }
+
     public ResponseEntity<JwtResponse> authenticate(User user) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+            if (authentication != null && authentication.isAuthenticated()) {
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+                UserDTO currentUser = this.userService.getUserByUsername(user.getUsername());
+                return ResponseEntity.ok(this.generateTokenAndCreateCookie(user.getUsername(), currentUser).getBody());
+            }
 
-        UserDTO currentUser = this.userService.getUserByUsername(user.getUsername());
-
-        return this.generateTokenAndCreateCookie(user.getUsername(),currentUser);
-
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
     }
 
     public ResponseEntity<JwtResponse> logout() {
