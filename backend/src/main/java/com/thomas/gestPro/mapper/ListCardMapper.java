@@ -12,6 +12,6 @@ public interface ListCardMapper {
       ListCardDTO toDTO(ListCard listCard);
 
       @InheritInverseConfiguration
-      ListCard toEntity(CardDTO cardDTO);
+      ListCard toEntity(ListCardDTO listCardDTO);
 
 }

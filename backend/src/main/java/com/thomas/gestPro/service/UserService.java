@@ -2,6 +2,7 @@ package com.thomas.gestPro.service;
 
 import com.thomas.gestPro.Exception.InvalidInputException;
 import com.thomas.gestPro.Exception.ResourceNotFoundException;
+import com.thomas.gestPro.dto.RegisterRequest;
 import com.thomas.gestPro.dto.UserDTO;
 import com.thomas.gestPro.mapper.UserMapper;
 import com.thomas.gestPro.model.Role;
@@ -113,33 +114,6 @@ public class UserService {
         userRepository.deleteById(userId);
     }
 
-//    /**
-//     * Adds a card to a user by their respective IDs.
-//     *
-//     * @param userId the ID of the user
-//     * @param cardId the ID of the card
-//     * @throws ResourceNotFoundException if the card is not found
-//     */
-//     public User addCardToUser(Long userId, Long cardId) {
-//         UserDTO existedUser = getById(userId);
-//         Card card = cardRepository.findById(cardId).orElseThrow(() -> new ResourceNotFoundException("Card not found"));
-//
-//         if (existedUser.isPresent()) {
-//             User user = existedUser.get();
-//             user.getCards().add(card);
-//             userRepository.save(user);
-//
-//             card.getUsers().add(user);
-//             cardRepository.save(card);
-//
-//             return user;
-//         }
-//
-//         return null;
-//     }
-
-
-
     public UserDTO getUserByUsername(String username) {
         return userRepository.getUserByUsername(username)
                 .map(userMapper::toDTO)
@@ -167,4 +141,20 @@ public class UserService {
     }
 
 
+    public boolean existsByUsernameOrEmail(String username, String email) {
+        Optional<User> userByUsername = userRepository.getUserByUsername(username);
+        Optional<User> userByEmail = userRepository.findByEmail(email);
+        return userByUsername.isPresent() || userByEmail.isPresent();
+    }
+
+    public UserDTO createUser(RegisterRequest request) {
+        User user = new User();
+        user.setUsername(request.getUsername());
+        user.setEmail(request.getEmail());
+        user.setPassword(request.getPassword());
+        Role userRole = roleRepository.findByName("ROLE_USER");
+        user.getRoles().add(userRole);
+        userRepository.save(user);
+        return userMapper.toDTO(user);
+    }
 }

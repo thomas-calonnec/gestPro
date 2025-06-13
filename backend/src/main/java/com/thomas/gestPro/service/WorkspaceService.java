@@ -84,14 +84,11 @@ public class WorkspaceService {
     }
 
     public List<WorkspaceDTO> getWorkspacesByUserId(Long userId) {
-
-        return userRepository.findById(userId)
-                .map(user -> user.getWorkspaces().stream()
-                        .map(workspaceMapper::toDTO)
-                        .collect(Collectors.toList())
-                )
-                .orElse(Collections.emptyList());
-
+        return workspaceRepository.findAll().stream()
+                .filter(workspace -> workspace.getUsers().stream()
+                        .anyMatch(user -> user.getId().equals(userId)))
+                .map(workspaceMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
     /**

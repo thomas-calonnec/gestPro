@@ -112,7 +112,11 @@ public class ListCardService {
      * @throws RuntimeException if the board is not found
      */
     public List<ListCardDTO> getCardsByBoardId(Long id) {
-        return this.getBoardById(id).getListCards();
+        return this.listCardRepository
+                .findByBoard_Id(id)
+                .stream()
+                .map(listCardMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
     /**

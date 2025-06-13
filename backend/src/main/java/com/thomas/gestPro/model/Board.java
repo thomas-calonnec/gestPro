@@ -6,6 +6,7 @@ import lombok.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "t_board")
@@ -44,6 +45,19 @@ public class Board {
     @ManyToMany(mappedBy = "boards", cascade = CascadeType.MERGE)
     @Builder.Default
     private List<Workspace> workspaces = new ArrayList<>();
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Board board = (Board) o;
+        return id != null && id.equals(board.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 
     public void setMembers(List<User> newMembers) {
         // Supprime les anciennes relations côté User

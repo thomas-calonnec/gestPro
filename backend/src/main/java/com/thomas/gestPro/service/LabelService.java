@@ -49,9 +49,9 @@ public class LabelService {
      * @param label the Label to create
      * @throws RuntimeException if a Label with the same color already exists
      */
-    public void createLabel(Label label) {
+    public Label createLabel(Label label) {
         if(labelRepository.findLabelByColor(label.getColor()).isEmpty()) {
-            labelRepository.save(label);
+            return labelRepository.save(label);
         } else {
             throw new RuntimeException("Label already exists");
         }
